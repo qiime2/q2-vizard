@@ -17,7 +17,7 @@ from q2_vizard._util import json_replace
 
 
 def plot_heatmap(output_dir: str, data: pd.DataFrame, x_label: str, 
-                 y_label: str, gradient: str):
+                 y_label: str, gradient: str, order: str = None):
     J_ENV = jinja2.Environment(
         loader=jinja2.PackageLoader('q2_vizard', 'assets/heatmap')
     )
@@ -36,12 +36,19 @@ def plot_heatmap(output_dir: str, data: pd.DataFrame, x_label: str,
     )
     with open(spec_fp) as fh:
         json_obj = json.load(fh)
-
+    
+    if order == "ascending":
+        order = {"order": "ascending"}
+    elif order == "descending":
+        order = {"order": "descending"}
+    else: 
+        order = False
+        
     full_spec = json_replace(json_obj, data=data, x_label=x_label, 
                              x_label_name=x_label_name,
                              y_label=y_label, y_label_name=y_label_name,
                              title=title, measure=gradient, 
-                             measure_name=measure_name)
+                             measure_name=measure_name, order=order)
 
     with open(os.path.join(output_dir, "index.html"), "w") as fh:
         spec_string = json.dumps(full_spec)

@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str
+from qiime2.plugin import Plugin, Str, Choices
 from q2_stats._type import (GroupDist, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
@@ -27,7 +27,8 @@ plugin.visualizers.register_function(
     parameters={
         'x_label': Str,
         'y_label': Str,
-        'gradient': Str
+        'gradient': Str,
+        'order': Str % Choices('ascending', 'descending')
     },
     name='Plot Heatmap',
     description='',

@@ -57,7 +57,7 @@
         "name": "X_label",
         "type": "band",
         "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_label"}, 
-                    "sort":{ "order": "ascending"}},
+                    "sort":{"{{REPLACE_PARAM}}": "order"}},
         "range": "width",
         "paddingInner": 0.01
       },
