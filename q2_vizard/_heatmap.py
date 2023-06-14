@@ -23,14 +23,13 @@ def plot_heatmap(output_dir: str, data: pd.DataFrame, x_label: str,
     )
     # general viz
     x_label_name = data[x_label].attrs['title']
-    measure_name = data[gradient].attrs['title']
     y_label_name = data[y_label].attrs['title']
+    measure_name = data[gradient].attrs['title']
     # orientation parameter could switch this 
     title = f'{measure_name} of {y_label_name} across {x_label_name}'
 
     index = J_ENV.get_template('index.html')
     data = json.loads(data.to_json(orient='records'))
-    # change index.html and spec.json to be more specific thanks :)
     spec_fp = pkg_resources.resource_filename(
         'q2_vizard', os.path.join('assets', 'heatmap', 'heatmap_spec.json')
     )
