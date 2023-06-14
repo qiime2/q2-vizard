@@ -6,9 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin
+from qiime2.plugin import Plugin, Str, Choices
+from q2_stats._type import (GroupDist, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
+
+
 
 plugin = Plugin(name='vizard',
                 version='0.0.1.dev0',
@@ -20,9 +23,13 @@ plugin = Plugin(name='vizard',
 
 plugin.visualizers.register_function(
     function=plot_heatmap,
-    inputs={
+    inputs={'data': GroupDist[Ordered, Matched]},
+    parameters={
+        'x_label': Str,
+        'y_label': Str,
+        'gradient': Str,
+        'order': Str % Choices('ascending', 'descending')
     },
-    parameters={},
     name='Plot Heatmap',
     description='',
 )
