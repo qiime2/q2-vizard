@@ -1,0 +1,77 @@
+{
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "width": 300,
+    "height": 300,
+    "data":
+    [
+        {
+            "name": "values",
+            "values": {"{{REPLACE_PARAM}}": "data"}
+        }
+    ],
+    "scales":
+    [
+        {
+            "name": "x_label",
+            "domain":
+                {
+                    "data": "values",
+                    "field": {"{{REPLACE_PARAM}}": "x_label"}
+                },
+                "range": "width"
+        },
+        {
+            "name": "y_label",
+            "domain":
+                {
+                    "data": "values",
+                    "field": {"{{REPLACE_PARAM}}": "y_label"}
+                },
+            "range": "height"
+        }
+    ],
+    "axes":
+    [
+        {
+            "scale": "x_label", "orient": "bottom",
+            "title": {"{{REPLACE_PARAM}}": "title"}
+        },
+        {
+            "scale": "y_label", "orient": "left",
+            "title": {"{{REPLACE_PARAM}}": "y_label"}
+        }
+    ],
+    "marks":
+    [
+        {
+            "type": "symbol",
+            "from": {"data": "values"},
+            "encode":
+            {
+                "hover":
+                {
+                    "fill": {"value": "#FF0000"},
+                    "opacity": {"value": 1}
+                },
+                "enter":
+                {
+                    "x":
+                    {
+                        "scale": "x_label",
+                        "field": {"{{REPLACE_PARAM}}": "x_label"}
+                    },
+                    "y":
+                    {
+                        "scale": "y_label",
+                        "field": {"{{REPLACE_PARAM}}": "y_label"}
+                    }
+                },
+                "update":
+                {
+                    "fill": {"value": "black"},
+                    "opacity": {"value": 0.3}
+                }
+            }
+        }
+    ]
+}

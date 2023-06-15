@@ -9,5 +9,5 @@
 import pandas as pd
 
 
-def plot_heatmap(output_dir: str, data: pd.DataFrame):
+def plot_heatmap():
     pass
