@@ -16,7 +16,8 @@ from collections import Counter
 from q2_vizard._util import json_replace
 
 
-def plot_heatmap(output_dir: str, data: pd.DataFrame, transpose: bool = False):
+def plot_heatmap(output_dir: str, data: pd.DataFrame, transpose: bool = False,
+                 order: str = None):
     J_ENV = jinja2.Environment(
         loader=jinja2.PackageLoader('q2_vizard', 'assets/heatmap')
     )
