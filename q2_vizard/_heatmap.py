@@ -11,7 +11,6 @@ import os
 import pkg_resources
 import jinja2
 import json
-from collections import Counter
 
 from q2_vizard._util import json_replace
 
@@ -21,15 +20,15 @@ def plot_heatmap(output_dir: str, data: pd.DataFrame, transpose: bool = False,
     J_ENV = jinja2.Environment(
         loader=jinja2.PackageLoader('q2_vizard', 'assets/heatmap')
     )
-    if transpose == True:
+    if transpose:
         x_label = "subject"
         y_label = "group"
         gradient = "measure"
-    else: 
+    else:
         x_label = "group"
         y_label = "subject"
         gradient = "measure"
-    
+
     x_label_name = data[x_label].attrs['title']
     y_label_name = data[y_label].attrs['title']
     measure_name = data[gradient].attrs['title']
@@ -47,13 +46,13 @@ def plot_heatmap(output_dir: str, data: pd.DataFrame, transpose: bool = False,
         order = {"order": "ascending"}
     elif order == "descending":
         order = {"order": "descending"}
-    else: 
+    else:
         order = False
-     
-    full_spec = json_replace(json_obj, data=data, x_label=x_label, 
+
+    full_spec = json_replace(json_obj, data=data, x_label=x_label,
                              x_label_name=x_label_name,
                              y_label=y_label, y_label_name=y_label_name,
-                             title=title, measure=gradient, 
+                             title=title, measure=gradient,
                              measure_name=measure_name, order=order)
 
     with open(os.path.join(output_dir, "index.html"), "w") as fh:
