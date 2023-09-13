@@ -1,7 +1,9 @@
 {
     "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "A basic scatterplot",
     "width": 300,
     "height": 300,
+    "title": {"{{REPLACE_PARAM}}": "title"},
     "data":
     [
         {
@@ -34,7 +36,7 @@
     [
         {
             "scale": "x_label", "orient": "bottom",
-            "title": {"{{REPLACE_PARAM}}": "title"}
+            "title": {"{{REPLACE_PARAM}}": "x_label"}
         },
         {
             "scale": "y_label", "orient": "left",
