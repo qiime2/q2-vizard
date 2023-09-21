@@ -12,7 +12,6 @@ from q2_stats._type import (GroupDist, Matched, Ordered)
 from q2_vizard._heatmap import plot_heatmap
 
 
-
 plugin = Plugin(name='vizard',
                 version='0.0.1.dev0',
                 website='https://github.com/qiime2/q2-vizard',
