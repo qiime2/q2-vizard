@@ -16,7 +16,8 @@ setup(
     packages=find_packages(),
     package_data={
         'q2_vizard': [
-            'assets/*'],
+            'assets/*',
+            'assets/heatmap/*'],
         'q2_vizard.tests': ['data/*'],
 
     },
