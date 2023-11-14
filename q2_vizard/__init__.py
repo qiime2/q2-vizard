@@ -5,3 +5,12 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+
+from ._version import get_versions
+from ._heatmap import plot_heatmap
+from ._util import json_replace
+
+__version__ = get_versions()['version']
+del get_versions
+
+__all__ = ['plot_heatmap', 'json_replace']
