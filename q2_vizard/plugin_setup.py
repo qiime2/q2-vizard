@@ -6,10 +6,11 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Choices, Bool
+from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
 from q2_stats._type import (GroupDist, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
+from q2_vizard._scatterplot import plot_scatterplot
 
 
 plugin = Plugin(name='vizard',
@@ -28,5 +29,21 @@ plugin.visualizers.register_function(
         'order': Str % Choices('ascending', 'descending')
     },
     name='Plot Heatmap',
+    description='',
+)
+
+
+plugin.visualizers.register_function(
+    function=plot_scatterplot,
+    inputs={
+        'data': Metadata,
+        'metadata': Metadata
+    },
+    parameters={
+        'title': Str,
+        'x_label': Str,
+        'y_label': Str
+    },
+    name='Plot Scatterplot',
     description='',
 )
