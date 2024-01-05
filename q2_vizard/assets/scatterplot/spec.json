@@ -1,0 +1,246 @@
+{
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "title": {"text": {"signal": "$Title"}},
+    "width": 600,
+    "height": 600,
+    "padding": 20,
+
+    "signals": [
+      {"name": "$Title",
+       "value": {"{{REPLACE_PARAM}}": "title"},
+       "bind": {"input": "input"}
+      },
+
+      {"name": "$SwapAxes", "value": false, "bind": {"input": "checkbox"}},
+      {"name": "$Invert", "value": false, "bind": {"input": "checkbox"}},
+
+      {
+        "name": "tooltip",
+        "value": {},
+        "on": [
+          {"events": "rect:mouseover", "update": "datum"},
+          {"events": "rect:mouseout",  "update": "{}"}
+        ]
+      },
+
+      {
+        "name": "clear", "value": true,
+        "on": [
+          {
+            "events": "pointerup[!event.item]",
+            "update": "true",
+            "force": true
+          }
+        ]
+      },
+      {
+        "name": "shift", "value": false,
+        "on": [
+          {
+            "events": "@legendSymbol:click, @legendLabel:click",
+            "update": "event.shiftKey",
+            "force":  true
+          }
+        ]
+      },
+      {
+        "name": "clicked", "value": null,
+        "on": [
+          {
+            "events": "@legendSymbol:click, @legendLabel:click",
+            "update": "{value: datum.value}",
+            "force":  true
+          }
+        ]
+      },
+      {
+        "name": "brush", "value": 0,
+        "on": [
+          {
+            "events": {"signal": "clear"},
+            "update": "clear ? [0, 0] : brush"
+          },
+          {
+            "events": "@xaxis:pointerdown",
+            "update": "[x(), x()]"
+          },
+          {
+            "events": "[@xaxis:pointerdown, window:pointerup] > window:pointermove!",
+            "update": "[brush[0], clamp(x(), 0, width)]"
+          },
+          {
+            "events": {"signal": "delta"},
+            "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+          }
+        ]
+      },
+      {
+        "name": "anchor", "value": null,
+        "on": [{"events": "@brush:pointerdown", "update": "slice(brush)"}]
+      },
+      {
+        "name": "xdown", "value": 0,
+        "on": [{"events": "@brush:pointerdown", "update": "x()"}]
+      },
+      {
+        "name": "delta", "value": 0,
+        "on": [
+          {
+            "events": "[@brush:pointerdown, window:pointerup] > window:pointermove!",
+            "update": "x() - xdown"
+          }
+        ]
+      },
+      {
+        "name": "domain",
+        "on": [
+          {
+            "events": {"signal": "brush"},
+            "update": "span(brush) ? invert('x', brush) : null"
+          }
+        ]
+      }
+    ],
+
+    "data": [
+      {
+        "name": "table",
+        "values": {"{{REPLACE_PARAM}}": "data"}
+      },
+      {
+        "name": "selected",
+        "on": [
+          {"trigger": "clear", "remove": true},
+          {"trigger": "!shift", "remove": true},
+          {"trigger": "!shift && clicked", "insert": "clicked"},
+          {"trigger": "shift && clicked", "toggle": "clicked"}
+        ]
+      }
+    ],
+
+    "scales": [
+      {
+        "name": "x_scale_width",
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_label"},
+        "range": "width",
+        "nice": true
+      },
+      {
+        "name": "x_scale_height",
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_label"},
+        "range": "height",
+        "nice": true
+      },
+      {
+        "name": "y_scale_width",
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_label"},
+        "range": "width",
+        "nice": true
+      },
+      {
+        "name": "y_scale_height",
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_label"},
+        "range": "height",
+        "nice": true
+      },
+      {
+        "name": "x_scale",
+        "domain": {"signal": "SwapAxes ? domain('y_scale_width') : domain('x_scale_width')"},
+        "range": "width",
+        "nice": true,
+        "reverse": {"signal": "$Invert"}
+
+      },
+      {
+        "name": "y_scale",
+        "domain": {"signal": "SwapAxes ? domain('x_scale_height') : domain('y_scale_height')"},
+        "range": "height",
+        "nice": true,
+        "reverse": {"signal": "$Invert"}
+
+      },
+      {
+        "name": "color_scale",
+        "type": "ordinal",
+        "domain": {"data": "table", "field": "Origin", "sort": true},
+        "range": {"scheme": "plasma"}
+      }
+    ],
+
+    "axes": [
+      {
+        "scale": "x_scale",
+        "grid": true,
+        "orient": "bottom",
+        "tickCount": 5,
+        "title": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'y_label'} : {'{{REPLACE_PARAM}}': 'x_label'}"}
+      },
+      {
+        "scale": "y_scale",
+        "grid": true,
+        "orient": "left",
+        "titlePadding": 5,
+        "title": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'x_label'} : {'{{REPLACE_PARAM}}': 'y_label'}"}
+      }
+    ],
+
+    "legends": [
+      {
+        "stroke": "color_scale",
+        "title": "Origin",
+        "encode": {
+          "symbols": {
+            "name": "legendSymbol",
+            "interactive": true,
+            "update": {
+              "fill": {"value": "transparent"},
+              "strokeWidth": {"value": 1.5},
+              "opacity": [
+                {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.7},
+                {"value": 0.15}
+              ]
+            }
+          },
+          "labels": {
+            "name": "legendLabel",
+            "interactive": true,
+            "update": {
+              "opacity": [
+                {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 1},
+                {"value": 0.25}
+              ]
+            }
+          }
+        }
+      }
+    ],
+
+    "marks": [
+      {
+        "name": "marks",
+        "type": "symbol",
+        "from": {"data": "table"},
+        "encode": {
+          "update": {
+            "x": {"scale": "x_scale", "field": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'y_label'} : {'{{REPLACE_PARAM}}': 'x_label'}"}},
+            "y": {"scale": "y_scale", "field": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'x_label'} : {'{{REPLACE_PARAM}}': 'y_label'}"}},
+            "shape": {"value": "circle"},
+            "strokeWidth": {"value": 1.5},
+            "opacity": [
+              {"test": "(!domain || inrange(datum['{'{{REPLACE_PARAM}}': 'x_label'}'], domain)) && (!length(data('selected')) || indata('selected', 'value', datum['Origin']))", "value": 0.7 },
+              {"value": 0.15}
+            ],
+            "stroke": [
+              {"test": "(!domain || inrange(datum['{'{{REPLACE_PARAM}}': 'x_label'}'], domain)) && (!length(data('selected')) || indata('selected', 'value', datum['Origin']))", "scale": "color_scale", "field": "Origin"},
+              {"value": "#ccc"}
+            ],
+            "fill": {"value": "transparent"}
+          },
+          "hover": {
+            "fill": {"scale": "color_scale", "field": "Origin"},
+            "tooltip": {"signal": "datum"}
+          }
+        }
+      }
+    ]
+  }

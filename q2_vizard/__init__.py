@@ -8,9 +8,10 @@
 
 from ._version import get_versions
 from ._heatmap import plot_heatmap
+from ._scatterplot import plot_scatterplot
 from ._util import json_replace
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['plot_heatmap', 'json_replace']
+__all__ = ['plot_heatmap', 'plot_scatterplot', 'json_replace']
