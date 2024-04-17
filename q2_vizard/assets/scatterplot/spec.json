@@ -1,18 +1,15 @@
 {
     "$schema": "https://vega.github.io/schema/vega/v5.json",
-    "title": {"text": {"signal": "$Title"}},
+    "title": {"text": {"signal": "Title"}},
     "width": 600,
     "height": 600,
     "padding": 20,
 
     "signals": [
-      {"name": "$Title",
+      {"name": "Title",
        "value": {"{{REPLACE_PARAM}}": "title"},
        "bind": {"input": "input"}
       },
-
-      {"name": "$SwapAxes", "value": false, "bind": {"input": "checkbox"}},
-      {"name": "$Invert", "value": false, "bind": {"input": "checkbox"}},
 
       {
         "name": "tooltip",
@@ -105,7 +102,7 @@
     "data": [
       {
         "name": "table",
-        "values": {"{{REPLACE_PARAM}}": "data"}
+        "values": {"{{REPLACE_PARAM}}": "metadata"}
       },
       {
         "name": "selected",
@@ -121,48 +118,44 @@
     "scales": [
       {
         "name": "x_scale_width",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_label"},
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
         "range": "width",
         "nice": true
       },
       {
         "name": "x_scale_height",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_label"},
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
         "range": "height",
         "nice": true
       },
       {
         "name": "y_scale_width",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_label"},
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_measure"}},
         "range": "width",
         "nice": true
       },
       {
         "name": "y_scale_height",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_label"},
+        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_measure"}},
         "range": "height",
         "nice": true
       },
       {
         "name": "x_scale",
-        "domain": {"signal": "SwapAxes ? domain('y_scale_width') : domain('x_scale_width')"},
-        "range": "width",
-        "nice": true,
-        "reverse": {"signal": "$Invert"}
-
+        "domain": {"signal": "domain('x_scale_width')"},
+        "range": "width"
       },
       {
         "name": "y_scale",
-        "domain": {"signal": "SwapAxes ? domain('x_scale_height') : domain('y_scale_height')"},
-        "range": "height",
-        "nice": true,
-        "reverse": {"signal": "$Invert"}
-
+        "domain": {"signal": "domain('y_scale_height')"},
+        "range": "height"
       },
       {
         "name": "color_scale",
         "type": "ordinal",
-        "domain": {"data": "table", "field": "Origin", "sort": true},
+        "domain": {"data": "table",
+                   "field": {"{{REPLACE_PARAM}}": "group_measure"},
+                   "sort": true},
         "range": {"scheme": "plasma"}
       }
     ],
@@ -173,21 +166,21 @@
         "grid": true,
         "orient": "bottom",
         "tickCount": 5,
-        "title": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'y_label'} : {'{{REPLACE_PARAM}}': 'x_label'}"}
+        "title": {"{{REPLACE_PARAM}}": "x_measure"}
       },
       {
         "scale": "y_scale",
         "grid": true,
         "orient": "left",
         "titlePadding": 5,
-        "title": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'x_label'} : {'{{REPLACE_PARAM}}': 'y_label'}"}
+        "title": {"{{REPLACE_PARAM}}": "y_measure"}
       }
     ],
 
     "legends": [
       {
         "stroke": "color_scale",
-        "title": "Origin",
+        "title": {"{{REPLACE_PARAM}}": "group_measure"},
         "encode": {
           "symbols": {
             "name": "legendSymbol",
@@ -222,22 +215,22 @@
         "from": {"data": "table"},
         "encode": {
           "update": {
-            "x": {"scale": "x_scale", "field": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'y_label'} : {'{{REPLACE_PARAM}}': 'x_label'}"}},
-            "y": {"scale": "y_scale", "field": {"signal": "SwapAxes ? {'{{REPLACE_PARAM}}': 'x_label'} : {'{{REPLACE_PARAM}}': 'y_label'}"}},
+            "x": {"scale": "x_scale", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
+            "y": {"scale": "y_scale", "field": {"{{REPLACE_PARAM}}": "y_measure"}},
             "shape": {"value": "circle"},
             "strokeWidth": {"value": 1.5},
             "opacity": [
-              {"test": "(!domain || inrange(datum['{'{{REPLACE_PARAM}}': 'x_label'}'], domain)) && (!length(data('selected')) || indata('selected', 'value', datum['Origin']))", "value": 0.7 },
+              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', datum[{'{{REPLACE_PARAM}}': 'group_measure'}]))", "value": 0.7 },
               {"value": 0.15}
             ],
             "stroke": [
-              {"test": "(!domain || inrange(datum['{'{{REPLACE_PARAM}}': 'x_label'}'], domain)) && (!length(data('selected')) || indata('selected', 'value', datum['Origin']))", "scale": "color_scale", "field": "Origin"},
+              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', datum[{'{{REPLACE_PARAM}}': 'group_measure'}]))", "scale": "color_scale", "field": {"{{REPLACE_PARAM}}": "group_measure"}},
               {"value": "#ccc"}
             ],
             "fill": {"value": "transparent"}
           },
           "hover": {
-            "fill": {"scale": "color_scale", "field": "Origin"},
+            "fill": {"scale": "color_scale", "field": {"{{REPLACE_PARAM}}": "group_measure"}},
             "tooltip": {"signal": "datum"}
           }
         }
