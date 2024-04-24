@@ -41,7 +41,6 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
-        'group_measure': Str,
         'title': Str
     },
     name='Scatterplot',

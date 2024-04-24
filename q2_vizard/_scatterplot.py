@@ -11,14 +11,13 @@ import json
 import pkg_resources
 import jinja2
 
-from qiime2 import Metadata, CategoricalMetadataColumn, NumericMetadataColumn
+from qiime2 import Metadata, NumericMetadataColumn
 from q2_vizard._util import json_replace
 
 
 def scatterplot(output_dir: str, metadata: Metadata,
                 x_measure: NumericMetadataColumn,
                 y_measure: NumericMetadataColumn,
-                group_measure: CategoricalMetadataColumn = None,
                 title: str = None):
 
     J_ENV = jinja2.Environment(
@@ -27,6 +26,7 @@ def scatterplot(output_dir: str, metadata: Metadata,
 
     index = J_ENV.get_template('index.html')
     md = metadata.to_dataframe()
+    md_cols = md.columns
 
     metadata = json.loads(md.to_json(orient='records'))
 
@@ -37,8 +37,7 @@ def scatterplot(output_dir: str, metadata: Metadata,
         json_obj = json.load(fh)
 
     full_spec = json_replace(json_obj, metadata=metadata, x_measure=x_measure,
-                             y_measure=y_measure, group_measure=group_measure,
-                             title=title)
+                             y_measure=y_measure, md_cols=md_cols, title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
