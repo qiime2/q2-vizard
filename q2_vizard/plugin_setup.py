@@ -44,5 +44,14 @@ plugin.visualizers.register_function(
         'title': Str
     },
     name='Scatterplot',
-    description='',
+    description='Basic scatterplot for visualizing two numeric Metadata'
+                ' measures with optional categorical color grouping.',
+    parameter_descriptions={
+        'metadata': "Any metadata-like input with at least two"
+                    " numeric measures for visualizing.",
+        'x_measure': "Numeric measure from the input Metadata that should be"
+                     " plotted on the x-axis.",
+        'y_measure': "Numeric measure from the input Metadata that should be"
+                     " plotted on the y-axis.",
+        'title': "The title of the scatterplot."}
 )
