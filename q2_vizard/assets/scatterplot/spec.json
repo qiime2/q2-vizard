@@ -12,10 +12,10 @@
       },
       {
         "name": "MetadataColumn",
-        "value": "table[{'{{REPLACE_PARAM}}': 'md_cols[0]'}]",
+        "value": {"{{REPLACE_PARAM}}": "md_cols_0"},
         "bind": {
           "input": "select",
-          "options": ["table[{'{{REPLACE_PARAM}}': 'md_cols'}]"]
+          "options": {"{{REPLACE_PARAM}}": "md_cols"}
         }
       },
       {

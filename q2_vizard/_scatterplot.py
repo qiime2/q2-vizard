@@ -26,7 +26,8 @@ def scatterplot(output_dir: str, metadata: Metadata,
 
     index = J_ENV.get_template('index.html')
     md = metadata.to_dataframe()
-    md_cols = md.columns
+    md_cols = list(md.columns)
+    md_cols_0 = md_cols[0]
 
     metadata = json.loads(md.to_json(orient='records'))
 
@@ -37,7 +38,8 @@ def scatterplot(output_dir: str, metadata: Metadata,
         json_obj = json.load(fh)
 
     full_spec = json_replace(json_obj, metadata=metadata, x_measure=x_measure,
-                             y_measure=y_measure, md_cols=md_cols, title=title)
+                             y_measure=y_measure, md_cols=md_cols,
+                             md_cols_0=md_cols_0, title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
