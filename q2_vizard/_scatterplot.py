@@ -20,16 +20,30 @@ def scatterplot(output_dir: str, metadata: Metadata,
                 y_measure: NumericMetadataColumn,
                 title: str = None):
 
+    # input handling for initial metadata
+    md = metadata.to_dataframe()
+
+    # handling categorical columns for color grouping
+    md_cols_categorical = \
+        metadata.filter_columns(column_type='categorical').to_dataframe()
+    md_cols_categorical = list(md_cols_categorical.columns)
+    md_dropdown_default = md_cols_categorical[0]
+
+    # handling numeric columns for x/y plotting
+    md_cols_numeric = \
+        metadata.filter_columns(column_type='numeric').to_dataframe()
+    md_cols_numeric = list(md_cols_numeric.columns)
+
+    for measure in [x_measure, y_measure]:
+        if measure not in md_cols_numeric:
+            raise TypeError(f'"{measure}" not of type `NumericMetadataColumn`.'
+                            ' Both input measures must contain numeric data.')
+
+    # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
         loader=jinja2.PackageLoader('q2_vizard', 'assets/scatterplot')
     )
-
     index = J_ENV.get_template('index.html')
-    md = metadata.to_dataframe()
-    md_cols = list(md.columns)
-    md_cols_0 = md_cols[0]
-
-    metadata = json.loads(md.to_json(orient='records'))
 
     spec_fp = pkg_resources.resource_filename(
         'q2_vizard', os.path.join('assets', 'scatterplot', 'spec.json')
@@ -37,9 +51,13 @@ def scatterplot(output_dir: str, metadata: Metadata,
     with open(spec_fp) as fh:
         json_obj = json.load(fh)
 
-    full_spec = json_replace(json_obj, metadata=metadata, x_measure=x_measure,
-                             y_measure=y_measure, md_cols=md_cols,
-                             md_cols_0=md_cols_0, title=title)
+    metadata_obj = json.loads(md.to_json(orient='records'))
+
+    full_spec = json_replace(json_obj, metadata=metadata_obj,
+                             x_measure=x_measure, y_measure=y_measure,
+                             md_cols=md_cols_categorical,
+                             md_cols_0=md_dropdown_default,
+                             title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
