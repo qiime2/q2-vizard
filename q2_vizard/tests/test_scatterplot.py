@@ -6,12 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._version import get_versions
-from ._heatmap import plot_heatmap
-from ._scatterplot import scatterplot
-from ._util import json_replace
-
-__version__ = get_versions()['version']
-del get_versions
-
-__all__ = ['plot_heatmap', 'scatterplot', 'json_replace']
+# TODO: tests
+# def test_input_measure_not_in_metadata():
+# def test_input_measure_not_numeric_md_column():

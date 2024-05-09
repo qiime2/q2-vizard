@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2023, QIIME 2 development team.
+# Copyright (c) 2023-2024, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -34,7 +34,11 @@ def scatterplot(output_dir: str, metadata: Metadata,
         metadata.filter_columns(column_type='numeric').to_dataframe()
     md_cols_numeric = list(md_cols_numeric.columns)
 
+    # validation for x/y measures
     for measure in [x_measure, y_measure]:
+        if measure not in metadata.columns:
+            raise ValueError(f'"{measure}" not found as a column'
+                             ' in the Metadata.')
         if measure not in md_cols_numeric:
             raise TypeError(f'"{measure}" not of type `NumericMetadataColumn`.'
                             ' Both input measures must contain numeric data.')
@@ -55,8 +59,8 @@ def scatterplot(output_dir: str, metadata: Metadata,
 
     full_spec = json_replace(json_obj, metadata=metadata_obj,
                              x_measure=x_measure, y_measure=y_measure,
-                             md_cols=md_cols_categorical,
-                             md_cols_0=md_dropdown_default,
+                             md_cols_categorical=md_cols_categorical,
+                             md_dropdown_default=md_dropdown_default,
                              title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:

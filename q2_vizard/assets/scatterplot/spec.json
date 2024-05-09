@@ -12,10 +12,10 @@
       },
       {
         "name": "CategoricalMetadataColumn",
-        "value": {"{{REPLACE_PARAM}}": "md_cols_0"},
+        "value": {"{{REPLACE_PARAM}}": "md_dropdown_default"},
         "bind": {
           "input": "select",
-          "options": {"{{REPLACE_PARAM}}": "md_cols"}
+          "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
         }
       },
       {
