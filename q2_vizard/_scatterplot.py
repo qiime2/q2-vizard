@@ -27,6 +27,7 @@ def scatterplot(output_dir: str, metadata: Metadata,
     md_cols_categorical = \
         metadata.filter_columns(column_type='categorical').to_dataframe()
     md_cols_categorical = list(md_cols_categorical.columns)
+    md_cols_categorical.append('none')
     md_dropdown_default = md_cols_categorical[0]
 
     # handling numeric columns for x/y plotting

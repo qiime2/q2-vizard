@@ -191,25 +191,11 @@
         "encode": {
           "symbols": {
             "name": "legendSymbol",
-            "interactive": true,
-            "update": {
-              "fill": {"value": "transparent"},
-              "strokeWidth": {"value": 1.5},
-              "opacity": [
-                {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.7},
-                {"value": 0.15}
-              ]
-            }
+            "interactive": false
           },
           "labels": {
             "name": "legendLabel",
-            "interactive": true,
-            "update": {
-              "opacity": [
-                {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 1},
-                {"value": 0.25}
-              ]
-            }
+            "interactive": false
           }
         }
       }
