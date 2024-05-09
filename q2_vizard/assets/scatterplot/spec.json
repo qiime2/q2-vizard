@@ -163,7 +163,7 @@
         "domain": {"data": "table",
                    "field": {"signal": "CategoricalMetadataColumn"},
                    "sort": true},
-        "range": {"scheme": "plasma"}
+        "range": {"scheme": "category10"}
       }
     ],
 
