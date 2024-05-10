@@ -21,7 +21,7 @@ def scatterplot(output_dir: str, metadata: Metadata,
                 title: str = None):
 
     # input handling for initial metadata
-    md = metadata.to_dataframe()
+    md = metadata.to_dataframe().reset_index()
 
     # handling categorical columns for color grouping
     md_cols_categorical = \
