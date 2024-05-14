@@ -7,5 +7,11 @@
 # ----------------------------------------------------------------------------
 
 # TODO: tests
-# def test_input_measure_not_in_metadata():
-# def test_input_measure_not_numeric_md_column():
+
+
+def test_input_measure_not_in_metadata():
+    pass
+
+
+def test_input_measure_not_numeric_md_column():
+    pass
