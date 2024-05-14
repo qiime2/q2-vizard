@@ -14,8 +14,8 @@ class TestBase(TestPluginBase):
 
 
 class TestScatterplot(TestBase):
-    def test_input_measure_not_in_metadata():
+    def test_input_measure_not_in_metadata(self):
         pass
 
-    def test_input_measure_not_numeric_md_column():
+    def test_input_measure_not_numeric_md_column(self):
         pass
