@@ -15,6 +15,7 @@ from q2_vizard._heatmap import plot_heatmap
 plugin = Plugin(name='vizard',
                 version='0.0.1.dev0',
                 website='https://github.com/qiime2/q2-vizard',
+                package='q2_vizard',
                 description='This QIIME 2 plugin is the first choice of wizard'
                             ' lizards for protection and entertainment.',
                 short_description='The first choice of wizard lizards.')
