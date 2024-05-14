@@ -6,12 +6,16 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-# TODO: tests
+from qiime2.plugin.testing import TestPluginBase
 
 
-def test_input_measure_not_in_metadata():
-    pass
+class TestBase(TestPluginBase):
+    package = 'q2_vizard.tests'
 
 
-def test_input_measure_not_numeric_md_column():
-    pass
+class TestScatterplot(TestBase):
+    def test_input_measure_not_in_metadata():
+        pass
+
+    def test_input_measure_not_numeric_md_column():
+        pass
