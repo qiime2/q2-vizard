@@ -42,6 +42,7 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
+        'group_measure': Str,
         'title': Str
     },
     name='Scatterplot',
@@ -54,5 +55,7 @@ plugin.visualizers.register_function(
                      " plotted on the x-axis.",
         'y_measure': "Numeric measure from the input Metadata that should be"
                      " plotted on the y-axis.",
+        'group_measure': "Categorical measure from the input Metadata that"
+                         " should be used for color-coding the scatterplot.",
         'title': "The title of the scatterplot."}
 )

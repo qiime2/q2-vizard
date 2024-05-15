@@ -11,13 +11,14 @@ import json
 import pkg_resources
 import jinja2
 
-from qiime2 import Metadata, NumericMetadataColumn
+from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 from q2_vizard._util import json_replace
 
 
 def scatterplot(output_dir: str, metadata: Metadata,
-                x_measure: NumericMetadataColumn,
-                y_measure: NumericMetadataColumn,
+                x_measure: NumericMetadataColumn = None,
+                y_measure: NumericMetadataColumn = None,
+                group_measure: CategoricalMetadataColumn = None,
                 title: str = None):
 
     # input handling for initial metadata
@@ -27,8 +28,23 @@ def scatterplot(output_dir: str, metadata: Metadata,
     md_cols_categorical = \
         metadata.filter_columns(column_type='categorical').to_dataframe()
     md_cols_categorical = list(md_cols_categorical.columns)
+
+    # validation for group measure
+    if group_measure:
+        if group_measure not in metadata.columns:
+            raise ValueError(f'"{group_measure}" not found as a column'
+                             ' in the Metadata.')
+        if group_measure not in md_cols_categorical:
+            raise ValueError(f'"{group_measure}" not of type'
+                             ' `CategoricalMetadataColumn`.')
+
+    # setting default (or selected) group measure for color-coding
+    # and adding 'none' for removing color-coding
     md_cols_categorical.append('none')
-    md_dropdown_default = md_cols_categorical[0]
+    if group_measure:
+        md_dropdown_default = group_measure
+    else:
+        md_dropdown_default = md_cols_categorical[0]
 
     # handling numeric columns for x/y plotting
     md_cols_numeric = \

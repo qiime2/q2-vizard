@@ -11,7 +11,7 @@
        "bind": {"input": "input"}
       },
       {
-        "name": "CategoricalMetadataColumn",
+        "name": "ColorBy",
         "value": {"{{REPLACE_PARAM}}": "md_dropdown_default"},
         "bind": {
           "input": "select",
@@ -161,7 +161,7 @@
         "name": "color_scale",
         "type": "ordinal",
         "domain": {"data": "table",
-                   "field": {"signal": "CategoricalMetadataColumn"},
+                   "field": {"signal": "ColorBy"},
                    "sort": true},
         "range": {"scheme": "category10"}
       }
@@ -187,7 +187,7 @@
     "legends": [
       {
         "stroke": "color_scale",
-        "title": {"signal": "CategoricalMetadataColumn"},
+        "title": {"signal": "ColorBy"},
         "encode": {
           "symbols": {
             "name": "legendSymbol",
@@ -213,17 +213,17 @@
             "shape": {"value": "circle"},
             "strokeWidth": {"value": 1.5},
             "opacity": [
-              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', CategoricalMetadataColumn))", "value": 0.7 },
+              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', ColorBy))", "value": 0.7 },
               {"value": 0.15}
             ],
             "stroke": [
-              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', CategoricalMetadataColumn))", "scale": "color_scale", "field": {"signal": "CategoricalMetadataColumn"}},
+              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', ColorBy))", "scale": "color_scale", "field": {"signal": "ColorBy"}},
               {"value": "#ccc"}
             ],
             "fill": {"value": "transparent"}
           },
           "hover": {
-            "fill": {"scale": "color_scale", "field": {"signal": "CategoricalMetadataColumn"}},
+            "fill": {"scale": "color_scale", "field": {"signal": "ColorBy"}},
             "tooltip": {"signal": "datum"}
           }
         }
