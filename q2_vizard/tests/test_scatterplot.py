@@ -13,7 +13,7 @@ class TestBase(TestPluginBase):
     package = 'q2_vizard.tests'
 
 
-class TestScatterplot(TestBase):
+class TestScatterplot2D(TestBase):
     def test_input_measure_not_in_metadata(self):
         pass
 

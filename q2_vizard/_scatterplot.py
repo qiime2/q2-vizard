@@ -15,11 +15,11 @@ from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 from q2_vizard._util import json_replace
 
 
-def scatterplot(output_dir: str, metadata: Metadata,
-                x_measure: NumericMetadataColumn = None,
-                y_measure: NumericMetadataColumn = None,
-                group_measure: CategoricalMetadataColumn = None,
-                title: str = None):
+def scatterplot_2d(output_dir: str, metadata: Metadata,
+                   x_measure: NumericMetadataColumn = None,
+                   y_measure: NumericMetadataColumn = None,
+                   group_measure: CategoricalMetadataColumn = None,
+                   title: str = None):
 
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
@@ -62,12 +62,12 @@ def scatterplot(output_dir: str, metadata: Metadata,
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
-        loader=jinja2.PackageLoader('q2_vizard', 'assets/scatterplot')
+        loader=jinja2.PackageLoader('q2_vizard', 'assets/scatterplot_2d')
     )
     index = J_ENV.get_template('index.html')
 
     spec_fp = pkg_resources.resource_filename(
-        'q2_vizard', os.path.join('assets', 'scatterplot', 'spec.json')
+        'q2_vizard', os.path.join('assets', 'scatterplot_2d', 'spec.json')
     )
     with open(spec_fp) as fh:
         json_obj = json.load(fh)

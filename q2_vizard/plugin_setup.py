@@ -10,7 +10,7 @@ from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
 from q2_stats._type import (GroupDist, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
-from q2_vizard._scatterplot import scatterplot
+from q2_vizard._scatterplot import scatterplot_2d
 
 
 plugin = Plugin(name='vizard',
@@ -35,7 +35,7 @@ plugin.visualizers.register_function(
 
 
 plugin.visualizers.register_function(
-    function=scatterplot,
+    function=scatterplot_2d,
     inputs={
     },
     parameters={
@@ -45,8 +45,8 @@ plugin.visualizers.register_function(
         'group_measure': Str,
         'title': Str
     },
-    name='Scatterplot',
-    description='Basic scatterplot for visualizing two numeric Metadata'
+    name='2D Scatterplot',
+    description='Basic 2D scatterplot for visualizing two numeric Metadata'
                 ' measures with optional categorical color grouping.',
     parameter_descriptions={
         'metadata': "Any metadata-like input with at least two"
