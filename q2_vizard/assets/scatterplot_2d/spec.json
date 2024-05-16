@@ -18,10 +18,26 @@
       },
       {
         "name": "ColorBy",
-        "value": {"{{REPLACE_PARAM}}": "md_dropdown_default"},
+        "value": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
         "bind": {
           "input": "select",
           "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
+        }
+      },
+      {
+        "name": "xField",
+        "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
+        "bind": {
+          "input": "select",
+          "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
+        }
+      },
+      {
+        "name": "yField",
+        "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
+        "bind": {
+          "input": "select",
+          "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
         }
       },
       {
@@ -131,25 +147,15 @@
     "scales": [
       {
         "name": "x_scale_width",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
-        "range": "width",
-        "nice": true
-      },
-      {
-        "name": "x_scale_height",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
-        "range": "height",
-        "nice": true
-      },
-      {
-        "name": "y_scale_width",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_measure"}},
+        "domain": {"data": "table",
+                   "field": {"signal": "xField"}},
         "range": "width",
         "nice": true
       },
       {
         "name": "y_scale_height",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_measure"}},
+        "domain": {"data": "table",
+                   "field": {"signal": "yField"}},
         "range": "height",
         "nice": true
       },
@@ -180,7 +186,7 @@
         "grid": true,
         "orient": "bottom",
         "tickCount": 5,
-        "title": {"{{REPLACE_PARAM}}": "x_measure"},
+        "title": {"signal": "xField"},
         "titleFontSize": 14,
         "titlePadding": 20
       },
@@ -189,7 +195,7 @@
         "labelFontSize": 12,
         "grid": true,
         "orient": "left",
-        "title": {"{{REPLACE_PARAM}}": "y_measure"},
+        "title": {"signal": "yField"},
         "titleFontSize": 14,
         "titlePadding": 20
       }
@@ -223,13 +229,13 @@
         "from": {"data": "table"},
         "encode": {
           "update": {
-            "x": {"scale": "x_scale", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
-            "y": {"scale": "y_scale", "field": {"{{REPLACE_PARAM}}": "y_measure"}},
+            "x": {"scale": "x_scale", "field": {"signal": "xField"}},
+            "y": {"scale": "y_scale", "field": {"signal": "yField"}},
             "shape": {"value": "circle"},
             "strokeWidth": {"value": 2.5},
             "size": {"value": 150},
             "stroke": [
-              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_measure'}], domain)) && (!length(data('selected')) || indata('selected', 'value', ColorBy))", "scale": "color_scale", "field": {"signal": "ColorBy"}},
+              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_dropdown_default'}], domain)) && (!length(data('selected')) || indata('selected', 'value', ColorBy))", "scale": "color_scale", "field": {"signal": "ColorBy"}},
               {"value": "#ccc"}
             ],
             "fill": {"value": "transparent"}

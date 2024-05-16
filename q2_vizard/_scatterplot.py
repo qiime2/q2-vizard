@@ -15,6 +15,26 @@ from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 from q2_vizard._util import json_replace
 
 
+def _measure_validation(metadata, measure, col_type):
+    if col_type == 'categorical':
+        md_type = 'CategoricalMetadataColumn'
+    elif col_type == 'numeric':
+        md_type = 'NumericMetadataColumn'
+    else:
+        raise TypeError('Invalid column type provided. Must be `categorical`'
+                        ' or `numeric`.')
+
+    if measure not in metadata.columns:
+        raise ValueError(f'"{measure}" not found as a column in the Metadata.')
+
+    valid_columns_md = \
+        metadata.filter_columns(column_type=col_type).to_dataframe()
+    valid_columns_list = list(valid_columns_md.columns)
+
+    if measure not in valid_columns_list:
+        raise ValueError(f'"{measure}" not of type {md_type}.')
+
+
 def scatterplot_2d(output_dir: str, metadata: Metadata,
                    x_measure: NumericMetadataColumn = None,
                    y_measure: NumericMetadataColumn = None,
@@ -31,20 +51,16 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # validation for group measure
     if group_measure:
-        if group_measure not in metadata.columns:
-            raise ValueError(f'"{group_measure}" not found as a column'
-                             ' in the Metadata.')
-        if group_measure not in md_cols_categorical:
-            raise ValueError(f'"{group_measure}" not of type'
-                             ' `CategoricalMetadataColumn`.')
+        _measure_validation(metadata=metadata, measure=group_measure,
+                            col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
     # and adding 'none' for removing color-coding
     md_cols_categorical.append('none')
     if group_measure:
-        md_dropdown_default = group_measure
+        group_dropdown_default = group_measure
     else:
-        md_dropdown_default = md_cols_categorical[0]
+        group_dropdown_default = md_cols_categorical[0]
 
     # handling numeric columns for x/y plotting
     md_cols_numeric = \
@@ -52,13 +68,19 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     md_cols_numeric = list(md_cols_numeric.columns)
 
     # validation for x/y measures
-    for measure in [x_measure, y_measure]:
-        if measure not in metadata.columns:
-            raise ValueError(f'"{measure}" not found as a column'
-                             ' in the Metadata.')
-        if measure not in md_cols_numeric:
-            raise TypeError(f'"{measure}" not of type `NumericMetadataColumn`.'
-                            ' Both input measures must contain numeric data.')
+    if x_measure:
+        _measure_validation(metadata=metadata, measure=x_measure,
+                            col_type='numeric')
+        x_dropdown_default = x_measure
+    else:
+        x_dropdown_default = md_cols_numeric[0]
+
+    if y_measure:
+        _measure_validation(metadata=metadata, measure=y_measure,
+                            col_type='numeric')
+        y_dropdown_default = y_measure
+    else:
+        y_dropdown_default = md_cols_numeric[0]
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
@@ -75,9 +97,11 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     metadata_obj = json.loads(md.to_json(orient='records'))
 
     full_spec = json_replace(json_obj, metadata=metadata_obj,
-                             x_measure=x_measure, y_measure=y_measure,
+                             md_cols_numeric=md_cols_numeric,
+                             x_dropdown_default=x_dropdown_default,
+                             y_dropdown_default=y_dropdown_default,
                              md_cols_categorical=md_cols_categorical,
-                             md_dropdown_default=md_dropdown_default,
+                             group_dropdown_default=group_dropdown_default,
                              title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
