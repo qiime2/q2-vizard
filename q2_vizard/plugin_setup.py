@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
-from q2_stats._type import (GroupDist, Matched, Ordered)
+from q2_stats._type import (Dist1D, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
 from q2_vizard._scatterplot import scatterplot_2d
@@ -24,7 +24,7 @@ plugin = Plugin(name='vizard',
 
 plugin.visualizers.register_function(
     function=plot_heatmap,
-    inputs={'data': GroupDist[Ordered, Matched]},
+    inputs={'data': Dist1D[Ordered, Matched]},
     parameters={
         'transpose': Bool,
         'order': Str % Choices('ascending', 'descending')
