@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2023, QIIME 2 development team.
+# Copyright (c) 2023-2024, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -17,7 +17,8 @@ setup(
     package_data={
         'q2_vizard': [
             'assets/*',
-            'assets/heatmap/*'],
+            'assets/heatmap/*',
+            'assets/scatterplot_2d/*'],
         'q2_vizard.tests': ['data/*'],
 
     },

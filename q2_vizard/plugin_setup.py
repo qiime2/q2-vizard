@@ -1,15 +1,16 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2023, QIIME 2 development team.
+# Copyright (c) 2023-2024, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Choices, Bool
+from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
 from q2_stats._type import (Dist1D, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
+from q2_vizard._scatterplot import scatterplot_2d
 
 
 plugin = Plugin(name='vizard',
@@ -30,4 +31,31 @@ plugin.visualizers.register_function(
     },
     name='Plot Heatmap',
     description='',
+)
+
+
+plugin.visualizers.register_function(
+    function=scatterplot_2d,
+    inputs={
+    },
+    parameters={
+        'metadata': Metadata,
+        'x_measure': Str,
+        'y_measure': Str,
+        'color_by_group': Str,
+        'title': Str
+    },
+    name='2D Scatterplot',
+    description='Basic 2D scatterplot for visualizing two numeric Metadata'
+                ' measures with optional categorical color grouping.',
+    parameter_descriptions={
+        'metadata': "Any metadata-like input with at least two"
+                    " numeric measures for visualizing.",
+        'x_measure': "Numeric measure from the input Metadata that should be"
+                     " plotted on the x-axis.",
+        'y_measure': "Numeric measure from the input Metadata that should be"
+                     " plotted on the y-axis.",
+        'color_by_group': "Categorical measure from the input Metadata that"
+                          " should be used for color-coding the scatterplot.",
+        'title': "The title of the scatterplot."}
 )
