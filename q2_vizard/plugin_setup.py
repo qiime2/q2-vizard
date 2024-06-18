@@ -36,8 +36,7 @@ plugin.visualizers.register_function(
 
 plugin.visualizers.register_function(
     function=scatterplot_2d,
-    inputs={
-    },
+    inputs={},
     parameters={
         'metadata': Metadata,
         'x_measure': Str,

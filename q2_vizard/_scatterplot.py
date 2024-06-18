@@ -32,7 +32,7 @@ def _measure_validation(metadata, measure, col_type):
     valid_columns_list = list(valid_columns_md.columns)
 
     if measure not in valid_columns_list:
-        raise ValueError(f'"{measure}" not of type {md_type}.')
+        raise TypeError(f'"{measure}" not of type {md_type}.')
 
 
 def scatterplot_2d(output_dir: str, metadata: Metadata,
