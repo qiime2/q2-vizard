@@ -25,14 +25,14 @@ def _measure_validation(metadata, measure, col_type):
                         ' or `numeric`.')
 
     if measure not in metadata.columns:
-        raise ValueError(f'"{measure}" not found as a column in the Metadata.')
+        raise ValueError(f'`{measure}` not found as a column in the Metadata.')
 
     valid_columns_md = \
         metadata.filter_columns(column_type=col_type).to_dataframe()
     valid_columns_list = list(valid_columns_md.columns)
 
     if measure not in valid_columns_list:
-        raise TypeError(f'"{measure}" not of type {md_type}.')
+        raise TypeError(f'`{measure}` not of type `{md_type}`.')
 
 
 def scatterplot_2d(output_dir: str, metadata: Metadata,

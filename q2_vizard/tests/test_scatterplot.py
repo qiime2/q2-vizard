@@ -36,41 +36,44 @@ class TestScatterplot2D(TestBase):
     def test_x_measure_not_in_metadata(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(ValueError,
-                                        '"boo" not found as a column'):
+                                        '`boo` not found as a column'):
                 scatterplot_2d(output_dir=output_dir,
                                metadata=self.md, x_measure='boo')
 
     def test_y_measure_not_in_metadata(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(ValueError,
-                                        '"boo" not found as a column'):
+                                        '`boo` not found as a column'):
                 scatterplot_2d(output_dir=output_dir,
                                metadata=self.md, y_measure='boo')
 
     def test_color_by_group_not_in_metadata(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(ValueError,
-                                        '"boo" not found as a column'):
+                                        '`boo` not found as a column'):
                 scatterplot_2d(output_dir=output_dir,
                                metadata=self.md, color_by_group='boo')
 
     def test_x_measure_not_numeric_md_column(self):
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(TypeError,
-                                        '"categorical-col" not of type'):
+            with self.assertRaisesRegex(
+                TypeError, '`categorical-col` not.*`NumericMetadataColumn`'
+            ):
                 scatterplot_2d(output_dir=output_dir,
                                metadata=self.md, x_measure='categorical-col')
 
     def test_y_measure_not_numeric_md_column(self):
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(TypeError,
-                                        '"categorical-col" not of type'):
+            with self.assertRaisesRegex(
+                TypeError, '`categorical-col` not.*`NumericMetadataColumn`'
+            ):
                 scatterplot_2d(output_dir=output_dir,
                                metadata=self.md, y_measure='categorical-col')
 
     def test_group_measure_not_categorical_md_column(self):
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(TypeError,
-                                        '"numeric-col" not of type'):
+            with self.assertRaisesRegex(
+                TypeError, '`numeric-col` not.*`CategoricalMetadataColumn`'
+            ):
                 scatterplot_2d(output_dir=output_dir,
                                metadata=self.md, color_by_group='numeric-col')
