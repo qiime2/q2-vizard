@@ -235,7 +235,7 @@
             "strokeWidth": {"value": 2.5},
             "size": {"value": 150},
             "stroke": [
-              {"test": "(!domain || inrange(datum[{'{{REPLACE_PARAM}}': 'x_dropdown_default'}], domain)) && (!length(data('selected')) || indata('selected', 'value', ColorBy))", "scale": "color_scale", "field": {"signal": "ColorBy"}},
+              {"test": "(!length(data('selected')) || indata('selected', 'value', ColorBy))", "scale": "color_scale", "field": {"signal": "ColorBy"}},
               {"value": "#ccc"}
             ],
             "fill": {"value": "transparent"}
