@@ -1,7 +1,7 @@
 {
     "$schema": "https://vega.github.io/schema/vega/v5.json",
     "title": {
-      "text": {"signal": "title"},
+      "text": {"signal": "Title"},
       "fontSize": 20,
       "orient": "top",
       "anchor": "start",
@@ -12,12 +12,12 @@
     "padding": 20,
 
     "signals": [
-      {"name": "title",
+      {"name": "Title",
        "value": {"{{REPLACE_PARAM}}": "title"},
        "bind": {"input": "input"}
       },
       {
-        "name": "colorBy",
+        "name": "ColorBy",
         "value": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
         "bind": {
           "input": "select",
@@ -173,7 +173,7 @@
         "name": "color_scale",
         "type": "ordinal",
         "domain": {"data": "table",
-                   "field": {"signal": "colorBy"},
+                   "field": {"signal": "ColorBy"},
                    "sort": true},
         "range": {"scheme": "category10"}
       }
@@ -207,7 +207,7 @@
         "symbolSize": 150,
         "symbolStrokeWidth": 2.5,
         "labelFontSize": 14,
-        "title": {"signal": "colorBy"},
+        "title": {"signal": "ColorBy"},
         "titleFontSize": 16,
         "encode": {
           "symbols": {
@@ -235,13 +235,13 @@
             "strokeWidth": {"value": 2.5},
             "size": {"value": 150},
             "stroke": [
-              {"test": "(!length(data('selected')) || indata('selected', 'value', colorBy))", "scale": "color_scale", "field": {"signal": "colorBy"}},
+              {"test": "(!length(data('selected')) || indata('selected', 'value', ColorBy))", "scale": "color_scale", "field": {"signal": "ColorBy"}},
               {"value": "#ccc"}
             ],
             "fill": {"value": "transparent"}
           },
           "hover": {
-            "fill": {"scale": "color_scale", "field": {"signal": "colorBy"}},
+            "fill": {"scale": "color_scale", "field": {"signal": "ColorBy"}},
             "tooltip": {"signal": "datum"}
           }
         }

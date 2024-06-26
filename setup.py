@@ -18,8 +18,7 @@ setup(
         'q2_vizard': [
             'assets/*',
             'assets/heatmap/*',
-            'assets/scatterplot_2d/*',
-            'assets/lineplot/*'],
+            'assets/scatterplot_2d/*'],
     },
     author='q2d2',
     author_email='q2d2@qiime2.org',
