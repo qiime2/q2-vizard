@@ -11,7 +11,7 @@ from q2_stats._type import (Dist1D, Matched, Ordered)
 
 from q2_vizard._heatmap import plot_heatmap
 from q2_vizard._scatterplot import scatterplot_2d
-from q2_vizard._lineplot import lineplot
+from q2_vizard._curveplot import curveplot
 
 
 plugin = Plugin(name='vizard',
@@ -62,7 +62,7 @@ plugin.visualizers.register_function(
 
 
 plugin.visualizers.register_function(
-    function=lineplot,
+    function=curveplot,
     inputs={},
     parameters={
         'metadata': Metadata,
@@ -71,8 +71,8 @@ plugin.visualizers.register_function(
         'color_by_group': Str,
         'title': Str
     },
-    name='Lineplot',
-    description='Basic lineplot for visualizing two numeric Metadata'
+    name='Curveplot',
+    description='Basic curveplot for visualizing two numeric Metadata'
                 ' measures with categorical color grouping.',
     parameter_descriptions={
         'metadata': "Any metadata-like input with at least two"
@@ -82,6 +82,6 @@ plugin.visualizers.register_function(
         'y_measure': "Numeric measure from the input Metadata that should be"
                      " plotted on the y-axis.",
         'color_by_group': "Categorical measure from the input Metadata that"
-                          " should be used for color-coding the lineplot.",
-        'title': "The title of the lineplot."}
+                          " should be used for color-coding the curveplot.",
+        'title': "The title of the curveplot."}
 )
