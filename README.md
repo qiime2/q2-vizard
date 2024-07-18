@@ -9,7 +9,7 @@ Please note that q2-vizard is currently in an alpha release state. While this pl
 
 ## Installing q2-vizard (pre-2024.10 Release)
 
-1. Install conda using the same instructions provided in the [QIIME 2 User Docs](https://docs.qiime2.org/2024.5/install/native/#miniconda)
+1. Install conda using the same instructions provided in the [QIIME 2 User Docs](https://docs.qiime2.org/2024.5/install/native/#miniconda).
 
 2. Create a `q2-vizard development environment` using the 2024.5 environment file included in this repository:
 ```
@@ -29,9 +29,9 @@ The following Metadata vizualizations are available for use, with examples below
 This visualizer provides an exploratory view of your Metadata - allowing for any two NumericMetadataColumns to be plotted against each other, with an optional third CategoricalMetadataColumn used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
 
 #### Demo
-[![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/assets/scatterplot_2d_example.png)
+![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/assets/scatterplot_2d_example.png)
 
-**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/l76or6ts0bz3ueztelttd/viz.qzv?rlkey=v37s02cdzp5dp56n46p3rtdch)
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/l76or6ts0bz3ueztelttd/viz.qzv?rlkey=v37s02cdzp5dp56n46p3rtdch)
 
 ### curveplot
 
