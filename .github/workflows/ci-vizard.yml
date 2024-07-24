@@ -13,7 +13,7 @@ jobs:
     with:
       distro: amplicon
       release-epoch: 2024.10
-      github-org-name: qiime2
-      github-repo-name: q2-vizard
+      github-org: qiime2
+      github-repo: q2-vizard
       github-env-ref: dev
       env-file-name: 2024.5-vizard-environment.yml
