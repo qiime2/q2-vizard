@@ -12,9 +12,5 @@ jobs:
   ci:
     uses: qiime2/distributions/.github/workflows/lib-community-ci.yaml@dev
     with:
-      distro: amplicon
-      release-epoch: 2024.10
-      github-org: qiime2
       github-repo: q2-vizard
-      github-env-ref: dev
       env-file-name: 2024.5-vizard-environment.yml
