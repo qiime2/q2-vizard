@@ -2,12 +2,10 @@
 # that can be used by any community developers to implement CI
 # testing again
 
-name: ci-vizard
+name: cron-vizard
 on:
-  pull_request:
-    branches: ["dev"]
-  push:
-    branches: ["dev"]
+  workflow_call: {}
+
 jobs:
   ci:
     uses: qiime2/distributions/.github/workflows/lib-community-ci.yaml@dev
