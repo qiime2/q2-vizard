@@ -1,0 +1,10 @@
+name: cron-vizard
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: 0 0 * * SUN
+
+jobs:
+  ci-vizard:
+    uses: ./.github/workflows/cron-vizard.yml
+    secrets: inherit
