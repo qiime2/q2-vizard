@@ -13,5 +13,6 @@ import versioneer
 setup(
     version=versioneer.get_version(),
     packages=find_packages(),
+    license='BSD-3-Clause',
     zip_safe=False,
 )
