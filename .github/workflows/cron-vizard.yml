@@ -4,8 +4,9 @@
 
 name: cron-vizard
 on:
-  workflow_call: {}
-
+  workflow_dispatch: {}
+  schedule:
+    - cron: 0 0 * * SUN
 jobs:
   ci:
     uses: qiime2/distributions/.github/workflows/lib-community-ci.yaml@dev
