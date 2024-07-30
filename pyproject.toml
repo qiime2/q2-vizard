@@ -1,0 +1,23 @@
+[build-system]
+requires = [
+    'setuptools>=60',
+    'setuptools-scm>=8.0',
+    'versioneer>=0.18'
+]
+
+[project]
+name = 'q2-vizard'
+authors = [
+    {name = 'Liz Gehret', email = 'elizabeth.gehret@nau.edu'}
+]
+description = 'QIIME 2 Plugin used for visualizations.'
+license = {file = 'LICENSE.txt'}
+dynamic = ['version']
+
+[project.urls]
+Homepage = 'https://qiime2.org'
+Documentation = 'https://docs.qiime2.org'
+Repository = 'https://github.com/qiime2/q2-vizard'
+
+[project.entry-points.'qiime2.plugins']
+q2-vizard = 'q2_vizard.plugin_setup:plugin'
