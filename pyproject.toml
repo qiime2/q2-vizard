@@ -1,9 +1,10 @@
 [build-system]
 requires = [
-    'setuptools>=60',
-    'setuptools-scm>=8.0',
-    'versioneer>=0.18'
+    'setuptools>=64',
+    'setuptools_scm>=8',
+    'versioneer'
 ]
+build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'q2-vizard'
@@ -11,8 +12,19 @@ authors = [
     {name = 'Liz Gehret', email = 'elizabeth.gehret@nau.edu'}
 ]
 description = 'QIIME 2 Plugin used for visualizations.'
+readme = 'README.md'
 license = {file = 'LICENSE.txt'}
 dynamic = ['version']
+
+[tool.setuptools_scm]
+
+[tool.versioneer]
+VCS=git
+style=pep440
+versionfile_source = q2_vizard/_version.py
+versionfile_build = q2_vizard/_version.py
+tag_prefix =
+parentdir_prefix = q2-vizard-
 
 [project.urls]
 Homepage = 'https://qiime2.org'
