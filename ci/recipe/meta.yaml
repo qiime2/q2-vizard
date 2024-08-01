@@ -1,5 +1,5 @@
-{% set data = load_setup_py_data() %}
-{% set version = data.get('version') or 'placehold' %}
+{%- set pyproject_toml = load_file('..', 'pyproject.toml') | parse_toml %}
+{%- set version = pyproject_toml.get('project', {}).get('version', 'placehold') %}
 
 package:
   name: q2-vizard
@@ -20,7 +20,9 @@ requirements:
 
   host:
     - python {{ python }}
+    - pip
     - setuptools
+    - wheel
 
   run:
     - python {{ python }}
