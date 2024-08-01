@@ -1,7 +1,5 @@
 .PHONY: all lint test test-cov install dev clean distclean
 
-PYTHON ?= python
-
 all: ;
 
 lint:
@@ -15,7 +13,7 @@ test-cov: all
 	py.test --cov=q2_vizard
 
 install: all
-	$(PYTHON) setup.py install
+	pip install .
 
 dev: all
 	pip install -e .
