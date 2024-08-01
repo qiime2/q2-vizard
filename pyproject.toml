@@ -13,7 +13,7 @@ authors = [
 ]
 description = 'QIIME 2 Plugin used for visualizations.'
 readme = 'README.md'
-license = {file = 'LICENSE.txt'}
+license = {file = 'LICENSE'}
 dynamic = ['version']
 
 [tool.setuptools_scm]
