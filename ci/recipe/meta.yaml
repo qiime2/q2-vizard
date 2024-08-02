@@ -1,4 +1,4 @@
-{%- set pyproject_toml = load_file('..', 'pyproject.toml') | parse_toml %}
+{%- set pyproject_toml = load_data('parse_pyproject_toml.py') %}
 {%- set version = pyproject_toml.get('project', {}).get('version', 'placehold') %}
 
 package:
@@ -23,6 +23,7 @@ requirements:
     - pip
     - setuptools
     - wheel
+    - toml      # this is needed to ensure the toml module is available
 
   run:
     - python {{ python }}
