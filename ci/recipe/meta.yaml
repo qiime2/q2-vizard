@@ -1,5 +1,5 @@
-{%- set pyproject_toml = load_data('parse_pyproject_toml.py') %}
-{%- set version = pyproject_toml.get('project', {}).get('version', 'placehold') %}
+{%- set report_data = load_file('..', 'report.json') | loads %}
+{%- set version = report_data['install'][0]['metadata']['version'] %}
 
 package:
   name: q2-vizard
