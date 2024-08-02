@@ -81,7 +81,7 @@
       "type": "ordinal",
       "range": "category",
       "domain": {"data": "table",
-                 "field": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
+                 "field": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"},
                  "sort": true}
     }
 ],
@@ -114,7 +114,7 @@
       "symbolSize": 150,
       "symbolStrokeWidth": 2.5,
       "labelFontSize": 14,
-      "title": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
+      "title": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"},
       "titleFontSize": 16,
       "encode": {
       "symbols": {
@@ -136,7 +136,7 @@
         "facet": {
           "name": "series",
           "data": "table",
-          "groupby": {"{{REPLACE_PARAM}}": "group_dropdown_default"}
+          "groupby": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"}
         }
       },
       "marks": [
@@ -148,7 +148,7 @@
               "x": {"scale": "x_scale", "field": {"signal": "xField"}},
               "y": {"scale": "y_scale", "field": {"signal": "yField"}},
               "stroke": {"scale": "color_scale",
-                         "field": {"{{REPLACE_PARAM}}": "group_dropdown_default"}},
+                         "field": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"}},
               "strokeWidth": {"value": 2}
             },
             "update": {

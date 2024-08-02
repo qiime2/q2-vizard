@@ -16,31 +16,37 @@ from q2_vizard._util import json_replace, measure_validation
 
 
 def curveplot(output_dir: str, metadata: Metadata,
-             x_measure: NumericMetadataColumn = None,
-             y_measure: NumericMetadataColumn = None,
-             color_by_group: CategoricalMetadataColumn = None,
-             title: str = None):
+              x_measure: NumericMetadataColumn,
+              y_measure: NumericMetadataColumn = None,
+              group: CategoricalMetadataColumn = None,
+              color_by: CategoricalMetadataColumn = None,
+              title: str = None):
 
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
 
-    # handling categorical columns for color grouping
+    # handling categorical columns for group & colorBy params
     md_cols_categorical = \
         metadata.filter_columns(column_type='categorical').to_dataframe()
     md_cols_categorical = list(md_cols_categorical.columns)
 
     # validation for group measure
-    if color_by_group:
-        measure_validation(metadata=metadata, measure=color_by_group,
+    if group:
+        measure_validation(metadata=metadata, measure=group,
+                           col_type='categorical')
+
+    # validation for colorBy measure
+    if color_by:
+        measure_validation(metadata=metadata, measure=color_by,
                            col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
     # and adding 'none' for removing color-coding
     md_cols_categorical.append('none')
-    if color_by_group:
-        group_dropdown_default = color_by_group
+    if color_by:
+        colorby_dropdown_default = color_by
     else:
-        group_dropdown_default = md_cols_categorical[0]
+        colorby_dropdown_default = md_cols_categorical[0]
 
     # handling numeric columns for x/y plotting
     md_cols_numeric = \
@@ -51,9 +57,6 @@ def curveplot(output_dir: str, metadata: Metadata,
     if x_measure:
         measure_validation(metadata=metadata, measure=x_measure,
                            col_type='numeric')
-        x_dropdown_default = x_measure
-    else:
-        x_dropdown_default = md_cols_numeric[0]
 
     if y_measure:
         measure_validation(metadata=metadata, measure=y_measure,
@@ -61,6 +64,8 @@ def curveplot(output_dir: str, metadata: Metadata,
         y_dropdown_default = y_measure
     else:
         y_dropdown_default = md_cols_numeric[0]
+
+    # TODO: add handling for x & y(x), disallowing replicate data & ordering X
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
@@ -78,10 +83,9 @@ def curveplot(output_dir: str, metadata: Metadata,
 
     full_spec = json_replace(json_obj, metadata=metadata_obj,
                              md_cols_numeric=md_cols_numeric,
-                             x_dropdown_default=x_dropdown_default,
                              y_dropdown_default=y_dropdown_default,
                              md_cols_categorical=md_cols_categorical,
-                             group_dropdown_default=group_dropdown_default,
+                             colorby_dropdown_default=colorby_dropdown_default,
                              title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
