@@ -1,4 +1,4 @@
-{%- set report_data = load_file('..', 'report.json') | loads %}
+{%- set report_data = load_file('..', 'report.json') %}
 {%- set version = report_data['install'][0]['metadata']['version'] %}
 
 package:
