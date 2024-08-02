@@ -6,7 +6,8 @@ source:
   path: ../..
 
 build:
-  script: make install
+  noarch: python
+  script: "{{ PYTHON }} -m build --wheel"
 
 requirements:
   build:
@@ -20,7 +21,6 @@ requirements:
     - pip
     - setuptools
     - wheel
-    - toml      # this is needed to ensure the toml module is available
 
   run:
     - python {{ python }}
