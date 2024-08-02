@@ -1,9 +1,6 @@
-{%- set report_data = load_file('..', 'report.json') %}
-{%- set version = report_data['install'][0]['metadata']['version'] %}
-
 package:
   name: q2-vizard
-  version: {{ version }}
+  version: 2024.10.0.dev0+77.ga03a375
 
 source:
   path: ../..
