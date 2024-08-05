@@ -17,20 +17,20 @@
     "bind": {"input": "input"}
    },
    {
-     "name": "xField",
-     "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
-     "bind": {
-       "input": "select",
-       "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-     }
-   },
-   {
      "name": "yField",
      "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
      "bind": {
        "input": "select",
        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
      }
+    },
+    {
+      "name": "colorBy",
+      "value": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
+      }
     },
     {
       "name": "curveType",
@@ -53,28 +53,20 @@
 
   "scales": [
     {
-      "name": "x_scale_width",
-      "domain": {"data": "table",
-                 "field": {"signal": "xField"}},
-      "range": "width",
-      "nice": true
-    },
-    {
-      "name": "y_scale_height",
-      "domain": {"data": "table",
-                 "field": {"signal": "yField"}},
-      "range": "height",
-      "nice": true
-    },
-    {
       "name": "x_scale",
-      "domain": {"signal": "domain('x_scale_width')"},
-      "range": "width"
+      "type": "point",
+      "range": "width",
+      "domain": {"data": "table",
+                 "field": {"{{REPLACE_PARAM}}": "x_measure"}}
     },
     {
       "name": "y_scale",
-      "domain": {"signal": "domain('y_scale_height')"},
-      "range": "height"
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": {"data": "table",
+                 "field": {"signal": "yField"}}
     },
     {
       "name": "color_scale",
@@ -93,7 +85,7 @@
       "grid": true,
       "orient": "bottom",
       "tickCount": 5,
-      "title": {"signal": "xField"},
+      "title": {"{{REPLACE_PARAM}}": "x_measure"},
       "titleFontSize": 14,
       "titlePadding": 20
     },
@@ -136,7 +128,7 @@
         "facet": {
           "name": "series",
           "data": "table",
-          "groupby": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"}
+          "groupby": {"{{REPLACE_PARAM}}": "group"}
         }
       },
       "marks": [
@@ -145,7 +137,7 @@
           "from": {"data": "series"},
           "encode": {
             "enter": {
-              "x": {"scale": "x_scale", "field": {"signal": "xField"}},
+              "x": {"scale": "x_scale", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
               "y": {"scale": "y_scale", "field": {"signal": "yField"}},
               "stroke": {"scale": "color_scale",
                          "field": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"}},

@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import pandas as pd
 import os
 import json
 import pkg_resources
@@ -23,19 +24,59 @@ def curveplot(output_dir: str, metadata: Metadata,
               title: str = None):
 
     # input handling for initial metadata
-    md = metadata.to_dataframe().reset_index()
+    md = metadata.to_dataframe()
 
-    # handling categorical columns for group & colorBy params
+    # column validation for x_measure
+    measure_validation(metadata=metadata, measure=x_measure,
+                       col_type='numeric')
+
+    # handling numeric columns for y(x) measure
+    # note that x_measure gets removed because we don't need to plot
+    # x against x(x)
+    filtered_md_numeric_cols = metadata.filter_columns(
+        column_type='numeric').to_dataframe().drop(columns=x_measure)
+    md_cols_numeric = list(filtered_md_numeric_cols.columns)
+
+    # column validation for y(x) measure & setting dropdown default
+    if y_measure:
+        measure_validation(metadata=metadata, measure=y_measure,
+                           col_type='numeric')
+        y_dropdown_default = y_measure
+    else:
+        y_dropdown_default = md_cols_numeric[0]
+
+    # handling for metadata sorting based on the selected group measure
+    if group:
+        measure_validation(metadata=metadata, measure=group,
+                           col_type='categorical')
+        group_ordered_md = []
+
+        for i in md[group].unique():
+            grouped_md = md[md[group] == i].sort_values(x_measure)
+            if any(grouped_md[x_measure].duplicated()):
+                raise ValueError(f'Replicates found in {x_measure} within the'
+                                 f' {i} group. Please filter your metadata to'
+                                 ' remove replicates from your selected'
+                                 ' `x_measure` in the chosen `group`:'
+                                 f' {group}.')
+
+            group_ordered_md.append(grouped_md)
+        ordered_md = pd.concat(group_ordered_md)
+
+    else:
+        # x_measure replicate validation & sorting with no group measure
+        ordered_md = md.sort_values(x_measure)
+        if any(ordered_md[x_measure].duplicated()):
+            raise ValueError(f'Replicates found in {x_measure}.'
+                             ' Please filter your metadata to remove'
+                             ' replicates from your selected `x_measure`.')
+
+    # handling categorical columns for color_by measure
     md_cols_categorical = \
         metadata.filter_columns(column_type='categorical').to_dataframe()
     md_cols_categorical = list(md_cols_categorical.columns)
 
-    # validation for group measure
-    if group:
-        measure_validation(metadata=metadata, measure=group,
-                           col_type='categorical')
-
-    # validation for colorBy measure
+    # validation for color_by measure
     if color_by:
         measure_validation(metadata=metadata, measure=color_by,
                            col_type='categorical')
@@ -47,25 +88,6 @@ def curveplot(output_dir: str, metadata: Metadata,
         colorby_dropdown_default = color_by
     else:
         colorby_dropdown_default = md_cols_categorical[0]
-
-    # handling numeric columns for x/y plotting
-    md_cols_numeric = \
-        metadata.filter_columns(column_type='numeric').to_dataframe()
-    md_cols_numeric = list(md_cols_numeric.columns)
-
-    # validation for x/y measures
-    if x_measure:
-        measure_validation(metadata=metadata, measure=x_measure,
-                           col_type='numeric')
-
-    if y_measure:
-        measure_validation(metadata=metadata, measure=y_measure,
-                           col_type='numeric')
-        y_dropdown_default = y_measure
-    else:
-        y_dropdown_default = md_cols_numeric[0]
-
-    # TODO: add handling for x & y(x), disallowing replicate data & ordering X
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
@@ -79,12 +101,13 @@ def curveplot(output_dir: str, metadata: Metadata,
     with open(spec_fp) as fh:
         json_obj = json.load(fh)
 
-    metadata_obj = json.loads(md.to_json(orient='records'))
+    metadata_obj = json.loads(ordered_md.to_json(orient='records'))
 
     full_spec = json_replace(json_obj, metadata=metadata_obj,
+                             x_measure=x_measure, group=group,
                              md_cols_numeric=md_cols_numeric,
-                             y_dropdown_default=y_dropdown_default,
                              md_cols_categorical=md_cols_categorical,
+                             y_dropdown_default=y_dropdown_default,
                              colorby_dropdown_default=colorby_dropdown_default,
                              title=title)
 

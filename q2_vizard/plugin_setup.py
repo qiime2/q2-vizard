@@ -23,6 +23,7 @@ plugin = Plugin(name='vizard',
                 short_description='The first choice of wizard lizards.')
 
 
+# TODO: refactor
 plugin.visualizers.register_function(
     function=plot_heatmap,
     inputs={'data': Dist1D[Ordered, Matched]},
@@ -61,6 +62,7 @@ plugin.visualizers.register_function(
 )
 
 
+# TODO: finish descriptions
 plugin.visualizers.register_function(
     function=curveplot,
     inputs={},
@@ -68,20 +70,17 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
-        'color_by_group': Str,
+        'group': Str,
+        'color_by': Str,
         'title': Str
     },
     name='Curveplot',
-    description='Basic curveplot for visualizing two numeric Metadata'
-                ' measures with categorical color grouping.',
+    description='',
     parameter_descriptions={
-        'metadata': "Any metadata-like input with at least two"
-                    " numeric measures for visualizing.",
-        'x_measure': "Numeric measure from the input Metadata that should be"
-                     " plotted on the x-axis.",
-        'y_measure': "Numeric measure from the input Metadata that should be"
-                     " plotted on the y-axis.",
-        'color_by_group': "Categorical measure from the input Metadata that"
-                          " should be used for color-coding the curveplot.",
+        'metadata': "",
+        'x_measure': "",
+        'y_measure': "",
+        'group': "",
+        'color_by': "",
         'title': "The title of the curveplot."}
 )
