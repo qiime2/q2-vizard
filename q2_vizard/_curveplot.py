@@ -20,7 +20,6 @@ def curveplot(output_dir: str, metadata: Metadata,
               x_measure: NumericMetadataColumn,
               y_measure: NumericMetadataColumn = None,
               group: CategoricalMetadataColumn = None,
-              color_by: CategoricalMetadataColumn = None,
               title: str = None):
 
     # input handling for initial metadata
@@ -71,24 +70,6 @@ def curveplot(output_dir: str, metadata: Metadata,
                              ' Please filter your metadata to remove'
                              ' replicates from your selected `x_measure`.')
 
-    # handling categorical columns for color_by measure
-    md_cols_categorical = \
-        metadata.filter_columns(column_type='categorical').to_dataframe()
-    md_cols_categorical = list(md_cols_categorical.columns)
-
-    # validation for color_by measure
-    if color_by:
-        measure_validation(metadata=metadata, measure=color_by,
-                           col_type='categorical')
-
-    # setting default (or selected) group measure for color-coding
-    # and adding 'none' for removing color-coding
-    md_cols_categorical.append('none')
-    if color_by:
-        colorby_dropdown_default = color_by
-    else:
-        colorby_dropdown_default = md_cols_categorical[0]
-
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
         loader=jinja2.PackageLoader('q2_vizard', 'assets/curveplot')
@@ -106,9 +87,7 @@ def curveplot(output_dir: str, metadata: Metadata,
     full_spec = json_replace(json_obj, metadata=metadata_obj,
                              x_measure=x_measure, group=group,
                              md_cols_numeric=md_cols_numeric,
-                             md_cols_categorical=md_cols_categorical,
                              y_dropdown_default=y_dropdown_default,
-                             colorby_dropdown_default=colorby_dropdown_default,
                              title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:

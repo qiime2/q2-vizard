@@ -25,14 +25,6 @@
      }
     },
     {
-      "name": "colorBy",
-      "value": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"},
-      "bind": {
-        "input": "select",
-        "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
-      }
-    },
-    {
       "name": "curveType",
       "value": "linear",
       "bind": {
@@ -73,7 +65,7 @@
       "type": "ordinal",
       "range": "category",
       "domain": {"data": "table",
-                 "field": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"},
+                 "field": {"{{REPLACE_PARAM}}": "group"},
                  "sort": true}
     }
 ],
@@ -106,7 +98,7 @@
       "symbolSize": 150,
       "symbolStrokeWidth": 2.5,
       "labelFontSize": 14,
-      "title": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"},
+      "title": {"{{REPLACE_PARAM}}": "group"},
       "titleFontSize": 16,
       "encode": {
       "symbols": {
@@ -136,15 +128,13 @@
           "type": "line",
           "from": {"data": "series"},
           "encode": {
-            "enter": {
+            "update": {
               "x": {"scale": "x_scale", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
               "y": {"scale": "y_scale", "field": {"signal": "yField"}},
-              "stroke": {"scale": "color_scale",
-                         "field": {"{{REPLACE_PARAM}}": "colorby_dropdown_default"}},
-              "strokeWidth": {"value": 2}
-            },
-            "update": {
               "interpolate": {"signal": "curveType"},
+              "stroke": {"scale": "color_scale",
+                         "field": {"{{REPLACE_PARAM}}": "group"}},
+              "strokeWidth": {"value": 2},
               "strokeOpacity": {"value": 1}
             },
             "hover": {

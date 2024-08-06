@@ -71,7 +71,6 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'group': Str,
-        'color_by': Str,
         'title': Str
     },
     name='Curveplot',
@@ -81,6 +80,5 @@ plugin.visualizers.register_function(
         'x_measure': "",
         'y_measure': "",
         'group': "",
-        'color_by': "",
         'title': "The title of the curveplot."}
 )
