@@ -40,6 +40,13 @@ def curveplot(output_dir: str, metadata: Metadata,
     if y_measure:
         measure_validation(metadata=metadata, measure=y_measure,
                            col_type='numeric')
+
+        if y_measure == x_measure:
+            raise ValueError(f'The same column `{x_measure}` has been used for'
+                             ' `x_measure` and `y_measure`.'
+                             ' Please choose different columns in your'
+                             ' metadata for these measures.')
+
         y_dropdown_default = y_measure
     else:
         y_dropdown_default = md_cols_numeric[0]
@@ -53,11 +60,11 @@ def curveplot(output_dir: str, metadata: Metadata,
         for i in md[group].unique():
             grouped_md = md[md[group] == i].sort_values(x_measure)
             if any(grouped_md[x_measure].duplicated()):
-                raise ValueError(f'Replicates found in {x_measure} within the'
-                                 f' {i} group. Please filter your metadata to'
-                                 ' remove replicates from your selected'
-                                 ' `x_measure` in the chosen `group`:'
-                                 f' {group}.')
+                raise ValueError(f'Replicates found in `{x_measure}` within'
+                                 f' the `{i}` group. Please filter your'
+                                 ' metadata to remove replicates from your'
+                                 ' selected `x_measure` in the chosen `group`:'
+                                 f' `{group}`.')
 
             group_ordered_md.append(grouped_md)
         ordered_md = pd.concat(group_ordered_md)
@@ -66,7 +73,7 @@ def curveplot(output_dir: str, metadata: Metadata,
         # x_measure replicate validation & sorting with no group measure
         ordered_md = md.sort_values(x_measure)
         if any(ordered_md[x_measure].duplicated()):
-            raise ValueError(f'Replicates found in {x_measure}.'
+            raise ValueError(f'Replicates found in `{x_measure}`.'
                              ' Please filter your metadata to remove'
                              ' replicates from your selected `x_measure`.')
 
