@@ -12,7 +12,7 @@ import pkg_resources
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from q2_vizard._util import json_replace, measure_validation
+from ._util import _json_replace, _measure_validation
 
 
 def scatterplot_2d(output_dir: str, metadata: Metadata,
@@ -31,8 +31,8 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # validation for group measure
     if color_by_group:
-        measure_validation(metadata=metadata, measure=color_by_group,
-                           col_type='categorical')
+        _measure_validation(metadata=metadata, measure=color_by_group,
+                            col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
     # and adding 'none' for removing color-coding
@@ -49,15 +49,15 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # validation for x/y measures
     if x_measure:
-        measure_validation(metadata=metadata, measure=x_measure,
-                           col_type='numeric')
+        _measure_validation(metadata=metadata, measure=x_measure,
+                            col_type='numeric')
         x_dropdown_default = x_measure
     else:
         x_dropdown_default = md_cols_numeric[0]
 
     if y_measure:
-        measure_validation(metadata=metadata, measure=y_measure,
-                           col_type='numeric')
+        _measure_validation(metadata=metadata, measure=y_measure,
+                            col_type='numeric')
         y_dropdown_default = y_measure
     else:
         y_dropdown_default = md_cols_numeric[0]
@@ -76,13 +76,13 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
-    full_spec = json_replace(json_obj, metadata=metadata_obj,
-                             md_cols_numeric=md_cols_numeric,
-                             x_dropdown_default=x_dropdown_default,
-                             y_dropdown_default=y_dropdown_default,
-                             md_cols_categorical=md_cols_categorical,
-                             group_dropdown_default=group_dropdown_default,
-                             title=title)
+    full_spec = _json_replace(json_obj, metadata=metadata_obj,
+                              md_cols_numeric=md_cols_numeric,
+                              x_dropdown_default=x_dropdown_default,
+                              y_dropdown_default=y_dropdown_default,
+                              md_cols_categorical=md_cols_categorical,
+                              group_dropdown_default=group_dropdown_default,
+                              title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)

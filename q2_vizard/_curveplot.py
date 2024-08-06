@@ -13,7 +13,7 @@ import pkg_resources
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from q2_vizard._util import json_replace, measure_validation
+from ._util import _json_replace, _measure_validation
 
 
 def curveplot(output_dir: str, metadata: Metadata,
@@ -26,8 +26,8 @@ def curveplot(output_dir: str, metadata: Metadata,
     md = metadata.to_dataframe()
 
     # column validation for x_measure
-    measure_validation(metadata=metadata, measure=x_measure,
-                       col_type='numeric')
+    _measure_validation(metadata=metadata, measure=x_measure,
+                        col_type='numeric')
 
     # handling numeric columns for y(x) measure
     # note that x_measure gets removed because we don't need to plot
@@ -38,8 +38,8 @@ def curveplot(output_dir: str, metadata: Metadata,
 
     # column validation for y(x) measure & setting dropdown default
     if y_measure:
-        measure_validation(metadata=metadata, measure=y_measure,
-                           col_type='numeric')
+        _measure_validation(metadata=metadata, measure=y_measure,
+                            col_type='numeric')
 
         if y_measure == x_measure:
             raise ValueError(f'The same column `{x_measure}` has been used for'
@@ -53,8 +53,8 @@ def curveplot(output_dir: str, metadata: Metadata,
 
     # handling for metadata sorting based on the selected group measure
     if group:
-        measure_validation(metadata=metadata, measure=group,
-                           col_type='categorical')
+        _measure_validation(metadata=metadata, measure=group,
+                            col_type='categorical')
         group_ordered_md = []
 
         for i in md[group].unique():
@@ -91,11 +91,11 @@ def curveplot(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(ordered_md.to_json(orient='records'))
 
-    full_spec = json_replace(json_obj, metadata=metadata_obj,
-                             x_measure=x_measure, group=group,
-                             md_cols_numeric=md_cols_numeric,
-                             y_dropdown_default=y_dropdown_default,
-                             title=title)
+    full_spec = _json_replace(json_obj, metadata=metadata_obj,
+                              x_measure=x_measure, group=group,
+                              md_cols_numeric=md_cols_numeric,
+                              y_dropdown_default=y_dropdown_default,
+                              title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
