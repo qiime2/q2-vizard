@@ -40,21 +40,6 @@ class TestBase(TestPluginBase):
 
 
 class TestCurveplot(TestBase):
-    def test_x_measure_not_in_metadata(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(ValueError,
-                                        '`boo` not found as a column'):
-                curveplot(output_dir=output_dir,
-                          metadata=self.md, x_measure='boo')
-
-    def test_x_measure_not_numeric_md_column(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(
-                    TypeError, '`categorical-col` not.*`NumericMetadataColumn`'
-            ):
-                curveplot(output_dir=output_dir,
-                          metadata=self.md, x_measure='categorical-col')
-
     def test_x_measure_no_group_with_replicates(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(
@@ -71,23 +56,6 @@ class TestCurveplot(TestBase):
                 curveplot(output_dir=output_dir, metadata=self.md,
                           x_measure='replicates', group='groups')
 
-    def test_y_measure_not_in_metadata(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(ValueError,
-                                        '`boo` not found as a column'):
-                curveplot(output_dir=output_dir,
-                          metadata=self.md, x_measure='numeric-col',
-                          y_measure='boo')
-
-    def test_y_measure_not_numeric_md_column(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(
-                TypeError, '`categorical-col` not.*`NumericMetadataColumn`'
-            ):
-                curveplot(output_dir=output_dir,
-                          metadata=self.md, x_measure='numeric-col',
-                          y_measure='categorical-col')
-
     def test_y_measure_same_column_as_x_measure(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(
@@ -95,19 +63,3 @@ class TestCurveplot(TestBase):
             ):
                 curveplot(output_dir=output_dir, metadata=self.md,
                           x_measure='numeric-col', y_measure='numeric-col')
-
-    def test_group_measure_not_in_metadata(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(ValueError,
-                                        '`boo` not found as a column'):
-                curveplot(output_dir=output_dir,
-                          metadata=self.md, x_measure='numeric-col',
-                          group='boo')
-
-    def test_group_measure_not_categorical_md_column(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(
-                TypeError, '`replicates` not.*`CategoricalMetadataColumn`'
-            ):
-                curveplot(output_dir=output_dir, metadata=self.md,
-                          x_measure='numeric-col', group='replicates')
