@@ -7,9 +7,9 @@
 # ----------------------------------------------------------------------------
 
 from ._version import get_versions
-from ._heatmap import plot_heatmap
-from ._scatterplot import scatterplot_2d
-from ._curveplot import curveplot
+from .heatmap import plot_heatmap
+from .scatterplot import scatterplot_2d
+from .curveplot import curveplot
 
 __version__ = get_versions()['version']
 del get_versions

@@ -9,9 +9,9 @@
 from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
 from q2_stats._type import (Dist1D, Matched, Ordered)
 
-from q2_vizard._heatmap import plot_heatmap
-from q2_vizard._scatterplot import scatterplot_2d
-from q2_vizard._curveplot import curveplot
+from q2_vizard.heatmap import plot_heatmap
+from q2_vizard.scatterplot import scatterplot_2d
+from q2_vizard.curveplot import curveplot
 
 
 plugin = Plugin(name='vizard',
