@@ -1,4 +1,4 @@
-{% set pyproject = load_file_data('report.json') %}
+{% set pyproject = load_file_data('./repo/report.json') %}
 {% set version = pyproject.get('install', {}).get('metadata').get('version') %}
 
 package:
