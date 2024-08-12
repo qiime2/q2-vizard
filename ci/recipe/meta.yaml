@@ -1,6 +1,6 @@
 package:
   name: q2-vizard
-  version: 2024.10.0.dev0+77.ga03a375
+  version: {{ version }}
 
 source:
   path: ../..
