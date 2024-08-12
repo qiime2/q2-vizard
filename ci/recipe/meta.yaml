@@ -1,3 +1,6 @@
+{% set pyproject = load_file_data('report.json') %}
+{% set version = pyproject.get('install', {}).get('metadata').get('version') %}
+
 package:
   name: q2-vizard
   version: {{ version }}
