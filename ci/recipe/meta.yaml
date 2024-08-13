@@ -1,5 +1,5 @@
-{% set data = load_setup_py_data() %}
-{% set version = data.get('version') or 'placehold' %}
+{% set pkg_data = load_file_data('../../../../report.json') %}
+{% set version = pkg_data['install'][0]['metadata']['version'] %}
 
 package:
   name: q2-vizard
@@ -9,6 +9,7 @@ source:
   path: ../..
 
 build:
+  noarch: python
   script: make install
 
 requirements:
@@ -20,6 +21,7 @@ requirements:
 
   host:
     - python {{ python }}
+    - pip
     - setuptools
 
   run:
