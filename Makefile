@@ -13,7 +13,7 @@ test-cov: all
 	py.test --cov=q2_vizard
 
 install: all
-	pip install .
+	pip install --dry-run --report report.json . && cat report.json && pip install --debug -v .
 
 dev: all
 	pip install -e .
