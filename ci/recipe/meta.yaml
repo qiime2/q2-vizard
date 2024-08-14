@@ -9,7 +9,7 @@ source:
   path: ../..
 
 build:
-  script: "$PYTHON" -m pip install --debug -v .
+  script: {{ python }} -m pip install --debug -v .
 
 requirements:
   build:
