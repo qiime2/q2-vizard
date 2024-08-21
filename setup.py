@@ -11,6 +11,5 @@ from setuptools import setup
 import versioneer
 
 setup(
-    name='q2-vizard',
     version=versioneer.get_version()
 )
