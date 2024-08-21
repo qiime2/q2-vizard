@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     'setuptools>=64',
-    'versioneer[toml]',
+    'versioneer[toml]==0.29',
     'wheel'
 ]
 build-backend = 'setuptools.build_meta'
@@ -17,7 +17,7 @@ license = {file = 'LICENSE'}
 dynamic = ['version']
 
 [tool.setuptools.dynamic]
-version = {attr = 'q2_vizard.__version__'}
+version = {attr = 'q2_vizard._version.get_versions()['version']'}
 
 [tool.versioneer]
 VCS = 'git'
