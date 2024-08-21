@@ -9,8 +9,7 @@ source:
   path: ../..
 
 build:
-  noarch: python
-  script: make install
+  script: {{ PYTHON }} -m pip install -v .
 
 requirements:
   build:
@@ -23,6 +22,7 @@ requirements:
     - python {{ python }}
     - pip
     - setuptools
+    - versioneer
 
   run:
     - python {{ python }}
