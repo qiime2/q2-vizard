@@ -17,7 +17,7 @@ requirements:
     # in order to render out transpiled js assets for various visualizations.
     # once rendered, node is no longer necessary. don't set this in host reqs.
     - nodejs
-    - flit_core
+    - setuptools_scm
 
   host:
     - python {{ python }}
