@@ -9,7 +9,7 @@ source:
   path: ../..
 
 build:
-  script: {{ PYTHON }} -m pip install --debug -v .
+  script: {{ PYTHON }} -m pip install -v .
 
 requirements:
   build:
@@ -17,12 +17,12 @@ requirements:
     # in order to render out transpiled js assets for various visualizations.
     # once rendered, node is no longer necessary. don't set this in host reqs.
     - nodejs
-    - versioneer
 
   host:
     - python {{ python }}
     - pip
     - setuptools
+    - versioneer
 
   run:
     - python {{ python }}
