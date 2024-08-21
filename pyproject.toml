@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    'setuptools',
-    'setuptools_scm',
+    'setuptools>=64',
+    'setuptools_scm>=8',
     'versioneer[toml]',
     'wheel'
 ]
@@ -18,6 +18,10 @@ license = {file = 'LICENSE'}
 dynamic = ['version']
 
 [tool.setuptools_scm]
+version_file = 'q2_vizard._version.py'
+
+[tool.setuptools.dynamic]
+version = {attr = 'q2_vizard.VERSION'}
 
 [tool.versioneer]
 VCS = 'git'
