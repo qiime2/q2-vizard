@@ -20,9 +20,6 @@ dynamic = ['version']
 [tool.setuptools_scm]
 version_file = 'q2_vizard._version.py'
 
-[tool.setuptools.dynamic]
-version = {attr = 'q2_vizard.VERSION'}
-
 [tool.versioneer]
 VCS = 'git'
 style = 'pep440'
