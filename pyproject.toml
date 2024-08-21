@@ -16,9 +16,6 @@ readme = 'README.md'
 license = {file = 'LICENSE'}
 dynamic = ['version']
 
-[tool.setuptools.dynamic]
-version = {attr = 'q2_vizard._version.get_versions()['version']'}
-
 [tool.versioneer]
 VCS = 'git'
 style = 'pep440'
