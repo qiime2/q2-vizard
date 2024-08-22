@@ -1,17 +1,14 @@
 package:
   name: q2-vizard
-  version: {{ environ.get('PKG_VERSION') }}
+  version: {{ PKG_VERSION }}
 
 source:
   path: ../..
 
 build:
-  script: |
-    echo "ENVIRONMENT VARIABLES DURING CONDA BUILD"
-    {% for key, value in environ.items() %}
-    echo "{{ key }} = {{ value }}"
-    {% endfor %}
-    {{ PYTHON }} -m pip install -v .
+  script-env:
+    - PKG_VERSION
+  script: {{ PYTHON }} -m pip install -v .
 
 requirements:
   build:
