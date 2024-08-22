@@ -6,7 +6,9 @@ source:
   path: ../..
 
 build:
-  script: {{ PYTHON }} -m pip install -v .
+  script: |
+    echo "pkg version: {{ environ.get('PKG_VERSION') }}"
+    {{ PYTHON }} -m pip install -v .
 
 requirements:
   build:
