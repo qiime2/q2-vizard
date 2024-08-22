@@ -7,7 +7,7 @@ source:
 
 build:
   script: |
-    echo "ENVIRONMENT VARIABLES:"
+    echo "ENVIRONMENT VARIABLES DURING CONDA BUILD"
     {% for key, value in environ.items() %}
     echo "{{ key }} = {{ value }}"
     {% endfor %}
