@@ -1,5 +1,5 @@
-{% set pkg_data = load_file_data('../../../../report.json') %}
-{% set version = pkg_data['install'][0]['metadata']['version'] %}
+{% set data = load_setup_py_data() %}
+{% set version = data.get('version') or 'placehold' %}
 
 package:
   name: q2-vizard
@@ -22,6 +22,8 @@ requirements:
     - python {{ python }}
     - pip
     - setuptools
+    # now that we're not vendoring versioneer, we need to add it into the host
+    # reqs in order for it to get added to the conda env for build pkg step
     - versioneer
 
   run:
