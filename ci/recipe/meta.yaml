@@ -17,6 +17,7 @@ requirements:
     # in order to render out transpiled js assets for various visualizations.
     # once rendered, node is no longer necessary. don't set this in host reqs.
     - nodejs
+    - versioneer
 
   host:
     - python {{ python }}
@@ -24,7 +25,7 @@ requirements:
     - setuptools
     # now that we're not vendoring versioneer, we need to add it into the host
     # reqs in order for it to get added to the conda env for build pkg step
-    - versioneer
+    # - versioneer
 
   run:
     - python {{ python }}
