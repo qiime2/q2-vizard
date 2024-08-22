@@ -7,7 +7,7 @@ source:
 
 build:
   script-env:
-    - PKG_VERSION={{ environ.get('PKG_VERSION') }}
+    - PKG_VERSION={{ environ.get('PKG_VERSION', '0.0.0') }}
   script: {{ PYTHON }} -m pip install -v .
 
 requirements:
