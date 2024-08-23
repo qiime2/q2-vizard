@@ -11,7 +11,7 @@ name = 'q2-vizard'
 authors = [
     {name = 'Liz Gehret', email = 'elizabeth.gehret@nau.edu'}
 ]
-description = 'QIIME 2 Plugin used for visualizations.'
+description = 'QIIME 2 Plugin used for generalized visualizations.'
 readme = 'README.md'
 license = {file = 'LICENSE'}
 dynamic = ['version']
