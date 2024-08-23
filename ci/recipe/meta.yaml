@@ -1,13 +1,13 @@
 package:
   name: q2-vizard
-  version: {{ PKG_VERSION }}
+  version: {{ PLUGIN_VERSION }}
 
 source:
   path: ../..
 
 build:
   script-env:
-    - PKG_VERSION={{ environ.get('PKG_VERSION', '0.0.0') }}
+    - PLUGIN_VERSION
   script: {{ PYTHON }} -m pip install -v .
 
 requirements:
