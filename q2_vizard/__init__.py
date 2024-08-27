@@ -9,9 +9,9 @@
 from ._version import get_versions
 from .heatmap import plot_heatmap
 from .scatterplot import scatterplot_2d
-from .curveplot import curveplot
+from .lineplot import lineplot
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['plot_heatmap', 'scatterplot_2d', 'curveplot']
+__all__ = ['plot_heatmap', 'scatterplot_2d', 'lineplot']

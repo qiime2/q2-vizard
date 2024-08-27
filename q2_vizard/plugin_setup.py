@@ -11,7 +11,7 @@ from q2_stats._type import (Dist1D, Matched, Ordered)
 
 from q2_vizard.heatmap import plot_heatmap
 from q2_vizard.scatterplot import scatterplot_2d
-from q2_vizard.curveplot import curveplot
+from q2_vizard.lineplot import lineplot
 
 
 plugin = Plugin(name='vizard',
@@ -64,7 +64,7 @@ plugin.visualizers.register_function(
 
 # TODO: finish descriptions
 plugin.visualizers.register_function(
-    function=curveplot,
+    function=lineplot,
     inputs={},
     parameters={
         'metadata': Metadata,
@@ -73,12 +73,12 @@ plugin.visualizers.register_function(
         'group': Str,
         'title': Str
     },
-    name='Curveplot',
+    name='Lineplot',
     description='',
     parameter_descriptions={
         'metadata': "",
         'x_measure': "",
         'y_measure': "",
         'group': "",
-        'title': "The title of the curveplot."}
+        'title': "The title of the lineplot."}
 )

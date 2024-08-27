@@ -33,7 +33,7 @@ This visualizer provides an exploratory view of your Metadata - allowing for any
 
 [**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/l76or6ts0bz3ueztelttd/viz.qzv?rlkey=v37s02cdzp5dp56n46p3rtdch)
 
-### curveplot
+### lineplot
 
 Coming soon!
 

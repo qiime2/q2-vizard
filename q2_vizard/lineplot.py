@@ -16,7 +16,7 @@ from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 from ._util import _json_replace, _measure_validation
 
 
-def curveplot(output_dir: str, metadata: Metadata,
+def lineplot(output_dir: str, metadata: Metadata,
               x_measure: NumericMetadataColumn,
               y_measure: NumericMetadataColumn = None,
               group: CategoricalMetadataColumn = None,
@@ -79,12 +79,12 @@ def curveplot(output_dir: str, metadata: Metadata,
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
-        loader=jinja2.PackageLoader('q2_vizard', 'assets/curveplot')
+        loader=jinja2.PackageLoader('q2_vizard', 'assets/lineplot')
     )
     index = J_ENV.get_template('index.html')
 
     spec_fp = pkg_resources.resource_filename(
-        'q2_vizard', os.path.join('assets', 'curveplot', 'spec.json')
+        'q2_vizard', os.path.join('assets', 'lineplot', 'spec.json')
     )
     with open(spec_fp) as fh:
         json_obj = json.load(fh)

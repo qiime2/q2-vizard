@@ -12,7 +12,7 @@ import tempfile
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
-from q2_vizard import curveplot
+from q2_vizard import lineplot
 
 
 class TestBase(TestPluginBase):
@@ -39,13 +39,13 @@ class TestBase(TestPluginBase):
                                         columns=columns, dtype=object))
 
 
-class TestCurveplot(TestBase):
+class TestLineplot(TestBase):
     def test_x_measure_no_group_with_replicates(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(
                     ValueError, 'Replicates found in `replicates`.'):
-                curveplot(output_dir=output_dir, metadata=self.md,
-                          x_measure='replicates')
+                lineplot(output_dir=output_dir, metadata=self.md,
+                         x_measure='replicates')
 
     def test_x_measure_group_with_replicates(self):
         with tempfile.TemporaryDirectory() as output_dir:
@@ -53,13 +53,13 @@ class TestCurveplot(TestBase):
                 ValueError, 'Replicates found in `replicates` within the'
                 ' `group1` group.*chosen `group`: `groups`.'
             ):
-                curveplot(output_dir=output_dir, metadata=self.md,
-                          x_measure='replicates', group='groups')
+                lineplot(output_dir=output_dir, metadata=self.md,
+                         x_measure='replicates', group='groups')
 
     def test_y_measure_same_column_as_x_measure(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(
                 ValueError, 'same column `numeric-col` has been used'
             ):
-                curveplot(output_dir=output_dir, metadata=self.md,
-                          x_measure='numeric-col', y_measure='numeric-col')
+                lineplot(output_dir=output_dir, metadata=self.md,
+                         x_measure='numeric-col', y_measure='numeric-col')
