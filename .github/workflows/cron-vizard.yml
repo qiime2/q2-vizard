@@ -1,0 +1,15 @@
+# WIP: working on a new GHA in distributions to pair with this
+# that can be used by any community developers to implement CI
+# testing again
+
+name: cron-vizard
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: 0 0 * * SUN
+jobs:
+  ci:
+    uses: qiime2/distributions/.github/workflows/lib-community-ci.yaml@dev
+    with:
+      github-repo: q2-vizard
+      env-file-name: 2024.10-vizard-environment.yml

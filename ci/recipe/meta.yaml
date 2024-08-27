@@ -1,15 +1,14 @@
-{% set data = load_setup_py_data() %}
-{% set version = data.get('version') or 'placehold' %}
-
 package:
   name: q2-vizard
-  version: {{ version }}
+  version: {{ PLUGIN_VERSION }}
 
 source:
   path: ../..
 
 build:
-  script: make install
+  script-env:
+    - PLUGIN_VERSION
+  script: {{ PYTHON }} -m pip install -v .
 
 requirements:
   build:
@@ -20,7 +19,11 @@ requirements:
 
   host:
     - python {{ python }}
+    - pip
     - setuptools
+    # now that we're not vendoring versioneer, we need to add it into the host
+    # reqs in order for it to get added to the conda env for build pkg step
+    - versioneer
 
   run:
     - python {{ python }}
