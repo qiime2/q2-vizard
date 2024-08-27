@@ -18,7 +18,7 @@ from ._util import _json_replace, _measure_validation
 def scatterplot_2d(output_dir: str, metadata: Metadata,
                    x_measure: NumericMetadataColumn = None,
                    y_measure: NumericMetadataColumn = None,
-                   color_by_group: CategoricalMetadataColumn = None,
+                   color_by: CategoricalMetadataColumn = None,
                    title: str = None):
 
     # input handling for initial metadata
@@ -30,15 +30,15 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     md_cols_categorical = list(md_cols_categorical.columns)
 
     # validation for group measure
-    if color_by_group:
-        _measure_validation(metadata=metadata, measure=color_by_group,
+    if color_by:
+        _measure_validation(metadata=metadata, measure=color_by,
                             col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
     # and adding 'none' for removing color-coding
     md_cols_categorical.append('none')
-    if color_by_group:
-        group_dropdown_default = color_by_group
+    if color_by:
+        group_dropdown_default = color_by
     else:
         group_dropdown_default = md_cols_categorical[0]
 

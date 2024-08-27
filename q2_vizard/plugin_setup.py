@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
+from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool, TypeMap
 from q2_stats._type import (Dist1D, Matched, Ordered)
 
 from q2_vizard.heatmap import plot_heatmap
@@ -22,6 +22,10 @@ plugin = Plugin(name='vizard',
                             ' lizards for protection and entertainment.',
                 short_description='The first choice of wizard lizards.')
 
+T_replicates, T_average = TypeMap({
+    Bool % Choices(False): None,
+    Bool % Choices(True): Str % Choices('median', 'mean')
+})
 
 # TODO: refactor
 plugin.visualizers.register_function(
@@ -43,26 +47,25 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
-        'color_by_group': Str,
+        'color_by': Str,
         'title': Str
     },
     name='2D Scatterplot',
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
                 ' measures with optional categorical color grouping.',
     parameter_descriptions={
-        'metadata': "Any metadata-like input with at least two"
-                    " numeric measures for visualizing.",
-        'x_measure': "Numeric measure from the input Metadata that should be"
-                     " plotted on the x-axis.",
-        'y_measure': "Numeric measure from the input Metadata that should be"
-                     " plotted on the y-axis.",
-        'color_by_group': "Categorical measure from the input Metadata that"
-                          " should be used for color-coding the scatterplot.",
-        'title': "The title of the scatterplot."}
+        'metadata': 'Any metadata-like input with at least two'
+                    ' numeric measures for visualizing.',
+        'x_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the x-axis.',
+        'y_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the y-axis.',
+        'color_by': 'Categorical measure from the input Metadata that'
+                    ' should be used for color-coding the scatterplot.',
+        'title': 'The title of the scatterplot.'}
 )
 
 
-# TODO: finish descriptions
 plugin.visualizers.register_function(
     function=lineplot,
     inputs={},
@@ -70,15 +73,28 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
-        'group': Str,
+        'replicates': T_replicates,
+        'average': T_average,
+        'facet_by': Str,
         'title': Str
     },
     name='Lineplot',
-    description='',
+    description='Basic lineplot for visualizing two numeric Metadata'
+                ' measures with optional faceting.',
     parameter_descriptions={
-        'metadata': "",
-        'x_measure': "",
-        'y_measure': "",
-        'group': "",
-        'title': "The title of the lineplot."}
+        'metadata': 'Any metadata-like input with at least two'
+                    ' numeric measures for visualizing.',
+        'x_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the x-axis.',
+        'y_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the y-axis.',
+        'replicates': 'Whether the chosen `x_measure` contains replicates.'
+                      ' If true, a method for averaging the y(x) values must'
+                      ' be selected.',
+        'average': 'The method for averaging replicates'
+                   ' if present in the chosen `x_measure`.'
+                   ' Available methods are `median` and `mean`.',
+        'facet_by': 'Categorical measure from the input Metadata that'
+                    ' should be used for faceting the lineplot.',
+        'title': 'The title of the lineplot.'}
 )

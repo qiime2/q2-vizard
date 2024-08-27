@@ -40,21 +40,23 @@ class TestBase(TestPluginBase):
 
 
 class TestLineplot(TestBase):
-    def test_x_measure_no_group_with_replicates(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(
-                    ValueError, 'Replicates found in `replicates`.'):
-                lineplot(output_dir=output_dir, metadata=self.md,
-                         x_measure='replicates')
+    # TODO: refactor with replicate handling
 
-    def test_x_measure_group_with_replicates(self):
-        with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(
-                ValueError, 'Replicates found in `replicates` within the'
-                ' `group1` group.*chosen `group`: `groups`.'
-            ):
-                lineplot(output_dir=output_dir, metadata=self.md,
-                         x_measure='replicates', group='groups')
+    # def test_x_measure_no_group_with_replicates(self):
+    #     with tempfile.TemporaryDirectory() as output_dir:
+    #         with self.assertRaisesRegex(
+    #                 ValueError, 'Replicates found in `replicates`.'):
+    #             lineplot(output_dir=output_dir, metadata=self.md,
+    #                      x_measure='replicates')
+
+    # def test_x_measure_group_with_replicates(self):
+    #     with tempfile.TemporaryDirectory() as output_dir:
+    #         with self.assertRaisesRegex(
+    #             ValueError, 'Replicates found in `replicates` within the'
+    #             ' `group1` group.*chosen `group`: `groups`.'
+    #         ):
+    #             lineplot(output_dir=output_dir, metadata=self.md,
+    #                      x_measure='replicates', group='groups')
 
     def test_y_measure_same_column_as_x_measure(self):
         with tempfile.TemporaryDirectory() as output_dir:

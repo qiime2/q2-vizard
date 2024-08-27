@@ -65,7 +65,7 @@
       "type": "ordinal",
       "range": "category",
       "domain": {"data": "table",
-                 "field": {"{{REPLACE_PARAM}}": "group"},
+                 "field": {"{{REPLACE_PARAM}}": "facet_by"},
                  "sort": true}
     }
 ],
@@ -98,7 +98,7 @@
       "symbolSize": 150,
       "symbolStrokeWidth": 2.5,
       "labelFontSize": 14,
-      "title": {"{{REPLACE_PARAM}}": "group"},
+      "title": {"{{REPLACE_PARAM}}": "facet_by"},
       "titleFontSize": 16,
       "encode": {
       "symbols": {
@@ -115,12 +115,12 @@
 
   "marks": [
     {
-      "type": "group",
+      "type": "facet_by",
       "from": {
         "facet": {
           "name": "series",
           "data": "table",
-          "groupby": {"{{REPLACE_PARAM}}": "group"}
+          "facet_byby": {"{{REPLACE_PARAM}}": "facet_by"}
         }
       },
       "marks": [
@@ -133,7 +133,7 @@
               "y": {"scale": "y_scale", "field": {"signal": "yField"}},
               "interpolate": {"signal": "curveType"},
               "stroke": {"scale": "color_scale",
-                         "field": {"{{REPLACE_PARAM}}": "group"}},
+                         "field": {"{{REPLACE_PARAM}}": "facet_by"}},
               "strokeWidth": {"value": 2.5},
               "strokeOpacity": {"value": 1}
             }
@@ -148,7 +148,7 @@
               "y": {"scale": "y_scale", "field": {"signal": "yField"}},
               "shape": {"value": "circle"},
               "stroke": {"scale": "color_scale",
-                         "field": {"{{REPLACE_PARAM}}": "group"}},
+                         "field": {"{{REPLACE_PARAM}}": "facet_by"}},
               "strokeWidth": {"value": 2.5},
               "fill": {"value": "white"},
               "size": {"value": 100}
