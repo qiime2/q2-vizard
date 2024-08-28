@@ -5,27 +5,20 @@
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": " "
+    "subtitle": {"{{REPLACE_PARAM}}": "subtitle"}
   },
   "width": 900,
   "height": 900,
   "padding": 20,
 
   "signals": [
-    {"name": "title",
-    "value": {"{{REPLACE_PARAM}}": "title"},
-    "bind": {"input": "input"}
-   },
-   {
-     "name": "yField",
-     "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
-     "bind": {
-       "input": "select",
-       "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-     }
+    {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
     },
     {
-      "name": "curveType",
+      "name": "lineType",
       "value": "linear",
       "bind": {
         "input": "select",
@@ -34,22 +27,139 @@
           "step"
         ]
       }
+    },
+    {
+      "name": "tooltip",
+      "value": {},
+      "on": [
+        {
+          "events": "rect:mouseover",
+          "update": "datum"
+        },
+        {
+          "events": "rect:mouseout",
+          "update": "{}"
+        }
+      ]
+    },
+    {
+      "name": "clear",
+      "value": true,
+      "on": [
+        {
+          "events": "pointerup[!event.item]",
+          "update": "true",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "shift",
+      "value": false,
+      "on": [
+        {
+          "events": "@legendSymbol:click, @legendLabel:click",
+          "update": "event.shiftKey",
+          "force":  true
+        }
+      ]
+    },
+    {
+      "name": "clicked",
+      "value": null,
+      "on": [
+        {
+          "events": "@legendSymbol:click, @legendLabel:click",
+          "update": "{value: datum.value}",
+          "force":  true
+        }
+      ]
+    },
+    {
+      "name": "brush",
+      "value": 0,
+      "on": [
+        {
+          "events": {"signal": "clear"},
+          "update": "clear ? [0, 0] : brush"
+        },
+        {
+          "events": "@xaxis:pointerdown",
+          "update": "[x(), x()]"
+        },
+        {
+          "events": "[@xaxis:pointerdown, window:pointerup] > window:pointermove!",
+          "update": "[brush[0], clamp(x(), 0, width)]"
+        },
+        {
+          "events": {"signal": "delta"},
+          "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+        }
+      ]
+    },
+    {
+      "name": "anchor",
+      "value": null,
+      "on": [
+        {
+          "events": "@brush:pointerdown",
+          "update": "slice(brush)"
+        }
+      ]
+    },
+    {
+      "name": "xdown",
+      "value": 0,
+      "on": [
+        {
+          "events": "@brush:pointerdown",
+          "update": "x()"
+        }
+      ]
+    },
+    {
+      "name": "delta",
+      "value": 0,
+      "on": [
+        {
+          "events": "[@brush:pointerdown, window:pointerup] > window:pointermove!",
+          "update": "x() - xdown"
+        }
+      ]
+    },
+    {
+      "name": "domain",
+      "on": [
+        {
+          "events": {"signal": "brush"},
+          "update": "span(brush) ? invert('x', brush) : null"
+        }
+      ]
     }
   ],
 
   "data": [
-    {"name": "table",
-     "values": {"{{REPLACE_PARAM}}": "metadata"}
+    {
+      "name": "scatter_table",
+      "values": {"{{REPLACE_PARAM}}": "ordered_metadata"}
+    },
+    {
+      "name": "line_table",
+      "values": {"{{REPLACE_PARAM}}": "averaged_metadata"}
     }
   ],
 
   "scales": [
     {
       "name": "x_scale",
-      "type": "point",
+      "type": "linear",
       "range": "width",
-      "domain": {"data": "table",
-                 "field": {"{{REPLACE_PARAM}}": "x_measure"}}
+      "nice": true,
+      "zero": true,
+      "domain": {
+        "data": "scatter_table",
+        "field": {"{{REPLACE_PARAM}}": "x_measure"}
+      }
     },
     {
       "name": "y_scale",
@@ -57,16 +167,20 @@
       "range": "height",
       "nice": true,
       "zero": true,
-      "domain": {"data": "table",
-                 "field": {"signal": "yField"}}
+      "domain": {
+        "data": "scatter_table",
+        "field": {"{{REPLACE_PARAM}}": "y_measure"}
+      }
     },
     {
       "name": "color_scale",
       "type": "ordinal",
       "range": "category",
-      "domain": {"data": "table",
-                 "field": {"{{REPLACE_PARAM}}": "facet_by"},
-                 "sort": true}
+      "domain": {
+        "data": "line_table",
+        "field": {"{{REPLACE_PARAM}}": "facet_by"},
+        "sort": true
+      }
     }
 ],
 
@@ -86,7 +200,7 @@
       "labelFontSize": 12,
       "grid": true,
       "orient": "left",
-      "title": {"signal": "yField"},
+      "title": {"{{REPLACE_PARAM}}": "y_measure"},
       "titleFontSize": 14,
       "titlePadding": 20
     }
@@ -101,11 +215,11 @@
       "title": {"{{REPLACE_PARAM}}": "facet_by"},
       "titleFontSize": 16,
       "encode": {
-      "symbols": {
+        "symbols": {
           "name": "legendSymbol",
           "interactive": false
-      },
-      "labels": {
+        },
+        "labels": {
           "name": "legendLabel",
           "interactive": false
         }
@@ -115,25 +229,32 @@
 
   "marks": [
     {
-      "type": "facet_by",
+      "type": "group",
       "from": {
         "facet": {
-          "name": "series",
-          "data": "table",
-          "facet_byby": {"{{REPLACE_PARAM}}": "facet_by"}
+          "name": "lines",
+          "data": "line_table",
+          "groupby": {"{{REPLACE_PARAM}}": "facet_by"}
         }
       },
       "marks": [
         {
           "type": "line",
-          "from": {"data": "series"},
+          "from": {"data": "lines"},
           "encode": {
             "update": {
-              "x": {"scale": "x_scale", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
-              "y": {"scale": "y_scale", "field": {"signal": "yField"}},
-              "interpolate": {"signal": "curveType"},
-              "stroke": {"scale": "color_scale",
-                         "field": {"{{REPLACE_PARAM}}": "facet_by"}},
+              "x": {
+                "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "x_measure"}
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "y_measure"}},
+              "interpolate": {"signal": "lineType"},
+              "stroke": {
+                "scale": "color_scale",
+                "field": {"{{REPLACE_PARAM}}": "facet_by"}
+              },
               "strokeWidth": {"value": 2.5},
               "strokeOpacity": {"value": 1}
             }
@@ -141,17 +262,32 @@
         },
         {
           "type": "symbol",
-          "from": {"data": "series"},
+          "from": {"data": "scatter_table"},
           "encode": {
             "update": {
-              "x": {"scale": "x_scale", "field": {"{{REPLACE_PARAM}}": "x_measure"}},
-              "y": {"scale": "y_scale", "field": {"signal": "yField"}},
+              "x": {
+                "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "x_measure"}
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "y_measure"}
+              },
               "shape": {"value": "circle"},
-              "stroke": {"scale": "color_scale",
-                         "field": {"{{REPLACE_PARAM}}": "facet_by"}},
+              "stroke": {
+                "scale": "color_scale",
+                "field": {"{{REPLACE_PARAM}}": "facet_by"}
+              },
               "strokeWidth": {"value": 2.5},
               "fill": {"value": "white"},
               "size": {"value": 100}
+            },
+            "hover": {
+              "fill": {
+                "scale": "color_scale",
+                "field": {"{{REPLACE_PARAM}}": "facet_by"}
+              },
+              "tooltip": {"signal": "datum"}
             }
           }
         }

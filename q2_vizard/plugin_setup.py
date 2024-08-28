@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool, TypeMap
+from qiime2.plugin import (Plugin, Metadata, Str, Choices, Bool)
 from q2_stats._type import (Dist1D, Matched, Ordered)
 
 from q2_vizard.heatmap import plot_heatmap
@@ -21,11 +21,6 @@ plugin = Plugin(name='vizard',
                 description='This QIIME 2 plugin is the first choice of wizard'
                             ' lizards for protection and entertainment.',
                 short_description='The first choice of wizard lizards.')
-
-T_replicates, T_average = TypeMap({
-    Bool % Choices(False): None,
-    Bool % Choices(True): Str % Choices('median', 'mean')
-})
 
 # TODO: refactor
 plugin.visualizers.register_function(
@@ -73,8 +68,8 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
-        'replicates': T_replicates,
-        'average': T_average,
+        'replicates': Bool,
+        'average': Str % Choices('median', 'mean'),
         'facet_by': Str,
         'title': Str
     },
