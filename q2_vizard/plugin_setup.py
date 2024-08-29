@@ -6,8 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (Plugin, Metadata, Str, Choices, Bool)
-from q2_stats._type import (Dist1D, Matched, Ordered)
+from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
+from q2_stats._type import Dist1D, Matched, Ordered
 
 from q2_vizard.heatmap import plot_heatmap
 from q2_vizard.scatterplot import scatterplot_2d

@@ -23,6 +23,7 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
+    md['legendDefault'] = 'data'
 
     # handling categorical columns for color grouping
     md_cols_categorical = \
@@ -35,12 +36,12 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
                             col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
-    # and adding 'none' for removing color-coding
-    md_cols_categorical.append('none')
-    if color_by:
-        group_dropdown_default = color_by
+    # and adding 'legendDefault' for removing color-coding
+    md_cols_categorical.append('legendDefault')
+    if color_by_group:
+        group_dropdown_default = color_by_group
     else:
-        group_dropdown_default = md_cols_categorical[0]
+        group_dropdown_default = md_cols_categorical['legendDefault']
 
     # handling numeric columns for x/y plotting
     md_cols_numeric = \
