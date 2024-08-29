@@ -7,10 +7,10 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
-from q2_stats._type import (Dist1D, Matched, Ordered)
+from q2_stats._type import Dist1D, Matched, Ordered
 
-from q2_vizard._heatmap import plot_heatmap
-from q2_vizard._scatterplot import scatterplot_2d
+from q2_vizard.heatmap import plot_heatmap
+from q2_vizard.scatterplot import scatterplot_2d
 
 
 plugin = Plugin(name='vizard',
@@ -48,13 +48,13 @@ plugin.visualizers.register_function(
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
                 ' measures with optional categorical color grouping.',
     parameter_descriptions={
-        'metadata': "Any metadata-like input with at least two"
-                    " numeric measures for visualizing.",
-        'x_measure': "Numeric measure from the input Metadata that should be"
-                     " plotted on the x-axis.",
-        'y_measure': "Numeric measure from the input Metadata that should be"
-                     " plotted on the y-axis.",
-        'color_by_group': "Categorical measure from the input Metadata that"
-                          " should be used for color-coding the scatterplot.",
-        'title': "The title of the scatterplot."}
+        'metadata': 'Any metadata-like input with at least two'
+                    ' numeric measures for visualizing.',
+        'x_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the x-axis.',
+        'y_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the y-axis.',
+        'color_by_group': 'Categorical measure from the input Metadata that'
+                          ' should be used for color-coding the scatterplot.',
+        'title': 'The title of the scatterplot.'}
 )
