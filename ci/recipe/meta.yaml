@@ -8,7 +8,7 @@ source:
 build:
   script-env:
     - PLUGIN_VERSION
-  script: {{ PYTHON }} -m pip install -v .
+  script: make install
 
 requirements:
   build:
