@@ -1,250 +1,176 @@
 {
-    "$schema": "https://vega.github.io/schema/vega/v5.json",
-    "title": {
-      "text": {"signal": "title"},
-      "fontSize": 20,
-      "orient": "top",
-      "anchor": "start",
-      "subtitle": " "
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "title": {
+    "text": {"signal": "title"},
+    "fontSize": 20,
+    "orient": "top",
+    "anchor": "start",
+    "subtitle": " "
+  },
+  "autosize": {
+    "type": "pad",
+    "resize": true
+  },
+  "width": 900,
+  "height": 900,
+  "padding": 20,
+
+  "signals": [
+    {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
     },
-    "width": 900,
-    "height": 900,
-    "padding": 20,
-
-    "signals": [
-      {"name": "title",
-       "value": {"{{REPLACE_PARAM}}": "title"},
-       "bind": {"input": "input"}
-      },
-      {
-        "name": "colorBy",
-        "value": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
-        "bind": {
-          "input": "select",
-          "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
-        }
-      },
-      {
-        "name": "xField",
-        "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
-        "bind": {
-          "input": "select",
-          "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-        }
-      },
-      {
-        "name": "yField",
-        "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
-        "bind": {
-          "input": "select",
-          "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-        }
-      },
-      {
-        "name": "tooltip",
-        "value": {},
-        "on": [
-          {"events": "rect:mouseover", "update": "datum"},
-          {"events": "rect:mouseout",  "update": "{}"}
-        ]
-      },
-
-      {
-        "name": "clear", "value": true,
-        "on": [
-          {
-            "events": "pointerup[!event.item]",
-            "update": "true",
-            "force": true
-          }
-        ]
-      },
-      {
-        "name": "shift", "value": false,
-        "on": [
-          {
-            "events": "@legendSymbol:click, @legendLabel:click",
-            "update": "event.shiftKey",
-            "force":  true
-          }
-        ]
-      },
-      {
-        "name": "clicked", "value": null,
-        "on": [
-          {
-            "events": "@legendSymbol:click, @legendLabel:click",
-            "update": "{value: datum.value}",
-            "force":  true
-          }
-        ]
-      },
-      {
-        "name": "brush", "value": 0,
-        "on": [
-          {
-            "events": {"signal": "clear"},
-            "update": "clear ? [0, 0] : brush"
-          },
-          {
-            "events": "@xaxis:pointerdown",
-            "update": "[x(), x()]"
-          },
-          {
-            "events": "[@xaxis:pointerdown, window:pointerup] > window:pointermove!",
-            "update": "[brush[0], clamp(x(), 0, width)]"
-          },
-          {
-            "events": {"signal": "delta"},
-            "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
-          }
-        ]
-      },
-      {
-        "name": "anchor", "value": null,
-        "on": [{"events": "@brush:pointerdown", "update": "slice(brush)"}]
-      },
-      {
-        "name": "xdown", "value": 0,
-        "on": [{"events": "@brush:pointerdown", "update": "x()"}]
-      },
-      {
-        "name": "delta", "value": 0,
-        "on": [
-          {
-            "events": "[@brush:pointerdown, window:pointerup] > window:pointermove!",
-            "update": "x() - xdown"
-          }
-        ]
-      },
-      {
-        "name": "domain",
-        "on": [
-          {
-            "events": {"signal": "brush"},
-            "update": "span(brush) ? invert('x', brush) : null"
-          }
-        ]
+    {
+      "name": "colorBy",
+      "value": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
       }
-    ],
-
-    "data": [
-      {
-        "name": "table",
-        "values": {"{{REPLACE_PARAM}}": "metadata"}
-      },
-      {
-        "name": "selected",
-        "on": [
-          {"trigger": "clear", "remove": true},
-          {"trigger": "!shift", "remove": true},
-          {"trigger": "!shift && clicked", "insert": "clicked"},
-          {"trigger": "shift && clicked", "toggle": "clicked"}
-        ]
+    },
+    {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
       }
-    ],
-
-    "scales": [
-      {
-        "name": "x_scale_width",
-        "domain": {"data": "table",
-                   "field": {"signal": "xField"}},
-        "range": "width",
-        "nice": true
-      },
-      {
-        "name": "y_scale_height",
-        "domain": {"data": "table",
-                   "field": {"signal": "yField"}},
-        "range": "height",
-        "nice": true
-      },
-      {
-        "name": "x_scale",
-        "domain": {"signal": "domain('x_scale_width')"},
-        "range": "width"
-      },
-      {
-        "name": "y_scale",
-        "domain": {"signal": "domain('y_scale_height')"},
-        "range": "height"
-      },
-      {
-        "name": "color_scale",
-        "type": "ordinal",
-        "domain": {"data": "table",
-                   "field": {"signal": "colorBy"},
-                   "sort": true},
-        "range": {"scheme": "category10"}
+    },
+    {
+      "name": "yField",
+      "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
       }
-    ],
+    }
+  ],
 
-    "axes": [
-      {
-        "scale": "x_scale",
-        "labelFontSize": 12,
-        "grid": true,
-        "orient": "bottom",
-        "tickCount": 5,
-        "title": {"signal": "xField"},
-        "titleFontSize": 14,
-        "titlePadding": 20
+  "data": [
+    {
+      "name": "table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x_scale_width",
+      "domain": {
+        "data": "table",
+        "field": {"signal": "xField"}
       },
-      {
-        "scale": "y_scale",
-        "labelFontSize": 12,
-        "grid": true,
-        "orient": "left",
-        "title": {"signal": "yField"},
-        "titleFontSize": 14,
-        "titlePadding": 20
-      }
-    ],
+      "range": "width",
+      "nice": true
+    },
+    {
+      "name": "y_scale_height",
+      "domain": {
+        "data": "table",
+        "field": {"signal": "yField"}
+      },
+      "range": "height",
+      "nice": true
+    },
+    {
+      "name": "x_scale",
+      "domain": {"signal": "domain('x_scale_width')"},
+      "range": "width"
+    },
+    {
+      "name": "y_scale",
+      "domain": {"signal": "domain('y_scale_height')"},
+      "range": "height"
+    },
+    {
+      "name": "color_scale",
+      "type": "ordinal",
+      "domain": {
+        "data": "table",
+        "field": {"signal": "colorBy"},
+        "sort": true
+      },
+      "range": {"scheme": "category10"}
+    }
+  ],
 
-    "legends": [
-      {
-        "stroke": "color_scale",
-        "symbolSize": 150,
-        "symbolStrokeWidth": 2.5,
-        "labelFontSize": 14,
-        "title": {"signal": "colorBy"},
-        "titleFontSize": 16,
-        "encode": {
-          "symbols": {
-            "name": "legendSymbol",
-            "interactive": false
-          },
-          "labels": {
-            "name": "legendLabel",
-            "interactive": false
-          }
+  "axes": [
+    {
+      "scale": "x_scale",
+      "labelFontSize": 12,
+      "grid": true,
+      "orient": "bottom",
+      "tickCount": 5,
+      "title": {"signal": "xField"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    },
+    {
+      "scale": "y_scale",
+      "labelFontSize": 12,
+      "grid": true,
+      "orient": "left",
+      "title": {"signal": "yField"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    }
+  ],
+
+  "legends": [
+    {
+      "stroke": "color_scale",
+      "symbolSize": 150,
+      "symbolStrokeWidth": 2.5,
+      "labelFontSize": 14,
+      "title": {"signal": "colorBy"},
+      "titleFontSize": 16,
+      "encode": {
+        "symbols": {
+          "name": "legendSymbol",
+          "interactive": false
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": false
         }
       }
-    ],
+    }
+  ],
 
-    "marks": [
-      {
-        "name": "marks",
-        "type": "symbol",
-        "from": {"data": "table"},
-        "encode": {
-          "update": {
-            "x": {"scale": "x_scale", "field": {"signal": "xField"}},
-            "y": {"scale": "y_scale", "field": {"signal": "yField"}},
-            "shape": {"value": "circle"},
-            "strokeWidth": {"value": 2.5},
-            "size": {"value": 150},
-            "stroke": [
-              {"test": "(!length(data('selected')) || indata('selected', 'value', colorBy))", "scale": "color_scale", "field": {"signal": "colorBy"}},
-              {"value": "#ccc"}
-            ],
-            "fill": {"value": "transparent"}
+  "marks": [
+    {
+      "name": "marks",
+      "type": "symbol",
+      "from": {"data": "table"},
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x_scale",
+            "field": {"signal": "xField"}
           },
-          "hover": {
-            "fill": {"scale": "color_scale", "field": {"signal": "colorBy"}},
-            "tooltip": {"signal": "datum"}
-          }
+          "y": {
+            "scale": "y_scale",
+            "field": {"signal": "yField"}},
+          "shape": {"value": "circle"},
+          "strokeWidth": {"value": 2.5},
+          "size": {"value": 150},
+          "stroke": [
+            {
+              "scale": "color_scale",
+              "field": {"signal": "colorBy"}
+            }
+          ],
+          "fill": {"value": "transparent"}
+        },
+        "hover": {
+          "fill": {
+            "scale": "color_scale",
+            "field": {"signal": "colorBy"}
+          },
+          "tooltip": {"signal": "datum"}
         }
       }
-    ]
-  }
+    }
+  ]
+}
