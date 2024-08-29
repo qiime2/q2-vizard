@@ -38,8 +38,8 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     # setting default (or selected) group measure for color-coding
     # and adding 'legendDefault' for removing color-coding
     md_cols_categorical.append('legendDefault')
-    if color_by_group:
-        group_dropdown_default = color_by_group
+    if color_by:
+        group_dropdown_default = color_by
     else:
         group_dropdown_default = md_cols_categorical['legendDefault']
 
