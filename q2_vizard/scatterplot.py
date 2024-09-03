@@ -41,7 +41,7 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     if color_by_group:
         group_dropdown_default = color_by_group
     else:
-        group_dropdown_default = md_cols_categorical['legendDefault']
+        group_dropdown_default = 'legendDefault'
 
     # handling numeric columns for x/y plotting
     md_cols_numeric = \
