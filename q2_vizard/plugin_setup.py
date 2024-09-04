@@ -11,6 +11,7 @@ from q2_stats._type import Dist1D, Matched, Ordered
 
 from q2_vizard.heatmap import plot_heatmap
 from q2_vizard.scatterplot import scatterplot_2d
+from q2_vizard.boxplot import boxplot
 
 
 plugin = Plugin(name='vizard',
@@ -57,4 +58,41 @@ plugin.visualizers.register_function(
         'color_by_group': 'Categorical measure from the input Metadata that'
                           ' should be used for color-coding the scatterplot.',
         'title': 'The title of the scatterplot.'}
+)
+
+
+plugin.visualizers.register_function(
+    function=boxplot,
+    inputs={},
+    parameters={
+        'metadata': Metadata,
+        'distribution': Str,
+        'facet_by': Str,
+        'average_method': Str % Choices('median', 'mean'),
+        'whisker_range': Str % Choices('iqr', 'percentile'),
+        'title': Str
+    },
+    name='Boxplot',
+    description='Basic boxplot for visualizing a numeric Metadata measure'
+                ' faceted by a categorical Metadata measure with choices for'
+                ' average method and whisker range.',
+    parameter_descriptions={
+        'metadata': 'Any metadata-like input with at least one numeric measure'
+                    ' and one categorical measure for visualizing.',
+        'distribution': 'The numeric measure that will be used to create each'
+                        ' box plot distribution.',
+        'facet_by': 'The categorical measure that will be used to facet each'
+                    ' group into separate box plots. If left blank, all data'
+                    ' will be represented within a single box.',
+        'average_method': 'The method that will be used to determine the'
+                          ' average for each group represented. Options are'
+                          ' either `mean` or `median` with `median` as the'
+                          ' default.',
+        'whisker_range': 'The range that will be used for calculating the'
+                         ' whisker lengths for each box. Options are `iqr`'
+                         ' or `percentile`. Any data points that fall outside'
+                         ' of the chosen range will be represented as outliers'
+                         ' plotted as circular points.',
+        'title': 'The title of the boxplot.'
+    }
 )
