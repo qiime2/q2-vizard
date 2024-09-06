@@ -7,10 +7,10 @@
 # ----------------------------------------------------------------------------
 
 from ._version import get_versions
-from .heatmap import plot_heatmap
+from .heatmap import heatmap
 from .scatterplot import scatterplot_2d
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['plot_heatmap', 'scatterplot_2d']
+__all__ = ['heatmap', 'scatterplot_2d']
