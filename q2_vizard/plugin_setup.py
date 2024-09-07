@@ -33,9 +33,8 @@ plugin.visualizers.register_function(
         'title': Str
     },
     name='Heatmap',
-    description={
-        'Basic heatmap for visualizing three numeric Metadata measures.'
-    },
+    description='Basic heatmap for visualizing '
+                'three numeric Metadata measures.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input that contains at least three'
                     ' numeric measures for visualizing.',
