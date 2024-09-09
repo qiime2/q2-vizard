@@ -5,7 +5,7 @@
 The first choice of wizard lizards for interactive, generalized microbiome data visualization!
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/vizarded-lizard-wizard.png)
 
-Please note that q2-vizard is currently in an alpha release state. While this plugin can be installed as a conda package, it has not been tested in integration against our other plugins yet. It is slated to be officially released in 2024.10 within the QIIME 2 Amplicon Distribution. In the meantime, please follow install instructions below if you'd like to take it for a test drive!
+**Please note that q2-vizard is currently in an alpha release state.** While this plugin can be installed as a conda package, _it has not been tested in integration against our other plugins yet and its API is still subject to change_. It is slated to be officially released in 2024.10 within the QIIME 2 Amplicon and Metagenome distributions. In the meantime, please follow install instructions below if you'd like to take it for a test drive!
 
 ## Installing q2-vizard (pre-2024.10 Release)
 
