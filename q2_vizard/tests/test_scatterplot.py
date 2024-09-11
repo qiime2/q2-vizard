@@ -43,6 +43,11 @@ class TestScatterplot(TestPluginBase):
             data=data, index=md_index, dtype=object,
             columns=['A', 'foobar', 'B', 'bodysite', 'Z']))
 
+        self.test_cases = [
+            ('B', 'Z', 'foobar', 'B', 'Z', 'foobar'),
+            ('', '', '', 'A', 'A', 'legendDefault')
+        ]
+
     # utility method that will run all checks for scatterplot
     # used in each browser test below (firefox & chrome supported)
     def _selenium_scatterplot_test(self, driver, x, y, color,
@@ -75,13 +80,8 @@ class TestScatterplot(TestPluginBase):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
-        test_cases = [
-            ('B', 'Z', 'foobar', 'B', 'Z', 'foobar'),
-            ('', '', '', 'A', 'A', 'legendDefault')
-        ]
-
         with webdriver.Chrome(options=chrome_options) as driver:
-            for x, y, color, exp_x, exp_y, exp_color in test_cases:
+            for x, y, color, exp_x, exp_y, exp_color in self.test_cases:
                 with self.subTest(x=x, y=y, color=color, exp_x=exp_x,
                                   exp_y=exp_y, exp_color=exp_color):
                     self._selenium_scatterplot_test(driver, x, y, color,
@@ -92,13 +92,8 @@ class TestScatterplot(TestPluginBase):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
 
-        test_cases = [
-            ('B', 'Z', 'foobar', 'B', 'Z', 'foobar'),
-            ('', '', '', 'A', 'A', 'legendDefault')
-        ]
-
         with webdriver.Firefox(options=firefox_options) as driver:
-            for x, y, color, exp_x, exp_y, exp_color in test_cases:
+            for x, y, color, exp_x, exp_y, exp_color in self.test_cases:
                 with self.subTest(x=x, y=y, color=color, exp_x=exp_x,
                                   exp_y=exp_y, exp_color=exp_color):
                     self._selenium_scatterplot_test(driver, x, y, color,
