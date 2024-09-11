@@ -8,3 +8,4 @@ dependencies:
   - pip
   - pip:
     - q2_vizard@git+https://github.com/qiime2/q2-vizard.git@dev
+    - selenium
