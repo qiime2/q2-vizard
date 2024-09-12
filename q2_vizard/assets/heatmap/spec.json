@@ -56,7 +56,8 @@
       "type": "band",
       "domain": {
         "data": "table",
-        "field": {"{{REPLACE_PARAM}}": "x_measure"}
+        "field": {"{{REPLACE_PARAM}}": "x_measure"},
+        "sort": true
       },
       "range": "width"
     },
@@ -65,7 +66,8 @@
       "type": "band",
       "domain": {
         "data": "table",
-        "field": {"{{REPLACE_PARAM}}": "y_measure"}
+        "field": {"{{REPLACE_PARAM}}": "y_measure"},
+        "sort": true
       },
       "range": "height"
     },
