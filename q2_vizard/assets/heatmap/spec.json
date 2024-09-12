@@ -57,7 +57,9 @@
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "x_measure"},
-        "sort": true
+        "sort": {
+          "order": "ascending"
+        }
       },
       "range": "width"
     },
@@ -67,7 +69,9 @@
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "y_measure"},
-        "sort": true
+        "sort": {
+          "order": "descending"
+        }
       },
       "range": "height"
     },
