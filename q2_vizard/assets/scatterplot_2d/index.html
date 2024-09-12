@@ -27,15 +27,12 @@
       font-family: monospace;
     }
     .vega-bind {
-    margin-right: 50px;
-    vertical-align: middle
+      margin-right: 50px;
+      vertical-align: middle;
     }
-
     .vega-bind span {
-    display: flex;
+      display: flex;
     }
-
-
   </style>
 </head>
 <body>
@@ -46,6 +43,20 @@
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+
+    // Use the view API to extract the marks data
+    var view = result.view;
+
+    // Get the data from the "table" dataset used to draw the marks
+    var marks = view.data('table');
+
+    // Extract the position of each mark
+    marks.forEach(function(mark) {
+      var x = view.scale('x_scale')(mark[view.signal('xField')]);
+      var y = view.scale('y_scale')(mark[view.signal('yField')]);
+      console.log('Mark position: x = ' + x + ', y = ' + y);
+    });
+
   }).catch(console.error);
 </script>
 </body>

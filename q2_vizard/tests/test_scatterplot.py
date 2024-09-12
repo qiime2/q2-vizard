@@ -75,12 +75,23 @@ class TestScatterplot(TestPluginBase):
             for field_name, expected_value in dropdown_fields:
                 _dropdown_util(field=field_name, exp=expected_value)
 
+    def _print_mark_positions(self, driver):
+        marks = driver.find_elements(By.CSS_SELECTOR, "circle")
+
+        # Print the positions of each mark (cx and cy for <circle>)
+        for mark in marks:
+            actual_x = mark.get_attribute("cx")
+            actual_y = mark.get_attribute("cy")
+            raise ValueError(f"Mark position: x = {actual_x}, y = {actual_y}")
+
     # run selenium checks with a chrome driver
     def test_scatterplot_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
         with webdriver.Chrome(options=chrome_options) as driver:
+            self._print_mark_positions(driver)
+
             for x, y, color, exp_x, exp_y, exp_color in self.test_cases:
                 with self.subTest(x=x, y=y, color=color, exp_x=exp_x,
                                   exp_y=exp_y, exp_color=exp_color):
