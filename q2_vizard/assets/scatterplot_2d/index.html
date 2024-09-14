@@ -41,21 +41,29 @@
 
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
-  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
-    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
 
-    // Use the view API to extract the marks data
+  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     var view = result.view;
 
-    // Get the data from the "table" dataset used to draw the marks
-    var marks = view.data('table');
+    // Ensure all elements in the SVG have identifiable attributes.
+    var svg = document.querySelector('#viz svg');
 
-    // Extract the position of each mark
-    marks.forEach(function(mark) {
-      var x = view.scale('x_scale')(mark[view.signal('xField')]);
-      var y = view.scale('y_scale')(mark[view.signal('yField')]);
-      console.log('Mark position: x = ' + x + ', y = ' + y);
+    // Add class to the marks for easy selection in Selenium
+    var marks = svg.querySelectorAll('g.marks > path');
+    marks.forEach(function(mark, index) {
+      mark.setAttribute('class', 'mark-' + index); // Assign a unique class to each mark
     });
+
+    // Add unique IDs/classes to axes and legends
+    var axes = svg.querySelectorAll('.role-axis');
+    axes.forEach(function(axis, index) {
+      axis.setAttribute('class', 'axis-' + index); // Assign unique class to each axis
+    });
+
+    var legend = svg.querySelector('.role-legend');
+    if (legend) {
+      legend.setAttribute('id', 'legend'); // Assign an ID to the legend for easy access
+    }
 
   }).catch(console.error);
 </script>
