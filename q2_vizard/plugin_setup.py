@@ -12,6 +12,7 @@ from q2_stats._type import Dist1D, Matched, Ordered
 from q2_vizard.heatmap import plot_heatmap
 from q2_vizard.scatterplot import scatterplot_2d
 
+import q2_vizard._examples as ex
 
 plugin = Plugin(name='vizard',
                 version='0.0.1.dev0',
@@ -44,9 +45,6 @@ plugin.visualizers.register_function(
         'color_by_group': Str,
         'title': Str
     },
-    name='2D Scatterplot',
-    description='Basic 2D scatterplot for visualizing two numeric Metadata'
-                ' measures with optional categorical color grouping.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input with at least two'
                     ' numeric measures for visualizing.',
@@ -56,5 +54,10 @@ plugin.visualizers.register_function(
                      ' plotted on the y-axis.',
         'color_by_group': 'Categorical measure from the input Metadata that'
                           ' should be used for color-coding the scatterplot.',
-        'title': 'The title of the scatterplot.'}
+        'title': 'The title of the scatterplot.'},
+    name='2D Scatterplot',
+    description='Basic 2D scatterplot for visualizing two numeric Metadata'
+                ' measures with optional categorical color grouping.',
+    examples={'scatterplot_defaults': ex.scatterplot_defaults,
+              'scatterplot_all_measures': ex.scatterplot_all_measures}
 )

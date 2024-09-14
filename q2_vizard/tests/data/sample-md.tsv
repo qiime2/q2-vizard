@@ -1,0 +1,10 @@
+sample_name	barcode	mouse_id	genotype	cage_id	donor	donor_status	days_post_transplant	genotype_and_donor_status	numeric_col
+#q2:types		categorical	categorical	categorical	categorical	categorical	numeric	categorical	numeric
+recip.391.ASO.PD2.D7	GGTCTTAGCACC	435	susceptible	C31	hc_1	Healthy	14	susceptible and Healthy	17
+recip.459.WT.HC3.D14	ACATGGGCGGAA	468	wild type	C42	hc_1	Healthy	7	wild type and Healthy	71
+recip.459.WT.HC3.D21	CATAAATTCTTG	469	wild type	C42	hc_1	Healthy	49	wild type and Healthy	88
+recip.459.WT.HC3.D49	GCTGCGTATACC	536	susceptible	C43	pd_1	Healthy	21	susceptible and PD	47
+recip.391.ASO.PD2.D9						PD	14		13
+recip.391.ASO.PD2.D12						PD	7		66
+recip.391.ASO.PD2.D19						PD	49		71
+recip.459.WT.HC3.D24						PD	21		35

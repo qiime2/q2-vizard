@@ -21,3 +21,34 @@ def md_factory():
     return qiime2.Metadata.load(
         _get_data_from_tests('sample-md.tsv')
     )
+
+
+def scatterplot_defaults(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    scatterplot_viz, = use.action(
+        use.UsageAction('vizard', 'scatterplot_2d'),
+        use.UsageInputs(
+            metadata=metadata
+        ),
+        use.UsageOutputNames(
+            visualization='scatterplot'
+        )
+    )
+
+
+def scatterplot_all_measures(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    scatterplot_viz, = use.action(
+        use.UsageAction('vizard', 'scatterplot_2d'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='days_post_transplant',
+            y_measure='numeric_col',
+            color_by_group='genotype',
+        ),
+        use.UsageOutputNames(
+            visualization='scatterplot'
+        )
+    )
