@@ -11,9 +11,32 @@
     "type": "pad",
     "resize": true
   },
-  "width": 900,
-  "height": 900,
+  "width": {"signal": "columnWidth * nColumns"},
+  "height": {"signal": "rowHeight * nRows"},
   "padding": 20,
+
+  "data": [
+    {
+      "name": "table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    },
+    {
+      "name": "rowTable",
+      "source": "table",
+      "transform": [{
+        "type": "aggregate",
+        "groupby": [{"{{REPLACE_PARAM}}": "y_measure"}]
+      }]
+    },
+    {
+      "name": "columnTable",
+      "source": "table",
+      "transform": [{
+        "type": "aggregate",
+        "groupby": [{"{{REPLACE_PARAM}}": "x_measure"}]
+      }]
+    }
+  ],
 
   "signals": [
     {
@@ -32,21 +55,37 @@
       "bind": {
         "input": "select",
         "options": [
-          "Inferno",
-          "Viridis",
-          "Magma",
-          "Greys",
-          "Plasma",
-          "Cividis"
+          "Inferno", "Viridis", "Magma", "Greys", "Plasma", "Cividis"
         ]
       }
-    }
-  ],
-
-  "data": [
+    },
     {
-      "name": "table",
-      "values": {"{{REPLACE_PARAM}}": "metadata"}
+      "name": "nRows",
+      "value": 1,
+      "update": "length(data('rowTable'))"
+    },
+    {
+      "name": "nColumns",
+      "value": 1,
+      "update": "length(data('columnTable'))"
+    },
+    {
+      "name": "rowHeight",
+      "value": 45,
+      "bind": {
+        "input": "range",
+        "min": 5,
+        "max": 200
+      }
+    },
+    {
+      "name": "columnWidth",
+      "value": 45,
+      "bind": {
+        "input": "range",
+        "min": 5,
+        "max": 200
+      }
     }
   ],
 
@@ -61,7 +100,7 @@
           "order": "ascending"
         }
       },
-      "range": "width"
+      "range": [0, {"signal": "columnWidth * nColumns"}]
     },
     {
       "name": "y_scale",
@@ -73,7 +112,7 @@
           "order": "descending"
         }
       },
-      "range": "height"
+      "range": [0, {"signal": "rowHeight * nRows"}]
     },
     {
       "name": "color",
@@ -117,7 +156,7 @@
       "title": {"{{REPLACE_PARAM}}": "gradient_measure"},
       "titleFontSize": 12,
       "titlePadding": 4,
-      "gradientLength": {"signal": "height - 16"}
+      "gradientLength": {"signal": "(rowHeight * nRows) - 16"}
     }
   ],
 
@@ -126,7 +165,7 @@
       "type": "rect",
       "from": {"data": "table"},
       "encode": {
-        "enter": {
+        "update": {
           "x": {
             "scale": "x_scale",
             "field": {"{{REPLACE_PARAM}}": "x_measure"}
@@ -143,16 +182,14 @@
             "scale": "y_scale",
             "band": 1
           },
-          "tooltip": {"signal": "datum"}
-        },
-        "update": {
           "fill": {
             "scale": "color",
             "field": {"{{REPLACE_PARAM}}": "gradient_measure"}
           },
           "stroke": {
             "value": "white"
-          }
+          },
+          "tooltip": {"signal": "datum"}
         }
       }
     }
