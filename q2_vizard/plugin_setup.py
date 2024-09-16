@@ -32,15 +32,14 @@ plugin.visualizers.register_function(
         'title': Str
     },
     name='Heatmap',
-    description='Basic heatmap for visualizing '
-                'three numeric Metadata measures.',
+    description='Basic heatmap for visualizing three Metadata measures.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input that contains at least three'
-                    ' numeric measures for visualizing.',
-        'x_measure': 'Numeric measure from the input Metadata that should be'
-                     ' plotted on the x-axis.',
-        'y_measure': 'Numeric measure from the input Metadata that should be'
-                     ' plotted on the y-axis.',
+                    ' measures for visualizing, one of which must be numeric.',
+        'x_measure': 'Numeric or categorical measure from the input Metadata'
+                     ' that should be plotted on the x-axis.',
+        'y_measure': 'Numeric or categorical measure from the input Metadata'
+                     ' that should be plotted on the y-axis.',
         'gradient_measure': 'Numeric measure from the input Metadata that'
                             ' should be used to represent the color gradient'
                             ' in the heatmap.',
