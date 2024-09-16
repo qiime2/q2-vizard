@@ -149,6 +149,9 @@
           "fill": {
             "scale": "color",
             "field": {"{{REPLACE_PARAM}}": "gradient_measure"}
+          },
+          "stroke": {
+            "value": "white"
           }
         }
       }
