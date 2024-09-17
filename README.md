@@ -33,11 +33,16 @@ This visualizer provides an exploratory view of your Metadata - allowing for any
 
 [**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/l76or6ts0bz3ueztelttd/viz.qzv?rlkey=v37s02cdzp5dp56n46p3rtdch)
 
-### curveplot
-
-Coming soon!
-
 ### heatmap
+
+This visualizer generates a heatmap displaying relationships between three Metadata measures. Two of the measures (which can be either categorical or numeric) are mapped to the x and y axes. The third measure (which must be numeric) defines the color gradient of the heatmap, illustrating the intensity or distribution of values across the grid.
+
+#### Demo
+![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/heatmap_example.png)
+
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/q6yrsg1pens7fhzlv14bv/demo-heatmap.qzv?rlkey=eoomz6gw8vcku7kbfjbqurulw)
+
+### lineplot
 
 Coming soon!
 
