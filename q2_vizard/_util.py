@@ -26,7 +26,7 @@ def _json_replace(json_obj, **values):
         return json_obj
 
 
-def _measure_validation(metadata, measure, col_type):
+def _col_type_validation(metadata, measure, col_type):
     if col_type == 'categorical':
         md_type = 'CategoricalMetadataColumn'
     elif col_type == 'numeric':
@@ -35,12 +35,28 @@ def _measure_validation(metadata, measure, col_type):
         raise TypeError('Invalid column type provided. Must be `categorical`'
                         ' or `numeric`.')
 
-    if measure not in metadata.columns:
-        raise ValueError(f'`{measure}` not found as a column in the Metadata.')
-
     valid_columns_md = \
         metadata.filter_columns(column_type=col_type).to_dataframe()
     valid_columns_list = list(valid_columns_md.columns)
 
     if measure not in valid_columns_list:
         raise TypeError(f'`{measure}` not of type `{md_type}`.')
+
+
+def _measure_validation(metadata, measure):
+    # All of these characters will break the rendered Vega spec when used
+    # in the context of a column name, so we're just not going to allow them.
+    # This is easier and more transparent than removing these characters and
+    # providing a user with a rendered Vega spec with modified column name(s).
+    disallowed_chars = ['[]', '[', ']', '.', '\\', "'", '"']
+
+    if measure not in metadata.columns:
+        raise ValueError(f'`{measure}` not found as a column in the Metadata.')
+
+    for char in disallowed_chars:
+        if char in measure:
+            raise ValueError(
+                f'Metadata column: `{measure}` contains `{char}`, which cannot'
+                f' be parsed by this visualization. Please remove `{char}`'
+                ' from this Metadata column name.'
+            )

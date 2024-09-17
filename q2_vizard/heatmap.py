@@ -13,7 +13,7 @@ import pkg_resources
 
 from qiime2 import Metadata, MetadataColumn, NumericMetadataColumn
 
-from ._util import _json_replace, _measure_validation
+from ._util import _json_replace, _col_type_validation, _measure_validation
 
 
 def heatmap(output_dir: str, metadata: Metadata,
@@ -25,10 +25,14 @@ def heatmap(output_dir: str, metadata: Metadata,
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
 
-    # measure validation for gradient_measure
-    _measure_validation(metadata=metadata,
-                        measure=gradient_measure,
-                        col_type='numeric')
+    # md validation for all input measures
+    for measure in [x_measure, y_measure, gradient_measure]:
+        _measure_validation(metadata=metadata, measure=measure)
+
+    # col type validation for gradient_measure
+    _col_type_validation(metadata=metadata,
+                         measure=gradient_measure,
+                         col_type='numeric')
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
