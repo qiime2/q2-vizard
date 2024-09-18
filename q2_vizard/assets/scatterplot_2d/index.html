@@ -13,10 +13,12 @@
       width: 100%;
       box-sizing: border-box;
       margin: 0px;
-      padding: 10px;
+      padding: 80px 10px 10px 10px;
     }
     #viz {
-      margin: 100px auto;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
       position: relative;
     }
     .vega-bindings {
@@ -27,15 +29,12 @@
       font-family: monospace;
     }
     .vega-bind {
-    margin-right: 50px;
-    vertical-align: middle
+      margin-right: 50px;
+      vertical-align: middle;
     }
-
     .vega-bind span {
-    display: flex;
+      display: flex;
     }
-
-
   </style>
 </head>
 <body>
@@ -43,10 +42,27 @@
 <div id="viz"></div>
 
 <script type="text/javascript">
-  var spec = JSON.parse(document.getElementById('spec').innerHTML);
-  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
-    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  // Parse the spec once and store it
+  var initialSpec = JSON.parse(document.getElementById('spec').innerHTML);
+
+  // Calculate initial width and height
+  initialSpec.width = window.innerWidth * 0.9;
+  initialSpec.height = window.innerHeight * 0.9;
+
+  // Embed the Vega spec
+  vegaEmbed('#viz', initialSpec, {'renderer': 'svg'}).then(function(result) {
+    // Store the Vega view instance for later resizing
+    var view = result.view;
+
+    // Function to resize the view without reloading the spec
+    function resizeVega() {
+      view.width(window.innerWidth * 0.9).height(window.innerHeight * 0.9).run();
+    }
+
+    // Resize on window resize
+    window.addEventListener('resize', resizeVega);
   }).catch(console.error);
+
 </script>
 </body>
 </html>

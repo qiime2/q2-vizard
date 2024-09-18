@@ -8,14 +8,27 @@
     "subtitle": " "
   },
   "autosize": {
-    "type": "pad",
-    "resize": true
+    "type": "fit",
+    "contains": "padding"
   },
-  "width": 900,
-  "height": 900,
-  "padding": 20,
-
+  "width": {"signal": "width"}, 
+  "height": {"signal": "height"},
+  "padding": {
+    "top": 5,
+    "left": 5,  
+    "bottom": 60,
+    "right": 5
+  },
+  
   "signals": [
+    {
+      "name": "width",             
+      "init": "containerSize()[0]"
+    },
+    {
+      "name": "height",
+      "init": "containerSize()[1]"
+    },
     {
       "name": "title",
       "value": {"{{REPLACE_PARAM}}": "title"},
@@ -27,7 +40,8 @@
       "bind": {
         "input": "select",
         "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
-      }
+      },
+      "range": "category"
     },
     {
       "name": "xField",
@@ -44,44 +58,177 @@
         "input": "select",
         "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
       }
+    },
+    {
+      "name": "xoffset",
+      "update": "-(height + padding.bottom)"
+    },
+    {
+      "name": "yoffset",
+      "update": "-(width + padding.left)"
+    },
+    {
+      "name": "xrange",
+      "update": "[0, width]"
+    },
+    {
+      "name": "yrange",
+      "update": "[height, 0]"
+    },
+    {
+      "name": "down",
+      "value": null,
+      "on": [
+        {"events": "touchend", "update": "null"},
+        {"events": "pointerdown, touchstart", "update": "xy()"}
+      ]
+    },
+    {
+      "name": "xcur",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown, touchstart, touchend",
+          "update": "slice(xdom)"
+        }
+      ]
+    },
+    {
+      "name": "ycur",
+      "value": null,
+      "on": [
+        {
+          "events": "pointerdown, touchstart, touchend",
+          "update": "slice(ydom)"
+        }
+      ]
+    },
+    {
+      "name": "delta",
+      "value": [0, 0],
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window", "type": "pointermove", "consume": true,
+              "between": [{"type": "pointerdown"}, {"source": "window", "type": "pointerup"}]
+            },
+            {
+              "type": "touchmove", "consume": true,
+              "filter": "event.touches.length === 1"
+            }
+          ],
+          "update": "down ? [down[0]-x(), y()-down[1]] : [0,0]"
+        }
+      ]
+    },
+    {
+      "name": "anchor",
+      "value": [0, 0],
+      "on": [
+        {
+          "events": "wheel",
+          "update": "[invert('x_scale', x()), invert('y_scale', y())]"
+        },
+        {
+          "events": {"type": "touchstart", "filter": "event.touches.length===2"},
+          "update": "[(xdom[0] + xdom[1]) / 2, (ydom[0] + ydom[1]) / 2]"
+        }
+      ]
+    },
+    {
+      "name": "zoom",
+      "value": 1,
+      "on": [
+        {
+          "events": "wheel!",
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        },
+        {
+          "events": {"signal": "dist2"},
+          "force": true,
+          "update": "dist1 / dist2"
+        }
+      ]
+    },
+    {
+      "name": "dist1",
+      "value": 0,
+      "on": [
+        {
+          "events": {"type": "touchstart", "filter": "event.touches.length===2"},
+          "update": "pinchDistance(event)"
+        },
+        {
+          "events": {"signal": "dist2"},
+          "update": "dist2"
+        }
+      ]
+    },
+    {
+      "name": "dist2",
+      "value": 0,
+      "on": [{
+        "events": {"type": "touchmove", "consume": true, "filter": "event.touches.length===2"},
+        "update": "pinchDistance(event)"
+      }]
+    },
+    {
+      "name": "xdom", "update": "slice(xext)",
+      "on": [
+        {
+          "events": {"signal": "delta"},
+           "update": "[xcur[0] + span(xcur) * delta[0] / width, xcur[1] + span(xcur) * delta[0] / width]"
+        },
+        {
+          "events": {"signal": "zoom"},
+          "update": "[anchor[0] + (xdom[0] - anchor[0]) * zoom, anchor[0] + (xdom[1] - anchor[0]) * zoom]"
+        }
+      ]
+    },
+    {
+      "name": "ydom", "update": "slice(yext)",
+      "on": [
+        {
+          "events": {"signal": "delta"},
+          "update": "[ycur[0] + span(ycur) * delta[1] / height, ycur[1] + span(ycur) * delta[1] / height]"
+        },
+        {
+          "events": {"signal": "zoom"},
+          "update": "[anchor[1] + (ydom[0] - anchor[1]) * zoom, anchor[1] + (ydom[1] - anchor[1]) * zoom]"
+        }
+      ]
+    },
+    {
+      "name": "size",
+      "update": "clamp(60 / span(xdom), 60, 1000)"
     }
   ],
 
   "data": [
     {
       "name": "table",
-      "values": {"{{REPLACE_PARAM}}": "metadata"}
+      "values": {"{{REPLACE_PARAM}}": "metadata"},
+      "transform": [
+        { "type": "extent", "field": {"signal": "xField"}, "signal": "xext" },
+        { "type": "extent", "field": {"signal": "yField"}, "signal": "yext" }
+      ]
     }
   ],
 
   "scales": [
     {
-      "name": "x_scale_width",
-      "domain": {
-        "data": "table",
-        "field": {"signal": "xField"}
-      },
-      "range": "width",
-      "nice": true
-    },
-    {
-      "name": "y_scale_height",
-      "domain": {
-        "data": "table",
-        "field": {"signal": "yField"}
-      },
-      "range": "height",
-      "nice": true
-    },
-    {
       "name": "x_scale",
-      "domain": {"signal": "domain('x_scale_width')"},
-      "range": "width"
+      "zero": false,
+      "domain": {"signal": "xdom"},
+      "range": {"signal": "xrange"}
     },
     {
       "name": "y_scale",
-      "domain": {"signal": "domain('y_scale_height')"},
-      "range": "height"
+      "zero": false,
+      "domain": {"signal": "ydom"},
+      "range": {"signal": "yrange"}
     },
     {
       "name": "color_scale",
@@ -98,7 +245,7 @@
   "axes": [
     {
       "scale": "x_scale",
-      "labelFontSize": 12,
+      "labelFontSize": 14,
       "grid": true,
       "orient": "bottom",
       "tickCount": 5,
@@ -108,7 +255,7 @@
     },
     {
       "scale": "y_scale",
-      "labelFontSize": 12,
+      "labelFontSize": 14,
       "grid": true,
       "orient": "left",
       "title": {"signal": "yField"},
@@ -125,14 +272,15 @@
       "labelFontSize": 14,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
+      "orient": "right",
+      "offset": 50,
+      "labelLimit": 150, 
       "encode": {
-        "symbols": {
-          "name": "legendSymbol",
-          "interactive": false
-        },
         "labels": {
-          "name": "legendLabel",
-          "interactive": false
+          "update": {
+            "limit": {"value": 250},
+            "tooltip": {"signal": "datum.label"} 
+          }
         }
       }
     }
@@ -143,6 +291,7 @@
       "name": "marks",
       "type": "symbol",
       "from": {"data": "table"},
+      "clip": true,
       "encode": {
         "update": {
           "x": {
@@ -151,10 +300,11 @@
           },
           "y": {
             "scale": "y_scale",
-            "field": {"signal": "yField"}},
+            "field": {"signal": "yField"}
+          },
           "shape": {"value": "circle"},
           "strokeWidth": {"value": 2.5},
-          "size": {"value": 150},
+          "size": {"signal": "size"},
           "stroke": [
             {
               "scale": "color_scale",
