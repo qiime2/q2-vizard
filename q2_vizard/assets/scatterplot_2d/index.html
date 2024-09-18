@@ -45,7 +45,7 @@
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     var view = result.view;
 
-    // Ensure all elements in the SVG have identifiable attributes.
+    // Ensure all elements in the SVG have identifiable attributes
     var svg = document.querySelector('#viz svg');
 
     // Add class to the marks for easy selection in Selenium
@@ -62,7 +62,7 @@
 
     var legend = svg.querySelector('.role-legend');
     if (legend) {
-      legend.setAttribute('id', 'legend'); // Assign an ID to the legend for easy access
+      legend.setAttribute('id', 'legend'); // Assign an ID to the legend
     }
 
   }).catch(console.error);

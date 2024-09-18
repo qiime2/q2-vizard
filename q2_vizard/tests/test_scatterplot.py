@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import os
+import re
 import tempfile
 import pandas as pd
 
@@ -43,19 +44,24 @@ class TestScatterplot(TestPluginBase):
             data=data, index=md_index, dtype=object,
             columns=['A', 'foobar', 'B', 'bodysite', 'Z']))
 
+        # the floats in the 4th position in these tuples represent
+        # the actual xy positions of the expected mark in the DOM
         self.test_cases = [
-            ('B', 'Z', 'foobar', 'B', 'Z', 'foobar'),
-            ('', '', '', 'A', 'A', 'legendDefault')
+            ('B', 'Z', 'foobar', 150.0, 528.75, 'B', 'Z', 'foobar'),
+            ('', '', '', 150.0, 750.0, 'A', 'A', 'legendDefault')
         ]
 
     # utility method that will run all checks for scatterplot
     # used in each browser test below (firefox & chrome supported)
-    def _selenium_scatterplot_test(self, driver, x, y, color,
-                                   exp_x, exp_y, exp_color):
+    def _selenium_scatterplot_test(self, driver, x_measure, y_measure,
+                                   color_measure, exp_x_mark, exp_y_mark,
+                                   exp_x_measure, exp_y_measure,
+                                   exp_color_measure):
         with tempfile.TemporaryDirectory() as output_dir:
             scatterplot_2d(
                 output_dir=output_dir, metadata=self.md,
-                x_measure=x, y_measure=y, color_by_group=color
+                x_measure=x_measure, y_measure=y_measure,
+                color_by_group=color_measure
             )
 
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
@@ -67,22 +73,32 @@ class TestScatterplot(TestPluginBase):
                 self.assertEqual(selected, exp)
 
             dropdown_fields = [
-                ('xField', exp_x),
-                ('yField', exp_y),
-                ('colorBy', exp_color)
+                ('xField', exp_x_measure),
+                ('yField', exp_y_measure),
+                ('colorBy', exp_color_measure)
             ]
 
             for field_name, expected_value in dropdown_fields:
                 _dropdown_util(field=field_name, exp=expected_value)
 
-    def _print_mark_positions(self, driver):
-        marks = driver.find_elements(By.CSS_SELECTOR, "circle")
+            # # test that a mark is where we expect it to be
+            def _extract_transform_coordinates(transform_str):
+                match = re.search(r'translate\(([^,]+),\s*([^)]+)\)',
+                                  transform_str)
+                x = float(match.group(1))
+                y = float(match.group(2))
+                return x, y
 
-        # Print the positions of each mark (cx and cy for <circle>)
-        for mark in marks:
-            actual_x = mark.get_attribute("cx")
-            actual_y = mark.get_attribute("cy")
-            raise ValueError(f"Mark position: x = {actual_x}, y = {actual_y}")
+            mark_obj = driver.find_elements(
+              By.CSS_SELECTOR,
+              'g.marks > path[class^="mark-0"]')
+            for _, mark in enumerate(mark_obj):
+                transform = mark.get_attribute('transform')
+
+            x_mark, y_mark = _extract_transform_coordinates(transform)
+
+            self.assertEqual(x_mark, exp_x_mark)
+            self.assertEqual(y_mark, exp_y_mark)
 
     # run selenium checks with a chrome driver
     def test_scatterplot_chrome(self):
@@ -90,13 +106,22 @@ class TestScatterplot(TestPluginBase):
         chrome_options.add_argument('-headless')
 
         with webdriver.Chrome(options=chrome_options) as driver:
-            self._print_mark_positions(driver)
+            for (x_measure, y_measure, color_measure,
+                 exp_x_mark, exp_y_mark, exp_x_measure,
+                 exp_y_measure, exp_color_measure) in self.test_cases:
 
-            for x, y, color, exp_x, exp_y, exp_color in self.test_cases:
-                with self.subTest(x=x, y=y, color=color, exp_x=exp_x,
-                                  exp_y=exp_y, exp_color=exp_color):
-                    self._selenium_scatterplot_test(driver, x, y, color,
-                                                    exp_x, exp_y, exp_color)
+                with self.subTest(
+                    x_measure=x_measure, y_measure=y_measure,
+                    color_measure=color_measure, exp_x_mark=exp_x_mark,
+                    exp_y_mark=exp_y_mark, exp_x_measure=exp_x_measure,
+                    exp_y_measure=exp_y_measure,
+                    exp_color_measure=exp_color_measure
+                ):
+
+                    self._selenium_scatterplot_test(
+                        driver, x_measure, y_measure, color_measure,
+                        exp_x_mark, exp_y_mark, exp_x_measure,
+                        exp_y_measure, exp_color_measure)
 
     # run selenium checks with a firefox driver
     def test_scatterplot_firefox(self):
@@ -104,8 +129,20 @@ class TestScatterplot(TestPluginBase):
         firefox_options.add_argument('-headless')
 
         with webdriver.Firefox(options=firefox_options) as driver:
-            for x, y, color, exp_x, exp_y, exp_color in self.test_cases:
-                with self.subTest(x=x, y=y, color=color, exp_x=exp_x,
-                                  exp_y=exp_y, exp_color=exp_color):
-                    self._selenium_scatterplot_test(driver, x, y, color,
-                                                    exp_x, exp_y, exp_color)
+
+            for (x_measure, y_measure, color_measure,
+                 exp_x_mark, exp_y_mark, exp_x_measure,
+                 exp_y_measure, exp_color_measure) in self.test_cases:
+
+                with self.subTest(
+                    x_measure=x_measure, y_measure=y_measure,
+                    color_measure=color_measure, exp_x_mark=exp_x_mark,
+                    exp_y_mark=exp_y_mark, exp_x_measure=exp_x_measure,
+                    exp_y_measure=exp_y_measure,
+                    exp_color_measure=exp_color_measure
+                ):
+
+                    self._selenium_scatterplot_test(
+                        driver, x_measure, y_measure, color_measure,
+                        exp_x_mark, exp_y_mark, exp_x_measure,
+                        exp_y_measure, exp_color_measure)
