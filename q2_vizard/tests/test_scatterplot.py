@@ -81,7 +81,30 @@ class TestScatterplot(TestPluginBase):
             for field_name, expected_value in dropdown_fields:
                 _dropdown_util(field=field_name, exp=expected_value)
 
-            # # test that a mark is where we expect it to be
+            # test that our axes match the dropdown values
+            axis_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'g[aria-roledescription="axis"]')
+            self.assertEqual(len(axis_elements), 2)
+
+            for _, axis in enumerate(axis_elements):
+                label = axis.get_attribute('aria-label')
+                if 'X-axis' in label:
+                    self.assertIn(f"axis titled '{exp_x_measure}'", label)
+                elif 'Y-axis' in label:
+                    self.assertIn(f"axis titled '{exp_y_measure}'", label)
+                else:
+                    raise ValueError(f'Unexpected axis element {label} found.')
+
+            # test that the legend contains the correct group
+            legend_element = \
+                driver.find_element(By.CSS_SELECTOR,
+                                    'g[aria-roledescription="legend"]')
+
+            label = legend_element.get_attribute('aria-label')
+            self.assertIn(f"legend titled '{exp_color_measure}'", label)
+
+            # test that a mark is where we expect it to be
             def _extract_transform_coordinates(transform_str):
                 match = re.search(r'translate\(([^,]+),\s*([^)]+)\)',
                                   transform_str)
@@ -89,11 +112,10 @@ class TestScatterplot(TestPluginBase):
                 y = float(match.group(2))
                 return x, y
 
-            mark_obj = driver.find_elements(
-              By.CSS_SELECTOR,
-              'g.marks > path[class^="mark-0"]')
-            for _, mark in enumerate(mark_obj):
-                transform = mark.get_attribute('transform')
+            mark_element = \
+                driver.find_element(By.CSS_SELECTOR,
+                                    'g.marks > path[class^="mark-0"]')
+            transform = mark_element.get_attribute('transform')
 
             x_mark, y_mark = _extract_transform_coordinates(transform)
 
