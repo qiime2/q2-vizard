@@ -12,25 +12,27 @@ import pkg_resources
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._util import _json_replace, _measure_validation
+from ._util import _json_replace, _measure_validation, _col_type_validation
 
 
 def boxplot(output_dir: str, metadata: Metadata,
-            distribution: NumericMetadataColumn, whisker_range: str,
+            distribution_measure: NumericMetadataColumn,
+            whisker_range: str, suppress_outliers: bool = False,
             facet_by: CategoricalMetadataColumn = None,
-            average_method: str = 'median', title: str = None):
+            title: str = None):
 
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
 
     # input validation for distribution & facet_by measures
-    _measure_validation(metadata=metadata, measure=distribution,
-                        col_type='numeric')
-    if facet_by:
-        _measure_validation(metadata=metadata, measure=facet_by,
-                            col_type='categorical')
+    _col_type_validation(metadata=metadata, measure=distribution_measure,
+                         col_type='numeric')
+    _measure_validation(metadata=metadata, measure=distribution_measure)
 
-# TODO: more pre-processing for box plot stats
+    if facet_by:
+        _col_type_validation(metadata=metadata, measure=facet_by,
+                             col_type='categorical')
+        _measure_validation(metadata=metadata, measure=facet_by)
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
@@ -46,9 +48,21 @@ def boxplot(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
+    # adds a warning in the subtitle regarding outliers being hidden
+    if suppress_outliers:
+        outliers_warning = (
+            'NOTE: outliers that fall outside of the chosen'
+            f' `whisker_range`: {whisker_range} have been suppressed.'
+        )
+    else:
+        outliers_warning = ' '
+
     full_spec = _json_replace(json_obj, metadata=metadata_obj,
-                              distribution=distribution, facet_by=facet_by,
-                              average_method=average_method, title=title)
+                              distribution_measure=distribution_measure,
+                              whisker_range=whisker_range,
+                              suppress_outliers=suppress_outliers,
+                              outliers_warning=outliers_warning,
+                              facet_by=facet_by, title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)

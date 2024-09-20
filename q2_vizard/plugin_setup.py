@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Metadata, Choices
+from qiime2.plugin import Plugin, Str, Metadata, Choices, Bool
 
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
@@ -80,32 +80,36 @@ plugin.visualizers.register_function(
     parameters={
         'metadata': Metadata,
         'distribution': Str,
+        'whisker_range': Str % Choices('tukeys_iqr', 'percentile'),
+        'suppress_outliers': Bool,
         'facet_by': Str,
-        'average_method': Str % Choices('median', 'mean'),
-        'whisker_range': Str % Choices('iqr', 'percentile'),
         'title': Str
     },
     name='Boxplot',
     description='Basic boxplot for visualizing a numeric Metadata measure'
                 ' faceted by a categorical Metadata measure with choices for'
-                ' average method and whisker range.',
+                ' the whisker range.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input with at least one numeric measure'
                     ' and one categorical measure for visualizing.',
-        'distribution': 'The numeric measure that will be used to create each'
-                        ' box plot distribution.',
+        'distribution_measure': 'The numeric measure that will be used to'
+                                ' create each box plot distribution.',
+        'whisker_range': 'The range that will be used for calculating the'
+                         ' whisker lengths for each box. Options are'
+                         ' `tukeys_iqr` (1.5 IQR) or `percentile`'
+                         ' (91th/9th percentile).'
+                         ' Any data points that fall outside of the chosen'
+                         ' range will be represented as outliers that are'
+                         ' plotted as circular points, unless'
+                         ' `suppress_outliers` has been enabled.',
+        'suppress_outliers': 'Whether to plot or suppress any data points that'
+                             ' fall outside of the chosen `whisker_range`.'
+                             ' Default is to plot outliers, and a warning'
+                             ' will be present in the plot subtitle noting'
+                             ' that outliers have been suppressed.',
         'facet_by': 'The categorical measure that will be used to facet each'
                     ' group into separate box plots. If left blank, all data'
                     ' will be represented within a single box.',
-        'average_method': 'The method that will be used to determine the'
-                          ' average for each group represented. Options are'
-                          ' either `mean` or `median` with `median` as the'
-                          ' default.',
-        'whisker_range': 'The range that will be used for calculating the'
-                         ' whisker lengths for each box. Options are `iqr`'
-                         ' or `percentile`. Any data points that fall outside'
-                         ' of the chosen range will be represented as outliers'
-                         ' plotted as circular points.',
         'title': 'The title of the boxplot.'
     }
 )
