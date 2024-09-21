@@ -12,7 +12,7 @@ import pkg_resources
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._util import _json_replace, _measure_validation
+from ._util import _json_replace, _col_type_validation, _measure_validation
 
 
 def scatterplot_2d(output_dir: str, metadata: Metadata,
@@ -32,8 +32,9 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # validation for group measure
     if color_by:
-        _measure_validation(metadata=metadata, measure=color_by,
-                            col_type='categorical')
+        _measure_validation(metadata=metadata, measure=color_by_group)
+        _col_type_validation(metadata=metadata, measure=color_by_group,
+                             col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
     # and adding 'legendDefault' for removing color-coding
@@ -41,7 +42,7 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     if color_by:
         group_dropdown_default = color_by
     else:
-        group_dropdown_default = md_cols_categorical['legendDefault']
+        group_dropdown_default = 'legendDefault'
 
     # handling numeric columns for x/y plotting
     md_cols_numeric = \
@@ -50,15 +51,17 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # validation for x/y measures
     if x_measure:
-        _measure_validation(metadata=metadata, measure=x_measure,
-                            col_type='numeric')
+        _measure_validation(metadata=metadata, measure=x_measure)
+        _col_type_validation(metadata=metadata, measure=x_measure,
+                             col_type='numeric')
         x_dropdown_default = x_measure
     else:
         x_dropdown_default = md_cols_numeric[0]
 
     if y_measure:
-        _measure_validation(metadata=metadata, measure=y_measure,
-                            col_type='numeric')
+        _measure_validation(metadata=metadata, measure=y_measure)
+        _col_type_validation(metadata=metadata, measure=y_measure,
+                             col_type='numeric')
         y_dropdown_default = y_measure
     else:
         y_dropdown_default = md_cols_numeric[0]

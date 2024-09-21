@@ -27,15 +27,12 @@
       font-family: monospace;
     }
     .vega-bind {
-    margin-right: 50px;
-    vertical-align: middle
+      margin-right: 50px;
+      vertical-align: middle;
     }
-
     .vega-bind span {
-    display: flex;
+      display: flex;
     }
-
-
   </style>
 </head>
 <body>
@@ -44,8 +41,30 @@
 
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
+
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
-    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+    var view = result.view;
+
+    // Ensure all elements in the SVG have identifiable attributes
+    var svg = document.querySelector('#viz svg');
+
+    // Add class to the marks for easy selection in Selenium
+    var marks = svg.querySelectorAll('g.marks > path');
+    marks.forEach(function(mark, index) {
+      mark.setAttribute('class', 'mark-' + index); // Assign a unique class to each mark
+    });
+
+    // Add unique IDs/classes to axes and legends
+    var axes = svg.querySelectorAll('.role-axis');
+    axes.forEach(function(axis, index) {
+      axis.setAttribute('class', 'axis-' + index); // Assign unique class to each axis
+    });
+
+    var legend = svg.querySelector('.role-legend');
+    if (legend) {
+      legend.setAttribute('id', 'legend'); // Assign an ID to the legend
+    }
+
   }).catch(console.error);
 </script>
 </body>

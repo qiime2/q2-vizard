@@ -1,105 +1,197 @@
 {
-    "$schema": "https://vega.github.io/schema/vega/v5.json",
-    "description": "A Basic Heatmap",
-    "width": {"signal": "ncolumns * columnwidth"},
-    "height": {"signal": "nrows * rowheight"},
-    "padding": 0,
-    "title": {"text": {"signal": "title"}},
-    "data": [
-      {"name": "table",
-       "values": {"{{REPLACE_PARAM}}": "data"}
-      },
-      {
-        "name": "rowtable",
-        "source": "table",
-        "transform": [{"type": "aggregate", "groupby": [{"{{REPLACE_PARAM}}": "y_label"}]}]
-      },
-      {
-        "name": "columntable",
-        "source": "table",
-        "transform": [{"type": "aggregate", "groupby": [{"{{REPLACE_PARAM}}": "x_label"}]}]
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "title": {
+    "text": {"signal": "title"},
+    "fontSize": 20,
+    "orient": "top",
+    "anchor": "start",
+    "subtitle": " "
+  },
+  "autosize": {
+    "type": "pad",
+    "resize": true
+  },
+  "width": {"signal": "columnWidth * nColumns"},
+  "height": {"signal": "rowHeight * nRows"},
+  "padding": 20,
+
+  "data": [
+    {
+      "name": "table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    },
+    {
+      "name": "rowTable",
+      "source": "table",
+      "transform": [{
+        "type": "aggregate",
+        "groupby": [{"{{REPLACE_PARAM}}": "y_measure"}]
+      }]
+    },
+    {
+      "name": "columnTable",
+      "source": "table",
+      "transform": [{
+        "type": "aggregate",
+        "groupby": [{"{{REPLACE_PARAM}}": "x_measure"}]
+      }]
+    }
+  ],
+
+  "signals": [
+    {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
+    },
+    {
+      "name": "invertGradient",
+      "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "gradientPalette",
+      "value": "Viridis",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Inferno", "Viridis", "Magma", "Greys", "Plasma", "Cividis"
+        ]
       }
-    ],
-    "signals": [
-      {
-        "name": "palette",
-        "value": "Viridis",
-        "bind": {
-          "input": "select",
-          "options": ["Inferno", "Viridis", "Magma", "Greys", "Plasma", "Cividis"]
+    },
+    {
+      "name": "nRows",
+      "value": 1,
+      "update": "length(data('rowTable'))"
+    },
+    {
+      "name": "nColumns",
+      "value": 1,
+      "update": "length(data('columnTable'))"
+    },
+    {
+      "name": "rowHeight",
+      "value": 45,
+      "bind": {
+        "input": "range",
+        "min": 5,
+        "max": 200
+      }
+    },
+    {
+      "name": "columnWidth",
+      "value": 45,
+      "bind": {
+        "input": "range",
+        "min": 5,
+        "max": 200
+      }
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x_scale",
+      "type": "band",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "x_measure"},
+        "sort": {
+          "order": "ascending"
         }
       },
-      {"name": "nrows", "value": 1, "update": "length(data(\"rowtable\"))"},
-      {
-        "name": "rowheight",
-        "value": 15,
-        "bind": {"input": "range", "min": 5, "max": 100}
+      "range": [0, {"signal": "columnWidth * nColumns"}]
+    },
+    {
+      "name": "y_scale",
+      "type": "band",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "y_measure"},
+        "sort": {
+          "order": "descending"
+        }
       },
-      {"name": "ncolumns", "value": 1, "update": "length(data(\"columntable\"))"},
-      {
-        "name": "columnwidth",
-        "value": 30,
-        "bind": {"input": "range", "min": 5, "max": 100 }
-      },
-      {"name": "title", "value": {"{{REPLACE_PARAM}}": "title"}, "bind": {"input": "input"}},
-      {"name": "y_label", "value": {"{{REPLACE_PARAM}}": "y_label_name"}, "bind": {"input": "input"}},
-      {"name": "x_label", "value": {"{{REPLACE_PARAM}}": "x_label_name"}, "bind": {"input": "input"}}
-    ],
-    "scales": [
-      {
-        "name": "Y_label",
-        "type": "band",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "y_label"}},
-        "range": "height",
-        "paddingInner": 0.05
-      },
-      {
-        "name": "X_label",
-        "type": "band",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "x_label"}, 
-                    "sort":{"{{REPLACE_PARAM}}": "order"}},
-        "range": "width",
-        "paddingInner": 0.01
-      },
-      {
-        "name": "color",
-        "type": "sequential",
-        "domain": {"data": "table", "field": {"{{REPLACE_PARAM}}": "measure"}},
-        "range": {"scheme": {"signal": "palette"}}
-      }
-    ],
-    "axes": [
-      {"scale": "Y_label", "orient": "left", "title":{"signal": "y_label"}},
-      {"scale": "X_label", "orient": "bottom", "title":{"signal": "x_label"}}
-    ],
-    "marks": [
-      {
-        "type": "rect",
-        "from": {"data": "table"},
-        "encode": {
-          "update": {
-            "y": {"field": {"{{REPLACE_PARAM}}": "y_label"}, "scale": "Y_label"},
-            "x": {"field": {"{{REPLACE_PARAM}}": "x_label"}, "scale": "X_label"},
-            "height": {"band": 1, "scale": "Y_label"},
-            "width": {"band": 1, "scale": "X_label"},
-            "fill": {"scale": "color", "field": {"{{REPLACE_PARAM}}": "measure"}},
-            "tooltip": {
-              "signal": "datum"
-            }
-          }
+      "range": [0, {"signal": "rowHeight * nRows"}]
+    },
+    {
+      "name": "color",
+      "type": "linear",
+      "range": {
+        "scheme": {"signal": "gradientPalette"}},
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "gradient_measure"}},
+      "reverse": {"signal": "invertGradient"},
+      "zero": false, "nice": true
+    }
+  ],
+
+  "axes": [
+    {
+      "scale": "x_scale",
+      "labelFontSize": 12,
+      "grid": true,
+      "orient": "bottom",
+      "tickCount": 5,
+      "title": {"{{REPLACE_PARAM}}": "x_measure"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    },
+    {
+      "scale": "y_scale",
+      "labelFontSize": 12,
+      "grid": true,
+      "orient": "left",
+      "title": {"{{REPLACE_PARAM}}": "y_measure"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color",
+      "type": "gradient",
+      "title": {"{{REPLACE_PARAM}}": "gradient_measure"},
+      "titleFontSize": 12,
+      "titlePadding": 4,
+      "gradientLength": {"signal": "(rowHeight * nRows) - 16"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x_scale",
+            "field": {"{{REPLACE_PARAM}}": "x_measure"}
+          },
+          "y": {
+            "scale": "y_scale",
+            "field": {"{{REPLACE_PARAM}}": "y_measure"}
+          },
+          "width": {
+            "scale": "x_scale",
+            "band": 1
+          },
+          "height": {
+            "scale": "y_scale",
+            "band": 1
+          },
+          "fill": {
+            "scale": "color",
+            "field": {"{{REPLACE_PARAM}}": "gradient_measure"}
+          },
+          "stroke": {
+            "value": "white"
+          },
+          "tooltip": {"signal": "datum"}
         }
       }
-    ],
-    "legends": [
-      {
-        "fill": "color",
-        "type": "gradient",
-        "title": {"{{REPLACE_PARAM}}": "measure_name"},
-        "titleFontSize": 12,
-        "titlePadding": 4,
-        "gradientLength": {"signal": "250"}
-      }
-    ],
-    "config": {}
-  }
-  
+    }
+  ]
+}

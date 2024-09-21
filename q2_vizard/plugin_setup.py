@@ -6,13 +6,13 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Metadata, Str, Choices, Bool
-from q2_stats._type import Dist1D, Matched, Ordered
+from qiime2.plugin import Plugin, Str, Metadata
 
-from q2_vizard.heatmap import plot_heatmap
+from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
 from q2_vizard.lineplot import lineplot
 
+import q2_vizard._examples as ex
 
 plugin = Plugin(name='vizard',
                 version='0.0.1.dev0',
@@ -24,14 +24,28 @@ plugin = Plugin(name='vizard',
 
 # TODO: refactor
 plugin.visualizers.register_function(
-    function=plot_heatmap,
-    inputs={'data': Dist1D[Ordered, Matched]},
+    function=heatmap,
+    inputs={},
     parameters={
-        'transpose': Bool,
-        'order': Str % Choices('ascending', 'descending')
+        'metadata': Metadata,
+        'x_measure': Str,
+        'y_measure': Str,
+        'gradient_measure': Str,
+        'title': Str
     },
-    name='Plot Heatmap',
-    description='',
+    name='Heatmap',
+    description='Basic heatmap for visualizing three Metadata measures.',
+    parameter_descriptions={
+        'metadata': 'Any metadata-like input that contains at least three'
+                    ' measures for visualizing, one of which must be numeric.',
+        'x_measure': 'Numeric or categorical measure from the input Metadata'
+                     ' that should be plotted on the x-axis.',
+        'y_measure': 'Numeric or categorical measure from the input Metadata'
+                     ' that should be plotted on the y-axis.',
+        'gradient_measure': 'Numeric measure from the input Metadata that'
+                            ' should be used to represent the color gradient'
+                            ' in the heatmap.',
+        'title': 'The title of the heatmap.'}
 )
 
 
@@ -45,9 +59,6 @@ plugin.visualizers.register_function(
         'color_by': Str,
         'title': Str
     },
-    name='2D Scatterplot',
-    description='Basic 2D scatterplot for visualizing two numeric Metadata'
-                ' measures with optional categorical color grouping.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input with at least two'
                     ' numeric measures for visualizing.',
@@ -57,7 +68,12 @@ plugin.visualizers.register_function(
                      ' plotted on the y-axis.',
         'color_by': 'Categorical measure from the input Metadata that'
                     ' should be used for color-coding the scatterplot.',
-        'title': 'The title of the scatterplot.'}
+        'title': 'The title of the scatterplot.'},
+    name='2D Scatterplot',
+    description='Basic 2D scatterplot for visualizing two numeric Metadata'
+                ' measures with optional categorical color grouping.',
+    examples={'scatterplot_defaults': ex.scatterplot_defaults,
+              'scatterplot_all_measures': ex.scatterplot_all_measures}
 )
 
 
