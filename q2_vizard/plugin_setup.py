@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Metadata, Choices, Bool
+from qiime2.plugin import Plugin, Str, Metadata, Choices
 
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
@@ -79,9 +79,8 @@ plugin.visualizers.register_function(
     inputs={},
     parameters={
         'metadata': Metadata,
-        'distribution': Str,
-        'whisker_range': Str % Choices('tukeys_iqr', 'percentile'),
-        'suppress_outliers': Bool,
+        'distribution_measure': Str,
+        'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
         'facet_by': Str,
         'title': Str
     },
@@ -96,17 +95,13 @@ plugin.visualizers.register_function(
                                 ' create each box plot distribution.',
         'whisker_range': 'The range that will be used for calculating the'
                          ' whisker lengths for each box. Options are'
-                         ' `tukeys_iqr` (1.5 IQR) or `percentile`'
-                         ' (91th/9th percentile).'
+                         ' `tukeys_iqr` (1.5 IQR), `percentile`'
+                         ' (91th/9th percentile), or `minmax`.'
                          ' Any data points that fall outside of the chosen'
                          ' range will be represented as outliers that are'
-                         ' plotted as circular points, unless'
-                         ' `suppress_outliers` has been enabled.',
-        'suppress_outliers': 'Whether to plot or suppress any data points that'
-                             ' fall outside of the chosen `whisker_range`.'
-                             ' Default is to plot outliers, and a warning'
-                             ' will be present in the plot subtitle noting'
-                             ' that outliers have been suppressed.',
+                         ' plotted as circular points, unless the'
+                         ' `suppressOutliers` checkbox has been enabled'
+                         ' on the rendered visualization.',
         'facet_by': 'The categorical measure that will be used to facet each'
                     ' group into separate box plots. If left blank, all data'
                     ' will be represented within a single box.',

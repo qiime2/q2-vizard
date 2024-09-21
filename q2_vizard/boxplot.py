@@ -17,8 +17,7 @@ from ._util import _json_replace, _measure_validation, _col_type_validation
 
 def boxplot(output_dir: str, metadata: Metadata,
             distribution_measure: NumericMetadataColumn,
-            whisker_range: str, suppress_outliers: bool = False,
-            facet_by: CategoricalMetadataColumn = None,
+            whisker_range: str, facet_by: CategoricalMetadataColumn = None,
             title: str = None):
 
     # input handling for initial metadata
@@ -48,20 +47,9 @@ def boxplot(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
-    # adds a warning in the subtitle regarding outliers being hidden
-    if suppress_outliers:
-        outliers_warning = (
-            'NOTE: outliers that fall outside of the chosen'
-            f' `whisker_range`: {whisker_range} have been suppressed.'
-        )
-    else:
-        outliers_warning = ' '
-
     full_spec = _json_replace(json_obj, metadata=metadata_obj,
                               distribution_measure=distribution_measure,
                               whisker_range=whisker_range,
-                              suppress_outliers=suppress_outliers,
-                              outliers_warning=outliers_warning,
                               facet_by=facet_by, title=title)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:

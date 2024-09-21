@@ -29,7 +29,7 @@
     }
     .vega-bind {
     margin-right: 50px;
-    vertical-align: middle  
+    vertical-align: middle
     }
 
     .vega-bind span {
@@ -47,6 +47,7 @@
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+    console.log(result.view.getState());
   }).catch(console.error);
 </script>
 </body>
