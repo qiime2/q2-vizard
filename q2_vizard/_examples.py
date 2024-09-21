@@ -46,7 +46,7 @@ def scatterplot_all_measures(use):
             metadata=metadata,
             x_measure='days_post_transplant',
             y_measure='numeric_col',
-            color_by_group='genotype',
+            color_by='genotype',
         ),
         use.UsageOutputNames(
             visualization='scatterplot'

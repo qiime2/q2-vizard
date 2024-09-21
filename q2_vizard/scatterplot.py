@@ -32,8 +32,8 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     # validation for group measure
     if color_by:
-        _measure_validation(metadata=metadata, measure=color_by_group)
-        _col_type_validation(metadata=metadata, measure=color_by_group,
+        _measure_validation(metadata=metadata, measure=color_by)
+        _col_type_validation(metadata=metadata, measure=color_by,
                              col_type='categorical')
 
     # setting default (or selected) group measure for color-coding

@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Metadata
+from qiime2.plugin import Plugin, Str, Metadata, Bool, Choices
 
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d

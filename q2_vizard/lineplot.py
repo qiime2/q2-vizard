@@ -13,7 +13,7 @@ import pkg_resources
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._util import _json_replace, _measure_validation
+from ._util import _json_replace, _measure_validation, _col_type_validation
 
 
 def lineplot(output_dir: str, metadata: Metadata,
@@ -28,8 +28,9 @@ def lineplot(output_dir: str, metadata: Metadata,
 
     # column validation for x_measure and y_measure
     for measure in [x_measure, y_measure]:
-        _measure_validation(metadata=metadata, measure=measure,
-                            col_type='numeric')
+        _col_type_validation(metadata=metadata, measure=measure,
+                             col_type='numeric')
+        _measure_validation(metadata=metadata, measure=measure)
 
     if y_measure == x_measure:
         raise ValueError(f'The same column `{x_measure}` has been used'
@@ -39,8 +40,9 @@ def lineplot(output_dir: str, metadata: Metadata,
 
     # column validation for faceting
     if facet_by:
-        _measure_validation(metadata=metadata, measure=facet_by,
-                            col_type='categorical')
+        _col_type_validation(metadata=metadata, measure=facet_by,
+                             col_type='categorical')
+        _measure_validation(metadata=metadata, measure=facet_by)
 
     # replicate handling when False
     if not replicates:

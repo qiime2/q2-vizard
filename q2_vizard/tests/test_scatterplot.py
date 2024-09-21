@@ -65,7 +65,7 @@ class TestScatterplot(TestPluginBase):
             scatterplot_2d(
                 output_dir=output_dir, metadata=self.md,
                 x_measure=x_measure, y_measure=y_measure,
-                color_by_group=color_measure
+                color_by=color_measure
             )
 
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
