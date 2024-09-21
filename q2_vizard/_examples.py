@@ -23,6 +23,7 @@ def md_factory():
     )
 
 
+# scatterplot usage examples
 def scatterplot_defaults(use):
     metadata = use.init_metadata('metadata', md_factory)
 
@@ -46,9 +47,27 @@ def scatterplot_all_measures(use):
             metadata=metadata,
             x_measure='days_post_transplant',
             y_measure='numeric_col',
-            color_by_group='genotype',
+            color_by='genotype',
         ),
         use.UsageOutputNames(
             visualization='scatterplot'
+        )
+    )
+
+
+# heatmap usage example
+def heatmap(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    heatmap_viz, = use.action(
+        use.UsageAction('vizard', 'heatmap'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='days_post_transplant',
+            y_measure='genotype',
+            gradient_measure='numeric_col',
+        ),
+        use.UsageOutputNames(
+            visualization='heatmap'
         )
     )
