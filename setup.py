@@ -18,6 +18,7 @@ setup(
         'q2_vizard': [
             'tests/data/*',
             'assets/*',
+            'assets/lineplot/*',
             'assets/heatmap/*',
             'assets/scatterplot_2d/*'],
     },
