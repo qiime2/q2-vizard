@@ -19,6 +19,10 @@
       "bind": {"input": "input"}
     },
     {
+      "name": "subtitle",
+      "value": {"{{REPLACE_PARAM}}": "subtitle"}
+    },
+    {
       "name": "lineType",
       "value": "linear",
       "bind": {

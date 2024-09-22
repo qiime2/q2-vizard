@@ -32,8 +32,10 @@ class TestLineplot(TestPluginBase):
         # first test case uses a replicates method & facet_by group
         # second test case doesn't have replicates or faceting
         self.test_cases = [
-            ('x', 'y', 'facet', 'median', 'median', "titled 'facet'",
-             ['aa', 'bb', 'cc'], exp_marks_len, '1', '2'),
+            ('x', 'y', 'facet', 'median',
+             'Data was averaged using the `median` method.',
+             "titled 'facet'", ['aa', 'bb', 'cc'],
+             exp_marks_len, '1', '2'),
             ('b', 'y', '', 'none', ' ', "titled 'legend'",
              '', exp_marks_len, '1', '6')
         ]
@@ -82,8 +84,7 @@ class TestLineplot(TestPluginBase):
 
             # test that our axes match xy input measures
             axis_elements = \
-                driver.find_elements(By.CSS_SELECTOR,
-                                     'g[aria-roledescription="axis"]')
+                driver.find_elements(By.CSS_SELECTOR, 'g.mark-group.role-axis')
             self.assertEqual(len(axis_elements), 2)
 
             for _, axis in enumerate(axis_elements):
@@ -98,10 +99,17 @@ class TestLineplot(TestPluginBase):
             # test that the legend contains the correct group
             legend_element = \
                 driver.find_element(By.CSS_SELECTOR,
-                                    'g[aria-roledescription="legend"]')
+                                    'g.mark-group.role-legend')
 
             label = legend_element.get_attribute('aria-label')
             self.assertIn(exp_legend, label)
+
+            # test that the title class contains the correct subtitle text
+            title_element = \
+                driver.find_element(By.CSS_SELECTOR, 'g.mark-group.role-title')
+
+            subtitle = title_element.get_attribute('subtitle')
+            self.assertEqual(subtitle, exp_subtitle)
 
     # run selenium checks with a chrome driver
     def test_lineplot_chrome(self):
