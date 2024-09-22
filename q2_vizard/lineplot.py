@@ -19,7 +19,7 @@ from ._util import _json_replace, _measure_validation, _col_type_validation
 def lineplot(output_dir: str, metadata: Metadata,
              x_measure: NumericMetadataColumn,
              y_measure: NumericMetadataColumn,
-             replicates: bool, average: str = None,
+             replicate_method: str = 'none',
              facet_by: CategoricalMetadataColumn = None,
              title: str = None):
 
@@ -44,14 +44,7 @@ def lineplot(output_dir: str, metadata: Metadata,
                              col_type='categorical')
         _measure_validation(metadata=metadata, measure=facet_by)
 
-    # replicate handling when False
-    if not replicates:
-        if average:
-            raise ValueError('Replicate handling has been disabled, but a'
-                             ' method for average handling was included.'
-                             ' The `average` parameter must be left blank'
-                             ' unless `replicates` has been set to True.')
-
+    if replicate_method == 'none':
         # handling for md sorting based on the selected facet_by measure
         if facet_by:
             facet_by_ordered_md = []
@@ -59,9 +52,9 @@ def lineplot(output_dir: str, metadata: Metadata,
                 facet_by_md = md[md[facet_by] == i].sort_values(x_measure)
                 if any(facet_by_md[x_measure].duplicated()):
                     raise ValueError(
-                        f'Replicates found in `{x_measure}` within the `{i}`'
-                        f' `facet_by`. If this is expected, please set'
-                        ' `replicates` to True and select an `average` method.'
+                        f'Replicates found in `{x_measure}` within the'
+                        f' `{i}` `facet_by` group. If this is expected,'
+                        ' please select a `replicate_method`.'
                         ' If this is not expected, please either filter out'
                         f' replicates from `{x_measure}` or select a different'
                         ' column in your metadata for use in the `x_measure`.')
@@ -94,20 +87,13 @@ def lineplot(output_dir: str, metadata: Metadata,
             if any(ordered_md[x_measure].duplicated()):
                 raise ValueError(
                     f'Replicates found in `{x_measure}`.'
-                    ' If this is expected, please set `replicates` to True'
-                    ' and select an `average` method.'
+                    ' If this is expected, please select a `replicate_method`.'
                     ' If this is not expected, please either filter out'
                     f' replicates from `{x_measure}` or select a different'
                     ' column in your metadata for use in the `x_measure`.')
 
     # replicate handling when True
-    else:
-        if not average:
-            raise ValueError('Replicate handling was enabled but a'
-                             ' method for averaging was not selected.'
-                             ' Please include either `median` or `mean`'
-                             ' as the averaging method if you have'
-                             ' enabled replicate handling.')
+    elif replicate_method in ['median', 'mean']:
 
         # handling for md sorting based on the selected facet_by measure
         if facet_by:
@@ -133,11 +119,11 @@ def lineplot(output_dir: str, metadata: Metadata,
         # this creates a subset of the md grouped by the facet_by column
         # y values at each unique x are averaged
         # this is used to create the average line
-        if average == 'median':
+        if replicate_method == 'median':
             averaged_md = \
                 (ordered_md.groupby([x_measure, facet_by],
                                     as_index=False)[y_measure].median())
-        elif average == 'mean':
+        elif replicate_method == 'mean':
             averaged_md = \
                 (ordered_md.groupby([x_measure, facet_by],
                                     as_index=False)[y_measure].mean())
@@ -159,16 +145,16 @@ def lineplot(output_dir: str, metadata: Metadata,
     ordered_md_obj = json.loads(ordered_md.to_json(orient='records'))
     averaged_md_obj = json.loads(averaged_md.to_json(orient='records'))
 
-    if average:
-        subtitle = f'Data was averaged using the `{average}` method.'
+    if replicate_method in ['median', 'mean']:
+        subtitle = f'Data was averaged using the `{replicate_method}` method.'
     else:
         subtitle = ' '
 
-    full_spec = _json_replace(json_obj, ordered_metadata=ordered_md_obj,
-                              averaged_metadata=averaged_md_obj,
-                              x_measure=x_measure, y_measure=y_measure,
-                              facet_by=facet_by, average=average,
-                              title=title, subtitle=subtitle)
+    full_spec = \
+        _json_replace(json_obj, ordered_metadata=ordered_md_obj,
+                      averaged_metadata=averaged_md_obj,
+                      x_measure=x_measure, y_measure=y_measure,
+                      facet_by=facet_by, title=title, subtitle=subtitle)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)

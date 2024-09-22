@@ -64,5 +64,4 @@ class TestLineplot(TestBase):
                 ValueError, 'same column `numeric-col` has been used'
             ):
                 lineplot(output_dir=output_dir, metadata=self.md,
-                         x_measure='numeric-col', y_measure='numeric-col',
-                         replicates=False)
+                         x_measure='numeric-col', y_measure='numeric-col')

@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Metadata, Bool, Choices
+from qiime2.plugin import Plugin, Str, Metadata, Choices
 
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
@@ -84,8 +84,7 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'x_measure': Str,
         'y_measure': Str,
-        'replicates': Bool,
-        'average': Str % Choices('median', 'mean'),
+        'replicate_method': Str % Choices('none', 'median', 'mean'),
         'facet_by': Str,
         'title': Str
     },
@@ -99,12 +98,9 @@ plugin.visualizers.register_function(
                      ' plotted on the x-axis.',
         'y_measure': 'Numeric measure from the input Metadata that should be'
                      ' plotted on the y-axis.',
-        'replicates': 'Whether the chosen `x_measure` contains replicates.'
-                      ' If true, a method for averaging the y(x) values must'
-                      ' be selected.',
-        'average': 'The method for averaging replicates'
-                   ' if present in the chosen `x_measure`.'
-                   ' Available methods are `median` and `mean`.',
+        'replicate_method': 'The method for averaging replicates'
+                            ' if present in the chosen `x_measure`.'
+                            ' Available methods are `median` and `mean`.',
         'facet_by': 'Categorical measure from the input Metadata that'
                     ' should be used for faceting the lineplot.',
         'title': 'The title of the lineplot.'}
