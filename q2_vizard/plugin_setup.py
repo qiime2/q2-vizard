@@ -88,9 +88,6 @@ plugin.visualizers.register_function(
         'facet_by': Str,
         'title': Str
     },
-    name='Lineplot',
-    description='Basic lineplot for visualizing two numeric Metadata'
-                ' measures with optional faceting.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input with at least two'
                     ' numeric measures for visualizing.',
@@ -103,5 +100,22 @@ plugin.visualizers.register_function(
                             ' Available methods are `median` and `mean`.',
         'facet_by': 'Categorical measure from the input Metadata that'
                     ' should be used for faceting the lineplot.',
-        'title': 'The title of the lineplot.'}
+        'title': 'The title of the lineplot.'},
+    name='Lineplot',
+    description='Basic lineplot for visualizing two numeric Metadata'
+                ' measures with optional faceting.',
+    examples={
+        'lineplot_median_replicates_with_faceting':
+            ex.lineplot_median_replicates_with_faceting,
+        'lineplot_mean_replicates_with_faceting':
+            ex.lineplot_mean_replicates_with_faceting,
+        'lineplot_median_replicates_no_faceting':
+            ex.lineplot_median_replicates_no_faceting,
+        'lineplot_mean_replicates_no_faceting':
+            ex.lineplot_mean_repliates_no_faceting,
+        'lineplot_no_replicates_with_faceting':
+            ex.lineplot_no_replicates_with_faceting,
+        'lineplot_no_replicates_no_faceting':
+            ex.lineplot_no_replicates_no_faceting
+    }
 )
