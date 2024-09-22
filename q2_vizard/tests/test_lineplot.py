@@ -111,6 +111,18 @@ class TestLineplot(TestPluginBase):
             subtitle = title_element.get_attribute('subtitle')
             self.assertEqual(subtitle, exp_subtitle)
 
+            # test that the correct number of scatter marks are present
+            # and a mark is where we expect it to be
+            # for some reason this viz renders multiple groups
+            # of the same marks, so just selecting the first one
+            first_mark_container = \
+                driver.find_element(By.CSS_SELECTOR,
+                                    'g.mark-symbol.role-mark')
+            mark_elements = \
+                first_mark_container.find_elements(By.CSS_SELECTOR, 'path')
+
+            self.assertEqual(exp_marks_len, len(mark_elements))
+
     # run selenium checks with a chrome driver
     def test_lineplot_chrome(self):
         chrome_options = ChromeOptions()

@@ -32,6 +32,18 @@
           "step"
         ]
       }
+    },
+    {
+      "name": "idField",
+      "value": {"{{REPLACE_PARAM}}": "md_ids"}
+    },
+    {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "x_measure"}
+    },
+    {
+      "name": "yField",
+      "value": {"{{REPLACE_PARAM}}": "y_measure"}
     }
   ],
 

@@ -54,6 +54,24 @@
 
     title.setAttribute('subtitle', subtitle);
 
+    // add class & xy info to the marks
+    // for some reason this viz renders multiple groups of the same marks
+    // so just selecting the first one since they're all identical
+    var firstMarkElement = svg.querySelector('g.mark-symbol.role-mark');
+    var marks = firstMarkElement.querySelectorAll('path');
+    marks.forEach(function(mark, index) {
+      var data = view.data('scatter_table');
+
+      var id = data[view.signal('idField')];
+      var x = data[view.signal('xField')];
+      var y = data[view.signal('yField')];
+
+      // add attrs to each mark
+      mark.setAttribute('class', 'mark-' + id);
+      mark.setAttribute('data-x', x);
+      mark.setAttribute('data-y', y);
+    });
+
   }).catch(console.error);
 </script>
 </body>

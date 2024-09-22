@@ -24,6 +24,7 @@ def lineplot(output_dir: str, metadata: Metadata,
              title: str = None):
 
     # input handling for initial metadata
+    md_ids = metadata.id_header
     md = metadata.to_dataframe()
 
     # column validation for x_measure and y_measure
@@ -151,7 +152,8 @@ def lineplot(output_dir: str, metadata: Metadata,
         subtitle = ' '
 
     full_spec = \
-        _json_replace(json_obj, ordered_metadata=ordered_md_obj,
+        _json_replace(json_obj, md_ids=md_ids,
+                      ordered_metadata=ordered_md_obj,
                       averaged_metadata=averaged_md_obj,
                       x_measure=x_measure, y_measure=y_measure,
                       facet_by=facet_by, title=title, subtitle=subtitle)
