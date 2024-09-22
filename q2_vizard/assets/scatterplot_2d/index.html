@@ -44,25 +44,34 @@
 
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     var view = result.view;
-
-    // Ensure all elements in the SVG have identifiable attributes
     var svg = document.querySelector('#viz svg');
 
-    // Add class to the marks for easy selection in Selenium
+    // Add id & xy attrs to the marks for easy selection in Selenium
     var marks = svg.querySelectorAll('g.marks > path');
     marks.forEach(function(mark, index) {
-      mark.setAttribute('class', 'mark-' + index); // Assign a unique class to each mark
+      var data = view.data('table')[index];
+
+      // These are each connected to a vega signal to pull the correct field
+      var id = data[view.signal('idField')];
+      var x = data[view.signal('xField')];
+      var y = data[view.signal('yField')];
+
+      // Add attrs to the marks elements for id & xy positions
+      mark.setAttribute('class', 'mark-' + id);
+      mark.setAttribute('data-x', x);
+      mark.setAttribute('data-y', y);
     });
 
-    // Add unique IDs/classes to axes and legends
+    // Add class to axes for easy selection in Selenium
     var axes = svg.querySelectorAll('.role-axis');
     axes.forEach(function(axis, index) {
-      axis.setAttribute('class', 'axis-' + index); // Assign unique class to each axis
+      axis.setAttribute('class', 'axis-' + index);
     });
 
+    // Add ID to legend for easy selection in Selenium
     var legend = svg.querySelector('.role-legend');
     if (legend) {
-      legend.setAttribute('id', 'legend'); // Assign an ID to the legend
+      legend.setAttribute('id', 'legend');
     }
 
   }).catch(console.error);

@@ -30,6 +30,10 @@
       }
     },
     {
+      "name": "idField",
+      "value": {"{{REPLACE_PARAM}}": "md_ids"}
+    },
+    {
       "name": "xField",
       "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
       "bind": {
