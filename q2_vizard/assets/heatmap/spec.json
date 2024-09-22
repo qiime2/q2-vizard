@@ -98,6 +98,10 @@
     {
       "name": "yField",
       "value": {"{{REPLACE_PARAM}}": "y_measure"}
+    },
+    {
+      "name": "gradientField",
+      "value": {"{{REPLACE_PARAM}}": "gradient_measure"}
     }
   ],
 
