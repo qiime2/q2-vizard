@@ -113,7 +113,7 @@ def lineplot_median_replicates_no_grouping(use):
     )
 
 
-def lineplot_mean_repliates_no_grouping(use):
+def lineplot_mean_replicates_no_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(

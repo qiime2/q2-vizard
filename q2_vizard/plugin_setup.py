@@ -105,17 +105,13 @@ plugin.visualizers.register_function(
     description='Basic lineplot for visualizing two numeric Metadata'
                 ' measures with optional grouping.',
     examples={
-        'lineplot_median_replicates_with_grouping':
+        f.__name__: f for f in [
             ex.lineplot_median_replicates_with_grouping,
-        'lineplot_mean_replicates_with_grouping':
             ex.lineplot_mean_replicates_with_grouping,
-        'lineplot_median_replicates_no_grouping':
             ex.lineplot_median_replicates_no_grouping,
-        'lineplot_mean_replicates_no_grouping':
-            ex.lineplot_mean_repliates_no_grouping,
-        'lineplot_no_replicates_with_grouping':
+            ex.lineplot_mean_replicates_no_grouping,
             ex.lineplot_no_replicates_with_grouping,
-        'lineplot_no_replicates_no_grouping':
             ex.lineplot_no_replicates_no_grouping
+        ]
     }
 )
