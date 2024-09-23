@@ -60,7 +60,7 @@ def scatterplot_all_measures(use):
     )
 
 
-def lineplot_median_replicates_with_faceting(use):
+def lineplot_median_replicates_with_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(
@@ -69,7 +69,7 @@ def lineplot_median_replicates_with_faceting(use):
             metadata=metadata,
             x_measure='x',
             y_measure='y',
-            facet_by='facet',
+            group_by='group',
             replicate_method='median',
         ),
         use.UsageOutputNames(
@@ -78,7 +78,7 @@ def lineplot_median_replicates_with_faceting(use):
     )
 
 
-def lineplot_mean_replicates_with_faceting(use):
+def lineplot_mean_replicates_with_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(
@@ -87,7 +87,7 @@ def lineplot_mean_replicates_with_faceting(use):
             metadata=metadata,
             x_measure='x',
             y_measure='y',
-            facet_by='facet',
+            group_by='group',
             replicate_method='mean',
         ),
         use.UsageOutputNames(
@@ -96,7 +96,7 @@ def lineplot_mean_replicates_with_faceting(use):
     )
 
 
-def lineplot_median_replicates_no_faceting(use):
+def lineplot_median_replicates_no_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(
@@ -113,7 +113,7 @@ def lineplot_median_replicates_no_faceting(use):
     )
 
 
-def lineplot_mean_repliates_no_faceting(use):
+def lineplot_mean_repliates_no_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(
@@ -130,7 +130,7 @@ def lineplot_mean_repliates_no_faceting(use):
     )
 
 
-def lineplot_no_replicates_with_faceting(use):
+def lineplot_no_replicates_with_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(
@@ -139,7 +139,7 @@ def lineplot_no_replicates_with_faceting(use):
             metadata=metadata,
             x_measure='a',
             y_measure='y',
-            facet_by='facet',
+            group_by='group',
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -147,7 +147,7 @@ def lineplot_no_replicates_with_faceting(use):
     )
 
 
-def lineplot_no_replicates_no_faceting(use):
+def lineplot_no_replicates_no_grouping(use):
     metadata = use.init_metadata('metadata', lineplot_md_factory)
 
     lineplot_viz, = use.action(

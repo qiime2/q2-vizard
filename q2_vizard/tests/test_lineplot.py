@@ -29,12 +29,12 @@ class TestLineplot(TestPluginBase):
         self.md = Metadata.load(self.get_data_path('lineplot-md.tsv'))
         exp_marks_len = self.md.id_count
 
-        # first test case uses a replicates method & facet_by group
-        # second test case doesn't have replicates or faceting
+        # first test case uses a replicates method & group_by
+        # second test case doesn't have replicates or grouping
         self.test_cases = [
-            ('x', 'y', 'facet', 'median',
+            ('x', 'y', 'group', 'median',
              'Data was averaged using the `median` method.',
-             "titled 'facet'", exp_marks_len, 'mark-sample01', '4', '6'),
+             "titled 'group'", exp_marks_len, 'mark-sample01', '4', '6'),
             ('b', 'y', '', 'none', ' ', "titled 'legend'",
              exp_marks_len, 'mark-sample01', '1', '6')
         ]
@@ -48,16 +48,16 @@ class TestLineplot(TestPluginBase):
                 lineplot(output_dir=output_dir, metadata=self.md,
                          x_measure='x', y_measure='x')
 
-    def test_x_replicates_with_faceting_error(self):
+    def test_x_replicates_with_grouping_error(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(
                 ValueError,
-                'Replicates found in `x` within the `aa` `facet_by` group'
+                'Replicates found in `x` within the `aa` `group_by` group'
             ):
                 lineplot(output_dir=output_dir, metadata=self.md,
-                         x_measure='x', y_measure='y', facet_by='facet')
+                         x_measure='x', y_measure='y', group_by='group')
 
-    def test_x_replicates_without_faceting_error(self):
+    def test_x_replicates_without_grouping_error(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(
                 ValueError,
@@ -68,14 +68,14 @@ class TestLineplot(TestPluginBase):
 
     # selenium testing
     def _selenium_lineplot_test(self, driver, x_measure, y_measure,
-                                facet_measure, replicate_method, exp_subtitle,
+                                group_measure, replicate_method, exp_subtitle,
                                 exp_legend, exp_marks_len, exp_mark_class,
                                 exp_x_mark, exp_y_mark):
         with tempfile.TemporaryDirectory() as output_dir:
             lineplot(
                 output_dir=output_dir, metadata=self.md,
                 x_measure=x_measure, y_measure=y_measure,
-                facet_by=facet_measure,
+                group_by=group_measure,
                 replicate_method=replicate_method
             )
 
@@ -111,13 +111,13 @@ class TestLineplot(TestPluginBase):
             self.assertEqual(subtitle, exp_subtitle)
 
             # test that the correct number of line marks are present
-            # equal to the number of unique groups in the facet_by, else = 1
+            # equal to the number of unique groups in the group_by, else = 1
             line_elements = \
                 driver.find_elements(By.CSS_SELECTOR, 'g.mark-line.role-mark')
             md_df = self.md.to_dataframe()
 
-            if facet_measure:
-                exp_lines = len(md_df[facet_measure].unique())
+            if group_measure:
+                exp_lines = len(md_df[group_measure].unique())
             else:
                 exp_lines = 1
 
@@ -150,13 +150,13 @@ class TestLineplot(TestPluginBase):
         chrome_options.add_argument('-headless')
 
         with webdriver.Chrome(options=chrome_options) as driver:
-            for (x_measure, y_measure, facet_measure, replicate_method,
+            for (x_measure, y_measure, group_measure, replicate_method,
                  exp_subtitle, exp_legend, exp_marks_len, exp_mark_class,
                  exp_x_mark, exp_y_mark) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
-                    facet_measure=facet_measure,
+                    group_measure=group_measure,
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
                     exp_marks_len=exp_marks_len, exp_mark_class=exp_mark_class,
@@ -164,7 +164,7 @@ class TestLineplot(TestPluginBase):
                 ):
 
                     self._selenium_lineplot_test(
-                        driver, x_measure, y_measure, facet_measure,
+                        driver, x_measure, y_measure, group_measure,
                         replicate_method, exp_subtitle, exp_legend,
                         exp_marks_len, exp_mark_class, exp_x_mark, exp_y_mark)
 
@@ -173,13 +173,13 @@ class TestLineplot(TestPluginBase):
         firefox_options.add_argument('-headless')
 
         with webdriver.Firefox(options=firefox_options) as driver:
-            for (x_measure, y_measure, facet_measure, replicate_method,
+            for (x_measure, y_measure, group_measure, replicate_method,
                  exp_subtitle, exp_legend, exp_marks_len, exp_mark_class,
                  exp_x_mark, exp_y_mark) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
-                    facet_measure=facet_measure,
+                    group_measure=group_measure,
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
                     exp_marks_len=exp_marks_len, exp_mark_class=exp_mark_class,
@@ -187,6 +187,6 @@ class TestLineplot(TestPluginBase):
                 ):
 
                     self._selenium_lineplot_test(
-                        driver, x_measure, y_measure, facet_measure,
+                        driver, x_measure, y_measure, group_measure,
                         replicate_method, exp_subtitle, exp_legend,
                         exp_marks_len, exp_mark_class, exp_x_mark, exp_y_mark)

@@ -1,4 +1,4 @@
-sample_name	facet	x	y	a	b
+sample_name	group	x	y	a	b
 #q2:types	categorical	numeric	numeric	numeric	numeric
 sample01	aa	4	6	1	1
 sample02	aa	5	9	2	2

@@ -85,7 +85,7 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'replicate_method': Str % Choices('none', 'median', 'mean'),
-        'facet_by': Str,
+        'group_by': Str,
         'title': Str
     },
     parameter_descriptions={
@@ -98,24 +98,24 @@ plugin.visualizers.register_function(
         'replicate_method': 'The method for averaging replicates'
                             ' if present in the chosen `x_measure`.'
                             ' Available methods are `median` and `mean`.',
-        'facet_by': 'Categorical measure from the input Metadata that'
-                    ' should be used for faceting the lineplot.',
+        'group_by': 'Categorical measure from the input Metadata that'
+                    ' should be used for grouping the lineplot.',
         'title': 'The title of the lineplot.'},
     name='Lineplot',
     description='Basic lineplot for visualizing two numeric Metadata'
-                ' measures with optional faceting.',
+                ' measures with optional grouping.',
     examples={
-        'lineplot_median_replicates_with_faceting':
-            ex.lineplot_median_replicates_with_faceting,
-        'lineplot_mean_replicates_with_faceting':
-            ex.lineplot_mean_replicates_with_faceting,
-        'lineplot_median_replicates_no_faceting':
-            ex.lineplot_median_replicates_no_faceting,
-        'lineplot_mean_replicates_no_faceting':
-            ex.lineplot_mean_repliates_no_faceting,
-        'lineplot_no_replicates_with_faceting':
-            ex.lineplot_no_replicates_with_faceting,
-        'lineplot_no_replicates_no_faceting':
-            ex.lineplot_no_replicates_no_faceting
+        'lineplot_median_replicates_with_grouping':
+            ex.lineplot_median_replicates_with_grouping,
+        'lineplot_mean_replicates_with_grouping':
+            ex.lineplot_mean_replicates_with_grouping,
+        'lineplot_median_replicates_no_grouping':
+            ex.lineplot_median_replicates_no_grouping,
+        'lineplot_mean_replicates_no_grouping':
+            ex.lineplot_mean_repliates_no_grouping,
+        'lineplot_no_replicates_with_grouping':
+            ex.lineplot_no_replicates_with_grouping,
+        'lineplot_no_replicates_no_grouping':
+            ex.lineplot_no_replicates_no_grouping
     }
 )
