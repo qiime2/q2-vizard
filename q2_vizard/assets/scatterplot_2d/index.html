@@ -62,18 +62,6 @@
       mark.setAttribute('data-y', y);
     });
 
-    // Add class to axes for easy selection in Selenium
-    var axes = svg.querySelectorAll('.role-axis');
-    axes.forEach(function(axis, index) {
-      axis.setAttribute('class', 'axis-' + index);
-    });
-
-    // Add ID to legend for easy selection in Selenium
-    var legend = svg.querySelector('.role-legend');
-    if (legend) {
-      legend.setAttribute('id', 'legend');
-    }
-
   }).catch(console.error);
 </script>
 </body>

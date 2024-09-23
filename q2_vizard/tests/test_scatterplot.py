@@ -85,7 +85,7 @@ class TestScatterplot(TestPluginBase):
             # test that our axes match the dropdown values
             axis_elements = \
                 driver.find_elements(By.CSS_SELECTOR,
-                                     'g[aria-roledescription="axis"]')
+                                     'g.mark-group.role-axis')
             self.assertEqual(len(axis_elements), 2)
 
             for _, axis in enumerate(axis_elements):
@@ -100,7 +100,7 @@ class TestScatterplot(TestPluginBase):
             # test that the legend contains the correct group
             legend_element = \
                 driver.find_element(By.CSS_SELECTOR,
-                                    'g[aria-roledescription="legend"]')
+                                    'g.mark-group.role-legend')
 
             label = legend_element.get_attribute('aria-label')
             self.assertIn(f"legend titled '{exp_color_measure}'", label)
@@ -109,7 +109,7 @@ class TestScatterplot(TestPluginBase):
             # and that a mark is where we expect it to be
             mark_elements = \
                 driver.find_elements(By.CSS_SELECTOR,
-                                     'g.marks > path[class^="mark-"]')
+                                     'g.mark-symbol.role-mark.marks > path')
             self.assertEqual(exp_marks_len, len(mark_elements))
 
             mark_element_0 = mark_elements[0]

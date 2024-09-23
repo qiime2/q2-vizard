@@ -71,7 +71,7 @@ class TestHeatmap(TestPluginBase):
             # test that our axes match the expected fields
             axis_elements = \
                 driver.find_elements(By.CSS_SELECTOR,
-                                     'g[aria-roledescription="axis"]')
+                                     'g.mark-group.role-axis')
             self.assertEqual(len(axis_elements), 2)
 
             for _, axis in enumerate(axis_elements):
@@ -86,7 +86,7 @@ class TestHeatmap(TestPluginBase):
             # test that the legend contains the correct group
             legend_element = \
                 driver.find_element(By.CSS_SELECTOR,
-                                    'g[aria-roledescription="legend"]')
+                                    'g.mark-group.role-legend')
 
             label = legend_element.get_attribute('aria-label')
             self.assertIn(f"legend titled '{exp_gradient_measure}'", label)
@@ -95,9 +95,7 @@ class TestHeatmap(TestPluginBase):
             # and that a rect mark is where we expect it to be
             mark_elements = \
                 driver.find_elements(
-                    By.CSS_SELECTOR,
-                    'g.mark-rect.role-mark > path[class^="rect-"]'
-                )
+                    By.CSS_SELECTOR, 'g.mark-rect.role-mark > path')
             self.assertEqual(exp_marks_len, len(mark_elements))
 
             mark_element_0 = mark_elements[0]
