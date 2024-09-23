@@ -7,7 +7,6 @@
 # ----------------------------------------------------------------------------
 
 import os
-# import re
 import tempfile
 import pandas as pd
 
@@ -15,7 +14,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
-# from selenium.webdriver.support.ui import Select
 
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
@@ -49,16 +47,14 @@ class TestHeatmap(TestPluginBase):
         self.test_cases = [
             ('bodysite', 'foobar', 'Z',
              exp_marks_len, 'left-palm', 'foo', '33',
-             'rect-sample1', 'bodysite', 'foobar', 'Z')
+             'rect-sample1')
         ]
 
     # utility method that will run all checks for heatmap
     # used in each browser test below (firefox & chrome supported)
     def _selenium_heatmap_test(self, driver, x_measure, y_measure,
                                gradient_measure, exp_marks_len, exp_x_mark,
-                               exp_y_mark, exp_gradient_mark, exp_mark_class,
-                               exp_x_measure, exp_y_measure,
-                               exp_gradient_measure):
+                               exp_y_mark, exp_gradient_mark, exp_mark_class):
         with tempfile.TemporaryDirectory() as output_dir:
             heatmap(
                 output_dir=output_dir, metadata=self.md,
@@ -77,9 +73,9 @@ class TestHeatmap(TestPluginBase):
             for _, axis in enumerate(axis_elements):
                 label = axis.get_attribute('aria-label')
                 if 'X-axis' in label:
-                    self.assertIn(f"axis titled '{exp_x_measure}'", label)
+                    self.assertIn(f"axis titled '{x_measure}'", label)
                 elif 'Y-axis' in label:
-                    self.assertIn(f"axis titled '{exp_y_measure}'", label)
+                    self.assertIn(f"axis titled '{y_measure}'", label)
                 else:
                     raise ValueError(f'Unexpected axis element {label} found.')
 
@@ -89,7 +85,7 @@ class TestHeatmap(TestPluginBase):
                                     'g.mark-group.role-legend')
 
             label = legend_element.get_attribute('aria-label')
-            self.assertIn(f"legend titled '{exp_gradient_measure}'", label)
+            self.assertIn(f"legend titled '{gradient_measure}'", label)
 
             # test that we have the correct number of rect marks
             # and that a rect mark is where we expect it to be
@@ -117,26 +113,21 @@ class TestHeatmap(TestPluginBase):
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure,
                  gradient_measure, exp_marks_len, exp_x_mark,
-                 exp_y_mark, exp_gradient_mark, exp_mark_class,
-                 exp_x_measure, exp_y_measure,
-                 exp_gradient_measure) in self.test_cases:
+                 exp_y_mark, exp_gradient_mark,
+                 exp_mark_class) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
                     gradient_measure=gradient_measure,
                     exp_marks_len=exp_marks_len, exp_x_mark=exp_x_mark,
                     exp_y_mark=exp_y_mark, exp_gradient_mark=exp_gradient_mark,
-                    exp_mark_class=exp_mark_class, exp_x_measure=exp_x_measure,
-                    exp_y_measure=exp_y_measure,
-                    exp_gradient_measure=exp_gradient_measure
+                    exp_mark_class=exp_mark_class
                 ):
 
                     self._selenium_heatmap_test(
                         driver, x_measure, y_measure,
                         gradient_measure, exp_marks_len, exp_x_mark,
-                        exp_y_mark, exp_gradient_mark, exp_mark_class,
-                        exp_x_measure, exp_y_measure,
-                        exp_gradient_measure)
+                        exp_y_mark, exp_gradient_mark, exp_mark_class)
 
     # run selenium checks with a firefox driver
     def test_heatmap_firefox(self):
@@ -146,23 +137,18 @@ class TestHeatmap(TestPluginBase):
         with webdriver.Firefox(options=firefox_options) as driver:
             for (x_measure, y_measure,
                  gradient_measure, exp_marks_len, exp_x_mark,
-                 exp_y_mark, exp_gradient_mark, exp_mark_class,
-                 exp_x_measure, exp_y_measure,
-                 exp_gradient_measure) in self.test_cases:
+                 exp_y_mark, exp_gradient_mark,
+                 exp_mark_class) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
                     gradient_measure=gradient_measure,
                     exp_marks_len=exp_marks_len, exp_x_mark=exp_x_mark,
                     exp_y_mark=exp_y_mark, exp_gradient_mark=exp_gradient_mark,
-                    exp_mark_class=exp_mark_class, exp_x_measure=exp_x_measure,
-                    exp_y_measure=exp_y_measure,
-                    exp_gradient_measure=exp_gradient_measure
+                    exp_mark_class=exp_mark_class
                 ):
 
                     self._selenium_heatmap_test(
                         driver, x_measure, y_measure,
                         gradient_measure, exp_marks_len, exp_x_mark,
-                        exp_y_mark, exp_gradient_mark, exp_mark_class,
-                        exp_x_measure, exp_y_measure,
-                        exp_gradient_measure)
+                        exp_y_mark, exp_gradient_mark, exp_mark_class)
