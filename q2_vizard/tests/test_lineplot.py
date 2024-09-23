@@ -149,6 +149,9 @@ class TestLineplot(TestPluginBase):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
+
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, group_measure, replicate_method,
                  exp_subtitle, exp_legend, exp_marks_len, exp_mark_class,
@@ -171,6 +174,9 @@ class TestLineplot(TestPluginBase):
     def test_lineplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
+
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
 
         with webdriver.Firefox(options=firefox_options) as driver:
             for (x_measure, y_measure, group_measure, replicate_method,
