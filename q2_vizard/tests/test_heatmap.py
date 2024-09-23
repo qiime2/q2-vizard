@@ -47,7 +47,7 @@ class TestHeatmap(TestPluginBase):
         self.test_cases = [
             ('bodysite', 'foobar', 'Z',
              exp_marks_len, 'left-palm', 'foo', '33',
-             'rect-sample1')
+             'data-sample1')
         ]
 
     # utility method that will run all checks for heatmap
@@ -110,6 +110,9 @@ class TestHeatmap(TestPluginBase):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
+
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure,
                  gradient_measure, exp_marks_len, exp_x_mark,
@@ -133,6 +136,9 @@ class TestHeatmap(TestPluginBase):
     def test_heatmap_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
+
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
 
         with webdriver.Firefox(options=firefox_options) as driver:
             for (x_measure, y_measure,

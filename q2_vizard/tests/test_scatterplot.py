@@ -47,9 +47,9 @@ class TestScatterplot(TestPluginBase):
 
         self.test_cases = [
             ('B', 'Z', 'foobar', exp_marks_len,
-             '5', '33', 'mark-sample1', 'B', 'Z', 'foobar'),
+             '5', '33', 'data-sample1', 'B', 'Z', 'foobar'),
             ('', '', '', exp_marks_len, '1', '1',
-             'mark-sample1', 'A', 'A', 'legendDefault')
+             'data-sample1', 'A', 'A', 'legendDefault')
         ]
 
     # utility method that will run all checks for scatterplot
@@ -126,6 +126,9 @@ class TestScatterplot(TestPluginBase):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
+
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, color_measure, exp_marks_len,
                  exp_x_mark, exp_y_mark, exp_mark_class, exp_x_measure,
@@ -149,6 +152,9 @@ class TestScatterplot(TestPluginBase):
     def test_scatterplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
+
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
 
         with webdriver.Firefox(options=firefox_options) as driver:
 
