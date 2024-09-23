@@ -34,9 +34,9 @@ class TestLineplot(TestPluginBase):
         self.test_cases = [
             ('x', 'y', 'facet', 'median',
              'Data was averaged using the `median` method.',
-             "titled 'facet'", exp_marks_len, '1', '2'),
+             "titled 'facet'", exp_marks_len, 'mark-sample01', '4', '6'),
             ('b', 'y', '', 'none', ' ', "titled 'legend'",
-             exp_marks_len, '1', '6')
+             exp_marks_len, 'mark-sample01', '1', '6')
         ]
 
     # testing error handling within the actual method
@@ -69,7 +69,7 @@ class TestLineplot(TestPluginBase):
     # selenium testing
     def _selenium_lineplot_test(self, driver, x_measure, y_measure,
                                 facet_measure, replicate_method, exp_subtitle,
-                                exp_legend, exp_marks_len,
+                                exp_legend, exp_marks_len, exp_mark_class,
                                 exp_x_mark, exp_y_mark):
         with tempfile.TemporaryDirectory() as output_dir:
             lineplot(
@@ -135,6 +135,15 @@ class TestLineplot(TestPluginBase):
 
             self.assertEqual(exp_marks_len, len(mark_elements))
 
+            mark_element_0 = mark_elements[0]
+            mark_class = mark_element_0.get_attribute('class')
+            mark_x = mark_element_0.get_attribute('data-x')
+            mark_y = mark_element_0.get_attribute('data-y')
+
+            self.assertEqual(mark_class, exp_mark_class)
+            self.assertEqual(mark_x, exp_x_mark)
+            self.assertEqual(mark_y, exp_y_mark)
+
     # run selenium checks with a chrome driver
     def test_lineplot_chrome(self):
         chrome_options = ChromeOptions()
@@ -142,7 +151,7 @@ class TestLineplot(TestPluginBase):
 
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, facet_measure, replicate_method,
-                 exp_subtitle, exp_legend, exp_marks_len,
+                 exp_subtitle, exp_legend, exp_marks_len, exp_mark_class,
                  exp_x_mark, exp_y_mark) in self.test_cases:
 
                 with self.subTest(
@@ -150,14 +159,14 @@ class TestLineplot(TestPluginBase):
                     facet_measure=facet_measure,
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
-                    exp_marks_len=exp_marks_len,
+                    exp_marks_len=exp_marks_len, exp_mark_class=exp_mark_class,
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark
                 ):
 
                     self._selenium_lineplot_test(
                         driver, x_measure, y_measure, facet_measure,
                         replicate_method, exp_subtitle, exp_legend,
-                        exp_marks_len, exp_x_mark, exp_y_mark)
+                        exp_marks_len, exp_mark_class, exp_x_mark, exp_y_mark)
 
     def test_lineplot_firefox(self):
         firefox_options = FirefoxOptions()
@@ -165,7 +174,7 @@ class TestLineplot(TestPluginBase):
 
         with webdriver.Firefox(options=firefox_options) as driver:
             for (x_measure, y_measure, facet_measure, replicate_method,
-                 exp_subtitle, exp_legend, exp_marks_len,
+                 exp_subtitle, exp_legend, exp_marks_len, exp_mark_class,
                  exp_x_mark, exp_y_mark) in self.test_cases:
 
                 with self.subTest(
@@ -173,11 +182,11 @@ class TestLineplot(TestPluginBase):
                     facet_measure=facet_measure,
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
-                    exp_marks_len=exp_marks_len,
+                    exp_marks_len=exp_marks_len, exp_mark_class=exp_mark_class,
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark
                 ):
 
                     self._selenium_lineplot_test(
                         driver, x_measure, y_measure, facet_measure,
                         replicate_method, exp_subtitle, exp_legend,
-                        exp_marks_len, exp_x_mark, exp_y_mark)
+                        exp_marks_len, exp_mark_class, exp_x_mark, exp_y_mark)

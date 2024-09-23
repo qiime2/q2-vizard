@@ -50,7 +50,7 @@
   "data": [
     {
       "name": "scatter_table",
-      "values": {"{{REPLACE_PARAM}}": "ordered_metadata"}
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
     },
     {
       "name": "line_table",

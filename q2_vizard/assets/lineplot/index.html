@@ -60,7 +60,7 @@
     var firstMarkElement = svg.querySelector('g.mark-symbol.role-mark');
     var marks = firstMarkElement.querySelectorAll('path');
     marks.forEach(function(mark, index) {
-      var data = view.data('scatter_table');
+      var data = view.data('scatter_table')[index];
 
       var id = data[view.signal('idField')];
       var x = data[view.signal('xField')];

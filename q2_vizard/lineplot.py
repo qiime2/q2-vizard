@@ -25,7 +25,7 @@ def lineplot(output_dir: str, metadata: Metadata,
 
     # input handling for initial metadata
     md_ids = metadata.id_header
-    md = metadata.to_dataframe()
+    md = metadata.to_dataframe().reset_index()
 
     # column validation for x_measure and y_measure
     for measure in [x_measure, y_measure]:
@@ -143,7 +143,7 @@ def lineplot(output_dir: str, metadata: Metadata,
     with open(spec_fp) as fh:
         json_obj = json.load(fh)
 
-    ordered_md_obj = json.loads(ordered_md.to_json(orient='records'))
+    md_obj = json.loads(md.to_json(orient='records'))
     averaged_md_obj = json.loads(averaged_md.to_json(orient='records'))
 
     if replicate_method in ['median', 'mean']:
@@ -152,8 +152,7 @@ def lineplot(output_dir: str, metadata: Metadata,
         subtitle = ' '
 
     full_spec = \
-        _json_replace(json_obj, md_ids=md_ids,
-                      ordered_metadata=ordered_md_obj,
+        _json_replace(json_obj, metadata=md_obj, md_ids=md_ids,
                       averaged_metadata=averaged_md_obj,
                       x_measure=x_measure, y_measure=y_measure,
                       facet_by=facet_by, title=title, subtitle=subtitle)
