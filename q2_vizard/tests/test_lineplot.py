@@ -34,10 +34,9 @@ class TestLineplot(TestPluginBase):
         self.test_cases = [
             ('x', 'y', 'facet', 'median',
              'Data was averaged using the `median` method.',
-             "titled 'facet'", ['aa', 'bb', 'cc'],
-             exp_marks_len, '1', '2'),
+             "titled 'facet'", exp_marks_len, '1', '2'),
             ('b', 'y', '', 'none', ' ', "titled 'legend'",
-             '', exp_marks_len, '1', '6')
+             exp_marks_len, '1', '6')
         ]
 
     # testing error handling within the actual method
@@ -70,7 +69,7 @@ class TestLineplot(TestPluginBase):
     # selenium testing
     def _selenium_lineplot_test(self, driver, x_measure, y_measure,
                                 facet_measure, replicate_method, exp_subtitle,
-                                exp_legend, exp_facet_groups, exp_marks_len,
+                                exp_legend, exp_marks_len,
                                 exp_x_mark, exp_y_mark):
         with tempfile.TemporaryDirectory() as output_dir:
             lineplot(
@@ -111,6 +110,19 @@ class TestLineplot(TestPluginBase):
             subtitle = title_element.get_attribute('subtitle')
             self.assertEqual(subtitle, exp_subtitle)
 
+            # test that the correct number of line marks are present
+            # equal to the number of unique groups in the facet_by, else = 1
+            line_elements = \
+                driver.find_elements(By.CSS_SELECTOR, 'g.mark-line.role-mark')
+            md_df = self.md.to_dataframe()
+
+            if facet_measure:
+                exp_lines = len(md_df[facet_measure].unique())
+            else:
+                exp_lines = 1
+
+            self.assertEqual(len(line_elements), exp_lines)
+
             # test that the correct number of scatter marks are present
             # and a mark is where we expect it to be
             # for some reason this viz renders multiple groups
@@ -130,7 +142,7 @@ class TestLineplot(TestPluginBase):
 
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, facet_measure, replicate_method,
-                 exp_subtitle, exp_legend, exp_facet_groups, exp_marks_len,
+                 exp_subtitle, exp_legend, exp_marks_len,
                  exp_x_mark, exp_y_mark) in self.test_cases:
 
                 with self.subTest(
@@ -138,7 +150,6 @@ class TestLineplot(TestPluginBase):
                     facet_measure=facet_measure,
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
-                    exp_facet_groups=exp_facet_groups,
                     exp_marks_len=exp_marks_len,
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark
                 ):
@@ -146,8 +157,7 @@ class TestLineplot(TestPluginBase):
                     self._selenium_lineplot_test(
                         driver, x_measure, y_measure, facet_measure,
                         replicate_method, exp_subtitle, exp_legend,
-                        exp_facet_groups, exp_marks_len,
-                        exp_x_mark, exp_y_mark)
+                        exp_marks_len, exp_x_mark, exp_y_mark)
 
     def test_lineplot_firefox(self):
         firefox_options = FirefoxOptions()
@@ -155,7 +165,7 @@ class TestLineplot(TestPluginBase):
 
         with webdriver.Firefox(options=firefox_options) as driver:
             for (x_measure, y_measure, facet_measure, replicate_method,
-                 exp_subtitle, exp_legend, exp_facet_groups, exp_marks_len,
+                 exp_subtitle, exp_legend, exp_marks_len,
                  exp_x_mark, exp_y_mark) in self.test_cases:
 
                 with self.subTest(
@@ -163,7 +173,6 @@ class TestLineplot(TestPluginBase):
                     facet_measure=facet_measure,
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
-                    exp_facet_groups=exp_facet_groups,
                     exp_marks_len=exp_marks_len,
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark
                 ):
@@ -171,5 +180,4 @@ class TestLineplot(TestPluginBase):
                     self._selenium_lineplot_test(
                         driver, x_measure, y_measure, facet_measure,
                         replicate_method, exp_subtitle, exp_legend,
-                        exp_facet_groups, exp_marks_len,
-                        exp_x_mark, exp_y_mark)
+                        exp_marks_len, exp_x_mark, exp_y_mark)
