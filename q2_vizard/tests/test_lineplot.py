@@ -34,9 +34,9 @@ class TestLineplot(TestPluginBase):
         self.test_cases = [
             ('x', 'y', 'group', 'median',
              'Data was averaged using the `median` method.',
-             "titled 'group'", exp_marks_len, 'mark-sample01', '4', '6'),
+             "titled 'group'", exp_marks_len, 'data-sample01', '4', '6'),
             ('b', 'y', '', 'none', ' ', "titled 'legend'",
-             exp_marks_len, 'mark-sample01', '1', '6')
+             exp_marks_len, 'data-sample01', '1', '6')
         ]
 
     # testing error handling within the actual method
@@ -125,13 +125,9 @@ class TestLineplot(TestPluginBase):
 
             # test that the correct number of scatter marks are present
             # and a mark is where we expect it to be
-            # for some reason this viz renders multiple groups
-            # of the same marks, so just selecting the first one
-            first_mark_container = \
-                driver.find_element(By.CSS_SELECTOR,
-                                    'g.mark-symbol.role-mark')
             mark_elements = \
-                first_mark_container.find_elements(By.CSS_SELECTOR, 'path')
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'g.mark-symbol.role-mark > path')
 
             self.assertEqual(exp_marks_len, len(mark_elements))
 

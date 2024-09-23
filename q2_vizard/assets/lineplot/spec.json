@@ -168,39 +168,39 @@
               "strokeOpacity": {"value": 1}
             }
           }
-        },
-        {
-          "type": "symbol",
-          "from": {"data": "scatter_table"},
-          "encode": {
-            "update": {
-              "x": {
-                "scale": "x_scale",
-                "field": {"{{REPLACE_PARAM}}": "x_measure"}
-              },
-              "y": {
-                "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "y_measure"}
-              },
-              "shape": {"value": "circle"},
-              "stroke": {
-                "scale": "color_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"}
-              },
-              "strokeWidth": {"value": 2.5},
-              "fill": {"value": "white"},
-              "size": {"value": 100}
-            },
-            "hover": {
-              "fill": {
-                "scale": "color_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"}
-              },
-              "tooltip": {"signal": "datum"}
-            }
-          }
         }
       ]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "scatter_table"},
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x_scale",
+            "field": {"{{REPLACE_PARAM}}": "x_measure"}
+          },
+          "y": {
+            "scale": "y_scale",
+            "field": {"{{REPLACE_PARAM}}": "y_measure"}
+          },
+          "shape": {"value": "circle"},
+          "stroke": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
+          "strokeWidth": {"value": 2.5},
+          "fill": {"value": "white"},
+          "size": {"value": 100}
+        },
+        "hover": {
+          "fill": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
+          "tooltip": {"signal": "datum"}
+        }
+      }
     }
   ]
 }
