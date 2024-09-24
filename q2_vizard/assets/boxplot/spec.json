@@ -22,12 +22,16 @@
       "bind": {"input": "input"}
     },
     {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "distribution_measure"}
+    },
+    {
+      "name": "yField",
+      "value": {"{{REPLACE_PARAM}}": "group_by"}
+    },
+    {
       "name": "whiskerMethod",
-      "value": {"{{REPLACE_PARAM}}": "whisker_range"},
-      "bind": {
-        "input": "radio",
-        "options": ["tukeys_iqr", "percentile", "minmax"]
-      }
+      "value": {"{{REPLACE_PARAM}}": "whisker_range"}
     },
     {
       "name": "transpose",
@@ -66,7 +70,7 @@
       "transform": [
         {
           "type": "aggregate",
-          "groupby": [{"{{REPLACE_PARAM}}": "y_measure"}]
+          "groupby": [{"{{REPLACE_PARAM}}": "group_by"}]
         }
       ]
     },
@@ -177,7 +181,7 @@
     {
       "name": "x_scale",
       "type": "linear",
-      "range": {"signal": "transpose ? 'height' : 'width'"},
+      "range": {"signal": "transpose ? [0, height] : [0, width]"},
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
@@ -186,7 +190,7 @@
     {
       "name": "y_scale",
       "type": "band",
-      "range": {"signal": "transpose ? 'width' : 'height'"},
+      "range": {"signal": "transpose ? [0, height] : [0, width]"},
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "group_by"}}
@@ -205,99 +209,47 @@
 
   "axes": [
     {
+      "scale": "x_scale",
+      "labelFontSize": 12,
       "orient": {"signal": "transpose ? 'left' : 'bottom'"},
-      "scale": "xscale",
-      "zindex": 1
+      "title": {"signal": "transpose ? yField : xField"},
+      "titleFontSize": 14,
+      "titlePadding": 20
     },
     {
+      "scale": "y_scale",
+      "labelFontSize": 12,
+      "grid": true,
       "orient": {"signal": "transpose ? 'bottom' : 'left'"},
-      "scale": "layout",
-      "tickCount": 5,
-      "zindex": 1
+      "tickCount": {"signal": "nRows"},
+      "title": {"signal": "transpose ? 'xField' : 'yField'"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    }
+  ],
+
+  "legends": [
+    {
+      "stroke": "color_scale",
+      "symbolSize": 150,
+      "symbolStrokeWidth": 2.5,
+      "labelFontSize": 14,
+      "title": {"signal": "yField"},
+      "titleFontSize": 16,
+      "encode": {
+        "symbols": {
+          "name": "legendSymbol",
+          "interactive": false
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": false
+        }
+      }
     }
   ],
 
   "marks": [
-    {
-      "type": "group",
-      "from": {
-        "facet": {
-          "data": "table",
-          "name": "facet",
-          "groupby": {"{{REPLACE_PARAM}}": "group_by"}
-        }
-      },
-      "encode": {
-        "enter": {
-          "yc": {"signal": "transpose ? width / 2 : plotWidth / 2", "offset": 0.5},
-          "height": {"signal": "plotWidth"},
-          "width": {"signal": "transpose ? height : width"}
-        }
-      },
-      "marks": [
-        {
-          "type": "rect",
-          "from": {"data": "summary"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "black"},
-              "height": {"signal": "transpose ? plotWidth / 2 : 1"},
-              "width": {"signal": "transpose ? 1 : plotWidth / 2"}
-            },
-            "update": {
-              "yc": {"signal": "transpose ? plotWidth / 2 : width / 2", "offset": -0.5},
-              "x": {"scale": "xscale", "field": "whiskerLow"},
-              "x2": {"scale": "xscale", "field": "whiskerHigh"}
-            }
-          }
-        },
-        {
-          "type": "rect",
-          "from": {"data": "summary"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "steelblue"},
-              "cornerRadius": {"value": 4}
-            },
-            "update": {
-              "yc": {"signal": "transpose ? height / 2 : plotWidth / 2"},
-              "height": {"signal": "transpose ? width / 2 : plotWidth / 2"},
-              "x": {"scale": "xscale", "field": "q1"},
-              "x2": {"scale": "xscale", "field": "q3"}
-            }
-          }
-        },
-        {
-          "type": "rect",
-          "from": {"data": "summary"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "aliceblue"},
-              "width": {"value": 2}
-            },
-            "update": {
-              "yc": {"signal": "transpose ? plotWidth / 2 : width / 2"},
-              "height": {"signal": "transpose ? plotWidth / 2 : width / 2"},
-              "x": {"scale": "xscale", "field": "median"}
-            }
-          }
-        },
-        {
-          "type": "symbol",
-          "from": {"data": "outliers"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "red"},
-              "size": {"value": 30}
-            },
-            "update": {
-              "yc": {"scale": "layout", "field": {"{{REPLACE_PARAM}}": "group_by"}, "band": 0.5},
-              "x": {"scale": "xscale", "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
-              "opacity": {"signal": "suppressOutliers ? 0 : 1"}
-            }
-          }
-        }
-      ]
-    }
+
   ]
 }
