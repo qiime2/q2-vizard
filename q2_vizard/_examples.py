@@ -159,6 +159,8 @@ def lineplot_no_replicates_no_grouping(use):
         ),
         use.UsageOutputNames(
             visualization='lineplot'
+        )
+    )
 
 
 def heatmap(use):
