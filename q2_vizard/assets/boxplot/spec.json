@@ -190,7 +190,7 @@
     {
       "name": "y_scale",
       "type": "band",
-      "range": {"signal": "transpose ? [0, height] : [0, width]"},
+      "range": {"signal": "transpose ? [0, width] : [0, height]"},
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "group_by"}}
@@ -222,7 +222,7 @@
       "grid": true,
       "orient": {"signal": "transpose ? 'bottom' : 'left'"},
       "tickCount": {"signal": "nRows"},
-      "title": {"signal": "transpose ? 'xField' : 'yField'"},
+      "title": {"signal": "transpose ? xField : yField"},
       "titleFontSize": 14,
       "titlePadding": 20
     }
