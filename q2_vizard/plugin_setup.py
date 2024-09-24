@@ -33,8 +33,6 @@ plugin.visualizers.register_function(
         'gradient_measure': Str,
         'title': Str
     },
-    name='Heatmap',
-    description='Basic heatmap for visualizing three Metadata measures.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input that contains at least three'
                     ' measures for visualizing, one of which must be numeric.',
@@ -45,7 +43,10 @@ plugin.visualizers.register_function(
         'gradient_measure': 'Numeric measure from the input Metadata that'
                             ' should be used to represent the color gradient'
                             ' in the heatmap.',
-        'title': 'The title of the heatmap.'}
+        'title': 'The title of the heatmap.'},
+    name='Heatmap',
+    description='Basic heatmap for visualizing three Metadata measures.',
+    examples={'heatmap': ex.heatmap}
 )
 
 

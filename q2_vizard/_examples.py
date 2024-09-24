@@ -159,5 +159,20 @@ def lineplot_no_replicates_no_grouping(use):
         ),
         use.UsageOutputNames(
             visualization='lineplot'
+
+
+def heatmap(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    heatmap_viz, = use.action(
+        use.UsageAction('vizard', 'heatmap'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='days_post_transplant',
+            y_measure='genotype',
+            gradient_measure='numeric_col',
+        ),
+        use.UsageOutputNames(
+            visualization='heatmap'
         )
     )

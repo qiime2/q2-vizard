@@ -22,6 +22,7 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
                    title: str = None):
 
     # input handling for initial metadata
+    md_ids = metadata.id_header
     md = metadata.to_dataframe().reset_index()
     md['legendDefault'] = 'data'
 
@@ -80,7 +81,7 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
-    full_spec = _json_replace(json_obj, metadata=metadata_obj,
+    full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
                               md_cols_numeric=md_cols_numeric,
                               x_dropdown_default=x_dropdown_default,
                               y_dropdown_default=y_dropdown_default,
