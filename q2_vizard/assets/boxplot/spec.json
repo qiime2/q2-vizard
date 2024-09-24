@@ -225,16 +225,18 @@
 
   "legends": [
     {
-      "stroke": "color_scale",
+      "fill": "color_scale",
+      "symbolType": "square",
       "symbolSize": 150,
-      "symbolStrokeWidth": 2.5,
+      "symbolStrokeWidth": 1.5,
       "labelFontSize": 14,
       "title": {"signal": "yField"},
       "titleFontSize": 16,
       "encode": {
         "symbols": {
-          "name": "legendSymbol",
-          "interactive": false
+          "update": {
+            "stroke": {"value": "black"}
+          }
         },
         "labels": {
           "name": "legendLabel",
