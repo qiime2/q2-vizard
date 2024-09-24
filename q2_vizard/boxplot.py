@@ -17,21 +17,21 @@ from ._util import _json_replace, _measure_validation, _col_type_validation
 
 def boxplot(output_dir: str, metadata: Metadata,
             distribution_measure: NumericMetadataColumn,
-            whisker_range: str, facet_by: CategoricalMetadataColumn = None,
+            whisker_range: str, group_by: CategoricalMetadataColumn = None,
             title: str = None):
 
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
 
-    # input validation for distribution & facet_by measures
+    # input validation for distribution & group_by measures
     _col_type_validation(metadata=metadata, measure=distribution_measure,
                          col_type='numeric')
     _measure_validation(metadata=metadata, measure=distribution_measure)
 
-    if facet_by:
-        _col_type_validation(metadata=metadata, measure=facet_by,
+    if group_by:
+        _col_type_validation(metadata=metadata, measure=group_by,
                              col_type='categorical')
-        _measure_validation(metadata=metadata, measure=facet_by)
+        _measure_validation(metadata=metadata, measure=group_by)
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
@@ -60,7 +60,7 @@ def boxplot(output_dir: str, metadata: Metadata,
     full_spec = _json_replace(json_obj, metadata=metadata_obj,
                               distribution_measure=distribution_measure,
                               whisker_range=whisker_range,
-                              facet_by=facet_by, title=title, expr=expr)
+                              group_by=group_by, title=title, expr=expr)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)

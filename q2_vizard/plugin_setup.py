@@ -82,12 +82,12 @@ plugin.visualizers.register_function(
         'metadata': Metadata,
         'distribution_measure': Str,
         'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
-        'facet_by': Str,
+        'group_by': Str,
         'title': Str
     },
     name='Boxplot',
     description='Basic boxplot for visualizing a numeric Metadata measure'
-                ' faceted by a categorical Metadata measure with choices for'
+                ' grouped by a categorical Metadata measure with choices for'
                 ' the whisker range.',
     parameter_descriptions={
         'metadata': 'Any metadata-like input with at least one numeric measure'
@@ -103,8 +103,8 @@ plugin.visualizers.register_function(
                          ' plotted as circular points, unless the'
                          ' `suppressOutliers` checkbox has been enabled'
                          ' on the rendered visualization.',
-        'facet_by': 'The categorical measure that will be used to facet each'
-                    ' group into separate box plots. If left blank, all data'
+        'group_by': 'The categorical measure that will be used to group the'
+                    ' data into separate box plots. If left blank, all data'
                     ' will be represented within a single box.',
         'title': 'The title of the boxplot.'
     }

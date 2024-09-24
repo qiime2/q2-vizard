@@ -1,280 +1,303 @@
 {
-    "$schema": "https://vega.github.io/schema/vega/v5.json",
-    "title": {
-      "text": {"signal": "title"},
-      "fontSize": 20,
-      "orient": "top",
-      "anchor": "start",
-      "subtitle": {"signal": "suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ''"}
-    },
-    "autosize": {
-      "type": "pad",
-      "resize": true
-    },
-    "width": 900,
-    "height": 900,
-    "padding": 20,
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "title": {
+    "text": {"signal": "title"},
+    "fontSize": 20,
+    "orient": "top",
+    "anchor": "start",
+    "subtitle": {"signal": "suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ' '"}
+  },
+  "autosize": {
+    "type": "pad",
+    "resize": true
+  },
+  "width": 900,
+  "height": {"signal": "rowHeight * nRows"},
+  "padding": 20,
 
-    "signals": [
-      {
-        "name": "title",
-        "value": {"{{REPLACE_PARAM}}": "title"},
-        "bind": {"input": "input"}
+  "signals": [
+    {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
+    },
+    {
+      "name": "whiskerMethod",
+      "value": {"{{REPLACE_PARAM}}": "whisker_range"},
+      "bind": {
+        "input": "radio",
+        "options": ["tukeys_iqr", "percentile", "minmax"]
+      }
+    },
+    {
+      "name": "transpose",
+      "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "suppressOutliers",
+      "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "nRows",
+      "value": 1,
+      "update": "length(data('rowTable'))"
+    },
+    {
+      "name": "rowHeight",
+      "value": 45,
+      "bind": {
+        "input": "range",
+        "min": 5,
+        "max": 200
+      }
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    },
+    {
+      "name": "rowTable",
+      "source": "table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [{"{{REPLACE_PARAM}}": "y_measure"}]
+        }
+      ]
+    },
+    {
+      "name": "percentiles_table",
+      "source": "table",
+      "transform": [
+        {
+          "type": "quantile",
+          "field": {"{{REPLACE_PARAM}}": "distribution_measure"},
+          "probs": [0.09, 0.91],
+          "groupby":[{"{{REPLACE_PARAM}}": "group_by"}],
+          "as": ["prob", "value"]
+        }
+      ]
+    },
+    {
+      "name": "p09_data",
+      "source": "percentiles_table",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.prob == 0.09"
+        }
+      ]
+    },
+    {
+      "name": "p91_data",
+      "source": "percentiles_table",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.prob == 0.91"
+        }
+      ]
+    },
+    {
+      "name": "summary",
+      "source": "table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "fields": [
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"}
+          ],
+          "ops": ["min","q1", "median", "q3", "max"],
+          "as": ["min", "q1", "median", "q3", "max"]
+        },
+        {
+          "type": "formula",
+          "as": "iqr",
+          "expr": "datum.q3 - datum.q1"
+        },
+        {
+          "type": "lookup",
+          "from": "p09_data",
+          "key": {"{{REPLACE_PARAM}}": "group_by"},
+          "fields": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "values": ["value"],
+          "as": ["p09"]
+        },
+        {
+          "type": "lookup",
+          "from": "p91_data",
+          "key": {"{{REPLACE_PARAM}}": "group_by"},
+          "fields": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "values": ["value"],
+          "as": ["p91"]
+        },
+        {
+          "type": "formula",
+          "as": "whiskerLow",
+          "expr": "whiskerMethod == 'tukeys_iqr' ? max(datum.q1 - 1.5 * datum.iqr, datum.min) : whiskerMethod == 'percentile' ? datum.p09 : datum.min"
+        },
+        {
+          "type": "formula",
+          "as": "whiskerHigh",
+          "expr": "whiskerMethod == 'tukeys_iqr' ? min(datum.q3 + 1.5 * datum.iqr, datum.max) : whiskerMethod == 'percentile' ? datum.p91 : datum.max"
+        }
+      ]
+    },
+    {
+      "name": "outliers",
+      "source": "table",
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "summary",
+          "key": {"{{REPLACE_PARAM}}": "group_by"},
+          "fields": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "as": ["summary"]
+        },
+        {
+          "type": "filter",
+          "expr": {"{{REPLACE_PARAM}}": "expr"}
+        }
+      ]
+    }
+
+  ],
+
+  "scales": [
+    {
+      "name": "x_scale",
+      "type": "linear",
+      "range": {"signal": "transpose ? 'height' : 'width'"},
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
+      "nice": true
+    },
+    {
+      "name": "y_scale",
+      "type": "band",
+      "range": {"signal": "transpose ? 'width' : 'height'"},
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "group_by"}}
+    },
+    {
+      "name": "color_scale",
+      "type": "ordinal",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "group_by"},
+        "sort": true
       },
-      {
-        "name": "plotWidth",
-        "value": 60
-      },
-      {
-        "name": "plotHeight",
-        "update": "(plotWidth + 10) * 3"
-      },
-      {
-        "name": "whiskerMethod",
-        "value": {"{{REPLACE_PARAM}}": "whisker_range"},
-        "bind": {
-          "input": "radio",
-          "options": ["tukeys_iqr", "percentile", "minmax"]
+      "range": {"scheme": "category10"}
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": {"signal": "transpose ? 'left' : 'bottom'"},
+      "scale": "xscale",
+      "zindex": 1
+    },
+    {
+      "orient": {"signal": "transpose ? 'bottom' : 'left'"},
+      "scale": "layout",
+      "tickCount": 5,
+      "zindex": 1
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "table",
+          "name": "facet",
+          "groupby": {"{{REPLACE_PARAM}}": "group_by"}
         }
       },
-      {
-        "name": "transpose",
-        "value": false,
-        "bind": {"input": "checkbox"}
+      "encode": {
+        "enter": {
+          "yc": {"signal": "transpose ? width / 2 : plotWidth / 2", "offset": 0.5},
+          "height": {"signal": "plotWidth"},
+          "width": {"signal": "transpose ? height : width"}
+        }
       },
-      {
-        "name": "suppressOutliers",
-        "value": false,
-        "bind": {"input": "checkbox"}
-      }
-    ],
-
-    "data": [
-      {
-        "name": "table",
-        "values": {"{{REPLACE_PARAM}}": "metadata"}
-      },
-      {
-        "name": "percentiles_table",
-        "source": "table",
-        "transform": [
-          {
-            "type": "quantile",
-            "field": {"{{REPLACE_PARAM}}": "distribution_measure"},
-            "probs": [0.09, 0.91],
-            "groupby":[{"{{REPLACE_PARAM}}": "facet_by"}],
-            "as": ["prob", "value"]
-          }
-        ]
-      },
-      {
-        "name": "p09_data",
-        "source": "percentiles_table",
-        "transform": [
-          {
-            "type": "filter",
-            "expr": "datum.prob == 0.09"
-          }
-        ]
-      },
-      {
-        "name": "p91_data",
-        "source": "percentiles_table",
-        "transform": [
-          {
-            "type": "filter",
-            "expr": "datum.prob == 0.91"
-          }
-        ]
-      },
-      {
-        "name": "summary",
-        "source": "table",
-        "transform": [
-          {
-            "type": "aggregate",
-            "groupby": [{"{{REPLACE_PARAM}}": "facet_by"}],
-            "fields": [
-              {"{{REPLACE_PARAM}}": "distribution_measure"},
-              {"{{REPLACE_PARAM}}": "distribution_measure"},
-              {"{{REPLACE_PARAM}}": "distribution_measure"},
-              {"{{REPLACE_PARAM}}": "distribution_measure"},
-              {"{{REPLACE_PARAM}}": "distribution_measure"}
-            ],
-            "ops": ["min","q1", "median", "q3", "max"],
-            "as": ["min", "q1", "median", "q3", "max"]
-          },
-          {
-            "type": "formula",
-            "as": "iqr",
-            "expr": "datum.q3 - datum.q1"
-          },
-          {
-            "type": "lookup",
-            "from": "p09_data",
-            "key": {"{{REPLACE_PARAM}}": "facet_by"},
-            "fields": [{"{{REPLACE_PARAM}}": "facet_by"}],
-            "values": ["value"],
-            "as": ["p09"]
-          },
-          {
-            "type": "lookup",
-            "from": "p91_data",
-            "key": {"{{REPLACE_PARAM}}": "facet_by"},
-            "fields": [{"{{REPLACE_PARAM}}": "facet_by"}],
-            "values": ["value"],
-            "as": ["p91"]
-          },
-          {
-            "type": "formula",
-            "as": "whiskerLow",
-            "expr": "whiskerMethod == 'tukeys_iqr' ? max(datum.q1 - 1.5 * datum.iqr, datum.min) : whiskerMethod == 'percentile' ? datum.p09 : datum.min"
-          },
-          {
-            "type": "formula",
-            "as": "whiskerHigh",
-            "expr": "whiskerMethod == 'tukeys_iqr' ? min(datum.q3 + 1.5 * datum.iqr, datum.max) : whiskerMethod == 'percentile' ? datum.p91 : datum.max"
-          }
-        ]
-      },
-      {
-        "name": "outliers",
-        "source": "table",
-        "transform": [
-          {
-            "type": "lookup",
-            "from": "summary",
-            "key": {"{{REPLACE_PARAM}}": "facet_by"},
-            "fields": [{"{{REPLACE_PARAM}}": "facet_by"}],
-            "as": ["summary"]
-          },
-          {
-            "type": "filter",
-            "expr": {"{{REPLACE_PARAM}}": "expr"}
-          }
-        ]
-      }
-
-    ],
-
-    "scales": [
-      {
-        "name": "layout",
-        "type": "band",
-        "range": {"signal": "transpose ? 'width' : 'height'"},
-        "domain": {
-          "data": "table",
-          "field": {"{{REPLACE_PARAM}}": "facet_by"}}
-      },
-      {
-        "name": "xscale",
-        "type": "linear",
-        "range": {"signal": "transpose ? 'height' : 'width'"},
-        "round": true,
-        "domain": {
-          "data": "table",
-          "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
-        "domainMin": 2000,
-        "zero": false,
-        "nice": true
-      }
-    ],
-
-    "axes": [
-      {
-        "orient": {"signal": "transpose ? 'left' : 'bottom'"},
-        "scale": "xscale",
-        "zindex": 1
-      },
-      {
-        "orient": {"signal": "transpose ? 'bottom' : 'left'"},
-        "scale": "layout",
-        "tickCount": 5,
-        "zindex": 1
-      }
-    ],
-
-    "marks": [
-      {
-        "type": "group",
-        "from": {
-          "facet": {
-            "data": "table",
-            "name": "facet",
-            "groupby": {"{{REPLACE_PARAM}}": "facet_by"}
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "black"},
+              "height": {"signal": "transpose ? plotWidth / 2 : 1"},
+              "width": {"signal": "transpose ? 1 : plotWidth / 2"}
+            },
+            "update": {
+              "yc": {"signal": "transpose ? plotWidth / 2 : width / 2", "offset": -0.5},
+              "x": {"scale": "xscale", "field": "whiskerLow"},
+              "x2": {"scale": "xscale", "field": "whiskerHigh"}
+            }
           }
         },
-        "encode": {
-          "enter": {
-            "yc": {"signal": "transpose ? width / 2 : plotWidth / 2", "offset": 0.5},
-            "height": {"signal": "plotWidth"},
-            "width": {"signal": "transpose ? height : width"}
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "steelblue"},
+              "cornerRadius": {"value": 4}
+            },
+            "update": {
+              "yc": {"signal": "transpose ? height / 2 : plotWidth / 2"},
+              "height": {"signal": "transpose ? width / 2 : plotWidth / 2"},
+              "x": {"scale": "xscale", "field": "q1"},
+              "x2": {"scale": "xscale", "field": "q3"}
+            }
           }
         },
-        "marks": [
-          {
-            "type": "rect",
-            "from": {"data": "summary"},
-            "encode": {
-              "enter": {
-                "fill": {"value": "black"},
-                "height": {"signal": "transpose ? plotWidth / 2 : 1"},
-                "width": {"signal": "transpose ? 1 : plotWidth / 2"}
-              },
-              "update": {
-                "yc": {"signal": "transpose ? plotWidth / 2 : width / 2", "offset": -0.5},
-                "x": {"scale": "xscale", "field": "whiskerLow"},
-                "x2": {"scale": "xscale", "field": "whiskerHigh"}
-              }
-            }
-          },
-          {
-            "type": "rect",
-            "from": {"data": "summary"},
-            "encode": {
-              "enter": {
-                "fill": {"value": "steelblue"},
-                "cornerRadius": {"value": 4}
-              },
-              "update": {
-                "yc": {"signal": "transpose ? height / 2 : plotWidth / 2"},
-                "height": {"signal": "transpose ? width / 2 : plotWidth / 2"},
-                "x": {"scale": "xscale", "field": "q1"},
-                "x2": {"scale": "xscale", "field": "q3"}
-              }
-            }
-          },
-          {
-            "type": "rect",
-            "from": {"data": "summary"},
-            "encode": {
-              "enter": {
-                "fill": {"value": "aliceblue"},
-                "width": {"value": 2}
-              },
-              "update": {
-                "yc": {"signal": "transpose ? plotWidth / 2 : width / 2"},
-                "height": {"signal": "transpose ? plotWidth / 2 : width / 2"},
-                "x": {"scale": "xscale", "field": "median"}
-              }
-            }
-          },
-          {
-            "type": "symbol",
-            "from": {"data": "outliers"},
-            "encode": {
-              "enter": {
-                "fill": {"value": "red"},
-                "size": {"value": 30}
-              },
-              "update": {
-                "yc": {"scale": "layout", "field": {"{{REPLACE_PARAM}}": "facet_by"}, "band": 0.5},
-                "x": {"scale": "xscale", "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
-                "opacity": {"signal": "suppressOutliers ? 0 : 1"}
-              }
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "aliceblue"},
+              "width": {"value": 2}
+            },
+            "update": {
+              "yc": {"signal": "transpose ? plotWidth / 2 : width / 2"},
+              "height": {"signal": "transpose ? plotWidth / 2 : width / 2"},
+              "x": {"scale": "xscale", "field": "median"}
             }
           }
-        ]
-      }
-    ]
-  }
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "outliers"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "red"},
+              "size": {"value": 30}
+            },
+            "update": {
+              "yc": {"scale": "layout", "field": {"{{REPLACE_PARAM}}": "group_by"}, "band": 0.5},
+              "x": {"scale": "xscale", "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
+              "opacity": {"signal": "suppressOutliers ? 0 : 1"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
