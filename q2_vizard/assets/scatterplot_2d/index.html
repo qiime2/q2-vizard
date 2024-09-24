@@ -57,7 +57,7 @@
       var y = data[view.signal('yField')];
 
       // Add attrs to the marks elements for id & xy positions
-      mark.setAttribute('class', 'data-' + id);
+      mark.setAttribute('data-id', id);
       mark.setAttribute('data-x', x);
       mark.setAttribute('data-y', y);
     });

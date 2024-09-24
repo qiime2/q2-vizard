@@ -47,14 +47,14 @@ class TestHeatmap(TestPluginBase):
         self.test_cases = [
             ('bodysite', 'foobar', 'Z',
              exp_marks_len, 'left-palm', 'foo', '33',
-             'data-sample1')
+             'sample1')
         ]
 
     # utility method that will run all checks for heatmap
     # used in each browser test below (firefox & chrome supported)
     def _selenium_heatmap_test(self, driver, x_measure, y_measure,
                                gradient_measure, exp_marks_len, exp_x_mark,
-                               exp_y_mark, exp_gradient_mark, exp_mark_class):
+                               exp_y_mark, exp_gradient_mark, exp_mark_id):
         with tempfile.TemporaryDirectory() as output_dir:
             heatmap(
                 output_dir=output_dir, metadata=self.md,
@@ -95,12 +95,12 @@ class TestHeatmap(TestPluginBase):
             self.assertEqual(exp_marks_len, len(mark_elements))
 
             mark_element_0 = mark_elements[0]
-            mark_class = mark_element_0.get_attribute('class')
+            mark_id = mark_element_0.get_attribute('data-id')
             mark_x = mark_element_0.get_attribute('data-x')
             mark_y = mark_element_0.get_attribute('data-y')
             mark_gradient = mark_element_0.get_attribute('data-gradient')
 
-            self.assertEqual(mark_class, exp_mark_class)
+            self.assertEqual(mark_id, exp_mark_id)
             self.assertEqual(mark_x, exp_x_mark)
             self.assertEqual(mark_y, exp_y_mark)
             self.assertEqual(mark_gradient, exp_gradient_mark)
@@ -117,20 +117,20 @@ class TestHeatmap(TestPluginBase):
             for (x_measure, y_measure,
                  gradient_measure, exp_marks_len, exp_x_mark,
                  exp_y_mark, exp_gradient_mark,
-                 exp_mark_class) in self.test_cases:
+                 exp_mark_id) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
                     gradient_measure=gradient_measure,
                     exp_marks_len=exp_marks_len, exp_x_mark=exp_x_mark,
                     exp_y_mark=exp_y_mark, exp_gradient_mark=exp_gradient_mark,
-                    exp_mark_class=exp_mark_class
+                    exp_mark_id=exp_mark_id
                 ):
 
                     self._selenium_heatmap_test(
                         driver, x_measure, y_measure,
                         gradient_measure, exp_marks_len, exp_x_mark,
-                        exp_y_mark, exp_gradient_mark, exp_mark_class)
+                        exp_y_mark, exp_gradient_mark, exp_mark_id)
 
     # run selenium checks with a firefox driver
     def test_heatmap_firefox(self):
@@ -144,17 +144,17 @@ class TestHeatmap(TestPluginBase):
             for (x_measure, y_measure,
                  gradient_measure, exp_marks_len, exp_x_mark,
                  exp_y_mark, exp_gradient_mark,
-                 exp_mark_class) in self.test_cases:
+                 exp_mark_id) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
                     gradient_measure=gradient_measure,
                     exp_marks_len=exp_marks_len, exp_x_mark=exp_x_mark,
                     exp_y_mark=exp_y_mark, exp_gradient_mark=exp_gradient_mark,
-                    exp_mark_class=exp_mark_class
+                    exp_mark_id=exp_mark_id
                 ):
 
                     self._selenium_heatmap_test(
                         driver, x_measure, y_measure,
                         gradient_measure, exp_marks_len, exp_x_mark,
-                        exp_y_mark, exp_gradient_mark, exp_mark_class)
+                        exp_y_mark, exp_gradient_mark, exp_mark_id)

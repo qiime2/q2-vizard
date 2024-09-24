@@ -47,16 +47,16 @@ class TestScatterplot(TestPluginBase):
 
         self.test_cases = [
             ('B', 'Z', 'foobar', exp_marks_len,
-             '5', '33', 'data-sample1', 'B', 'Z', 'foobar'),
+             '5', '33', 'sample1', 'B', 'Z', 'foobar'),
             ('', '', '', exp_marks_len, '1', '1',
-             'data-sample1', 'A', 'A', 'legendDefault')
+             'sample1', 'A', 'A', 'legendDefault')
         ]
 
     # utility method that will run all checks for scatterplot
     # used in each browser test below (firefox & chrome supported)
     def _selenium_scatterplot_test(self, driver, x_measure, y_measure,
                                    color_measure, exp_marks_len, exp_x_mark,
-                                   exp_y_mark, exp_mark_class, exp_x_measure,
+                                   exp_y_mark, exp_mark_id, exp_x_measure,
                                    exp_y_measure, exp_color_measure):
         with tempfile.TemporaryDirectory() as output_dir:
             scatterplot_2d(
@@ -113,11 +113,11 @@ class TestScatterplot(TestPluginBase):
             self.assertEqual(exp_marks_len, len(mark_elements))
 
             mark_element_0 = mark_elements[0]
-            mark_class = mark_element_0.get_attribute('class')
+            mark_id = mark_element_0.get_attribute('data-id')
             mark_x = mark_element_0.get_attribute('data-x')
             mark_y = mark_element_0.get_attribute('data-y')
 
-            self.assertEqual(mark_class, exp_mark_class)
+            self.assertEqual(mark_id, exp_mark_id)
             self.assertEqual(mark_x, exp_x_mark)
             self.assertEqual(mark_y, exp_y_mark)
 
@@ -131,21 +131,21 @@ class TestScatterplot(TestPluginBase):
 
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, color_measure, exp_marks_len,
-                 exp_x_mark, exp_y_mark, exp_mark_class, exp_x_measure,
+                 exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
                  exp_y_measure, exp_color_measure) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
                     color_measure=color_measure, exp_marks_len=exp_marks_len,
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
-                    exp_mark_class=exp_mark_class, exp_x_measure=exp_x_measure,
+                    exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
                     exp_y_measure=exp_y_measure,
                     exp_color_measure=exp_color_measure
                 ):
 
                     self._selenium_scatterplot_test(
                         driver, x_measure, y_measure, color_measure,
-                        exp_marks_len, exp_x_mark, exp_y_mark, exp_mark_class,
+                        exp_marks_len, exp_x_mark, exp_y_mark, exp_mark_id,
                         exp_x_measure, exp_y_measure, exp_color_measure)
 
     # run selenium checks with a firefox driver
@@ -159,19 +159,19 @@ class TestScatterplot(TestPluginBase):
         with webdriver.Firefox(options=firefox_options) as driver:
 
             for (x_measure, y_measure, color_measure, exp_marks_len,
-                 exp_x_mark, exp_y_mark, exp_mark_class, exp_x_measure,
+                 exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
                  exp_y_measure, exp_color_measure) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
                     color_measure=color_measure, exp_marks_len=exp_marks_len,
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
-                    exp_mark_class=exp_mark_class, exp_x_measure=exp_x_measure,
+                    exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
                     exp_y_measure=exp_y_measure,
                     exp_color_measure=exp_color_measure
                 ):
 
                     self._selenium_scatterplot_test(
                         driver, x_measure, y_measure, color_measure,
-                        exp_marks_len, exp_x_mark, exp_y_mark, exp_mark_class,
+                        exp_marks_len, exp_x_mark, exp_y_mark, exp_mark_id,
                         exp_x_measure, exp_y_measure, exp_color_measure)
