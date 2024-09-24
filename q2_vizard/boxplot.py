@@ -47,10 +47,20 @@ def boxplot(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
+    # outlier filtering expression pre-processing
+    # this needs to be created as an f-string prior to being passed into
+    # the vega spec so that the var can be templated in
+    # prior to it being read as a string
+    expr = (
+        f"datum['{distribution_measure}']"
+        f" < datum.summary.whiskerLow || datum['{distribution_measure}']"
+        " > datum.summary.whiskerHigh"
+    )
+
     full_spec = _json_replace(json_obj, metadata=metadata_obj,
                               distribution_measure=distribution_measure,
                               whisker_range=whisker_range,
-                              facet_by=facet_by, title=title)
+                              facet_by=facet_by, title=title, expr=expr)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
