@@ -34,11 +34,6 @@
       "value": {"{{REPLACE_PARAM}}": "whisker_range"}
     },
     {
-      "name": "transpose",
-      "value": false,
-      "bind": {"input": "checkbox"}
-    },
-    {
       "name": "suppressOutliers",
       "value": false,
       "bind": {"input": "checkbox"}
@@ -181,7 +176,7 @@
     {
       "name": "x_scale",
       "type": "linear",
-      "range": {"signal": "transpose ? [0, height] : [0, width]"},
+      "range": {"signal": "[0, width]"},
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
@@ -190,7 +185,7 @@
     {
       "name": "y_scale",
       "type": "band",
-      "range": {"signal": "transpose ? [0, width] : [0, height]"},
+      "range": {"signal": "[0, height]"},
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "group_by"}}
@@ -211,8 +206,8 @@
     {
       "scale": "x_scale",
       "labelFontSize": 12,
-      "orient": {"signal": "transpose ? 'left' : 'bottom'"},
-      "title": {"signal": "transpose ? yField : xField"},
+      "orient": "bottom",
+      "title": {"signal": "xField"},
       "titleFontSize": 14,
       "titlePadding": 20
     },
@@ -220,9 +215,9 @@
       "scale": "y_scale",
       "labelFontSize": 12,
       "grid": true,
-      "orient": {"signal": "transpose ? 'bottom' : 'left'"},
+      "orient": "left",
       "tickCount": {"signal": "nRows"},
-      "title": {"signal": "transpose ? xField : yField"},
+      "title": {"signal": "yField"},
       "titleFontSize": 14,
       "titlePadding": 20
     }
