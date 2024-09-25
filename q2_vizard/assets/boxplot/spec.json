@@ -247,6 +247,55 @@
   ],
 
   "marks": [
-
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "facet",
+          "data": "summary",
+          "groupby": [{"{{REPLACE_PARAM}}": "group_by"}]
+        }
+      },
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "width": {"signal": "width"},
+          "y": {"value": 0},
+          "height": {"signal": "height"}
+        }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "q1"
+              },
+              "x2": {
+                "scale": "x_scale",
+                "field": "q3"
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"}
+              },
+              "height": {
+                "scale": "y_scale",
+                "band": 0.8
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 1.5},
+              "fill": {
+                "scale": "color_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"}
+              }
+            }
+          }
+        }
+      ]
+    }
   ]
 }
