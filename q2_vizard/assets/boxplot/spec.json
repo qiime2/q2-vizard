@@ -214,9 +214,7 @@
     {
       "scale": "y_scale",
       "labelFontSize": 12,
-      "grid": true,
       "orient": "left",
-      "tickCount": {"signal": "nRows"},
       "title": {"signal": "yField"},
       "titleFontSize": 14,
       "titlePadding": 20
@@ -291,7 +289,35 @@
               "fill": {
                 "scale": "color_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
-              }
+              },
+              "cornerRadius": {"value": 5}
+            }
+          }
+        },
+
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "median"
+              },
+              "x2": {
+                "scale": "x_scale",
+                "field": "median"
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"}
+              },
+              "height": {
+                "scale": "y_scale",
+                "band": 0.8
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 4}
             }
           }
         }

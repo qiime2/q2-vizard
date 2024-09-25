@@ -32,6 +32,9 @@ def boxplot(output_dir: str, metadata: Metadata,
         _col_type_validation(metadata=metadata, measure=group_by,
                              col_type='categorical')
         _measure_validation(metadata=metadata, measure=group_by)
+    else:
+        md['legend'] = 'data'
+        group_by = 'legend'
 
     # jinja templating & JSON-ifying
     J_ENV = jinja2.Environment(
