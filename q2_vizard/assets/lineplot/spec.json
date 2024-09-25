@@ -150,6 +150,7 @@
         {
           "type": "line",
           "from": {"data": "lines"},
+          "sort": {"field": "x"},
           "encode": {
             "update": {
               "x": {
