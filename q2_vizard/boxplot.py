@@ -72,7 +72,7 @@ def boxplot(output_dir: str, metadata: Metadata,
 
     if whisker_range in ['percentile', 'minmax', 'tukeys_iqr']:
         subtitle = \
-            f'Whiskers were calculated using the `{whisker_range}` method.'
+            f'Whiskers were drawn using the `{whisker_range}` method.'
     else:
         subtitle = ' '
 
