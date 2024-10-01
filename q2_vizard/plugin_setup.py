@@ -81,8 +81,9 @@ plugin.visualizers.register_function(
     parameters={
         'metadata': Metadata,
         'distribution_measure': Str,
-        'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
         'group_by': Str,
+        'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
+        'box_orientation': Str % Choices('horizontal', 'vertical'),
         'title': Str
     },
     name='Boxplot',
@@ -94,6 +95,9 @@ plugin.visualizers.register_function(
                     ' and one categorical measure for visualizing.',
         'distribution_measure': 'The numeric measure that will be used to'
                                 ' create each box plot distribution.',
+        'group_by': 'The categorical measure that will be used to group the'
+                    ' data into separate box plots. If left blank, all data'
+                    ' will be represented within a single box.',
         'whisker_range': 'The range that will be used for calculating the'
                          ' whisker lengths for each box. Options are'
                          ' `tukeys_iqr` (1.5 IQR clamped to the data extent),'
@@ -103,9 +107,8 @@ plugin.visualizers.register_function(
                          ' plotted as circular points, unless the'
                          ' `suppressOutliers` checkbox has been enabled'
                          ' on the rendered visualization.',
-        'group_by': 'The categorical measure that will be used to group the'
-                    ' data into separate box plots. If left blank, all data'
-                    ' will be represented within a single box.',
+        'box_orientation': 'The visual orientataion of the boxes (either'
+                           ' horizontal or vertical).',
         'title': 'The title of the boxplot.'
     }
 )

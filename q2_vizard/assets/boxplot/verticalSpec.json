@@ -12,7 +12,7 @@
     "resize": true
   },
   "width": 900,
-  "height": {"signal": "rowHeight * nRows"},
+  "height": {"signal": "columnWidth * nColumns"},
   "padding": 20,
 
   "signals": [
@@ -27,11 +27,11 @@
     },
     {
       "name": "xField",
-      "value": {"{{REPLACE_PARAM}}": "distribution_measure"}
+      "value": {"{{REPLACE_PARAM}}": "group_by"}
     },
     {
       "name": "yField",
-      "value": {"{{REPLACE_PARAM}}": "group_by"}
+      "value": {"{{REPLACE_PARAM}}": "distribution_measure"}
     },
     {
       "name": "whiskerMethod",
@@ -43,12 +43,12 @@
       "bind": {"input": "checkbox"}
     },
     {
-      "name": "nRows",
+      "name": "nColumns",
       "value": 1,
-      "update": "length(data('rowTable'))"
+      "update": "length(data('columnTable'))"
     },
     {
-      "name": "rowHeight",
+      "name": "columnWidth",
       "value": 45,
       "bind": {
         "input": "range",
@@ -64,7 +64,7 @@
       "values": {"{{REPLACE_PARAM}}": "metadata"}
     },
     {
-      "name": "rowTable",
+      "name": "columnTable",
       "source": "table",
       "transform": [
         {
@@ -187,21 +187,22 @@
   "scales": [
     {
       "name": "x_scale",
-      "type": "linear",
-      "range": {"signal": "[0, width]"},
-      "domain": {
-        "data": "table",
-        "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
-      "nice": true
-    },
-    {
-      "name": "y_scale",
       "type": "band",
       "padding": 0.4,
-      "range": {"signal": "[0, height]"},
+      "range": "width",
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "group_by"}}
+    },
+    {
+      "name": "y_scale",
+      "type": "linear",
+      "range": "height",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "distribution_measure"}
+      },
+      "nice": true
     },
     {
       "name": "color_scale",
@@ -241,7 +242,7 @@
       "symbolSize": 150,
       "symbolStrokeWidth": 1.5,
       "labelFontSize": 14,
-      "title": {"signal": "yField"},
+      "title": {"signal": "xField"},
       "titleFontSize": 16,
       "encode": {
         "symbols": {
@@ -281,18 +282,18 @@
           "from": {"data": "facet"},
           "encode": {
             "update": {
-              "x": {
+              "xc": {
                 "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "y": {
+                "scale": "y_scale",
                 "field": "whiskerLow"
               },
-              "x2": {
-                "scale": "x_scale",
-                "field": "whiskerHigh"
-              },
-              "yc": {
+              "y2": {
                 "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.5
+                "field": "whiskerHigh"
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5}
@@ -304,19 +305,19 @@
           "from": {"data": "facet"},
           "encode": {
             "update": {
-              "x": {
+              "xc": {
                 "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "width": {
+                "scale": "x_scale",
+                "band": 0.8
+              },
+              "y": {
+                "scale": "y_scale",
                 "field": "whiskerLow"
               },
-              "yc": {
-                "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.5
-              },
-              "height": {
-                "scale": "y_scale",
-                "band": 0.8
-              },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5}
             }
@@ -327,19 +328,19 @@
           "from": {"data": "facet"},
           "encode": {
             "update": {
-              "x": {
+              "xc": {
                 "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "width": {
+                "scale": "x_scale",
+                "band": 0.8
+              },
+              "y": {
+                "scale": "y_scale",
                 "field": "whiskerHigh"
               },
-              "yc": {
-                "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.5
-              },
-              "height": {
-                "scale": "y_scale",
-                "band": 0.8
-              },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5}
             }
@@ -350,22 +351,22 @@
           "from": {"data": "facet"},
           "encode": {
             "update": {
-              "x": {
+              "xc": {
                 "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "width": {
+                "scale": "x_scale",
+                "band": 1
+              },
+              "y": {
+                "scale": "y_scale",
                 "field": "q1"
               },
-              "x2": {
-                "scale": "x_scale",
+              "y2": {
+                "scale": "y_scale",
                 "field": "q3"
-              },
-              "yc": {
-                "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.5
-              },
-              "height": {
-                "scale": "y_scale",
-                "band": 1
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5},
@@ -383,18 +384,18 @@
           "from": {"data": "facet"},
           "encode": {
             "update": {
-              "x": {
+              "xc": {
                 "scale": "x_scale",
-                "field": "median"
-              },
-              "yc": {
-                "scale": "y_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"},
                 "band": 0.5
               },
-              "height": {
-                "scale": "y_scale",
+              "width": {
+                "scale": "x_scale",
                 "band": 1
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": "median"
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 4},
@@ -407,14 +408,14 @@
           "from": {"data": "outliers"},
           "encode": {
             "update": {
-              "x": {
+              "xc": {
                 "scale": "x_scale",
-                "field": {"signal": "xField"}
-              },
-              "yc": {
-                "scale": "y_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"},
                 "band": 0.5
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": {"signal": "yField"}
               },
               "shape": {"value": "circle"},
               "size": {"value": 80},

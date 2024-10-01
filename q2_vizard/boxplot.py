@@ -17,7 +17,9 @@ from ._util import _json_replace, _measure_validation, _col_type_validation
 
 def boxplot(output_dir: str, metadata: Metadata,
             distribution_measure: NumericMetadataColumn,
-            whisker_range: str, group_by: CategoricalMetadataColumn = None,
+            group_by: CategoricalMetadataColumn = None,
+            whisker_range: str = 'percentile',
+            box_orientation: str = 'horizontal',
             title: str = None):
 
     # input handling for initial metadata
@@ -43,9 +45,16 @@ def boxplot(output_dir: str, metadata: Metadata,
     )
     index = J_ENV.get_template('index.html')
 
+    if box_orientation == 'horizontal':
+        spec = 'horizontalSpec.json'
+
+    elif box_orientation == 'vertical':
+        spec = 'verticalSpec.json'
+
     spec_fp = pkg_resources.resource_filename(
-        'q2_vizard', os.path.join('assets', 'boxplot', 'spec.json')
+        'q2_vizard', os.path.join('assets', 'boxplot', spec)
     )
+
     with open(spec_fp) as fh:
         json_obj = json.load(fh)
 
