@@ -11,8 +11,8 @@
     "type": "pad",
     "resize": true
   },
-  "width": 900,
-  "height": {"signal": "columnWidth * nColumns"},
+  "height": 900,
+  "width": {"signal": "columnWidth * nColumns"},
   "padding": 20,
 
   "signals": [

@@ -24,7 +24,7 @@ plugin = Plugin(name='vizard',
                             ' visualization!',
                 short_description='Generalized microbiome data visualization.')
 
-# TODO: refactor
+
 plugin.visualizers.register_function(
     function=heatmap,
     inputs={},
