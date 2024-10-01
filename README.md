@@ -26,7 +26,7 @@ The following Metadata vizualizations are available for use, with examples below
 
 ## scatterplot_2d
 
-This visualizer provides an exploratory view of your Metadata - allowing for any two NumericMetadataColumns to be plotted against each other, with an optional third CategoricalMetadataColumn used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
+This visualizer provides an exploratory view of your Metadata - allowing for any two numeric measures to be plotted against each other, with an optional third categorical measure used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
 
 ### Demo
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/scatterplot_2d_example.png)
@@ -46,8 +46,12 @@ This visualizer generates a heatmap displaying relationships between three Metad
 
 ## lineplot
 
-Coming soon!
+This visualizer generates a lineplot displaying relationships between two numeric Metadata measures with an optional third categorical measure for grouping your data into separate lines. If replicates are present within your first numeric measure (plotted on the x-axis), you can select either 'median' or 'mean' for replicate handling, which will create line(s) with the average at each point where replicates are present.
 
+### Demo
+![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/lineplot_example.png)
+
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/1kbaxs6albopv0kze9g94/lineplot-demo.qzv?rlkey=uf241f3scq6l1ila79fy40afv)
 
 ## boxplot
 
