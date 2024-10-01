@@ -23,7 +23,12 @@ def md_factory():
     )
 
 
-# scatterplot usage examples
+def lineplot_md_factory():
+    return qiime2.Metadata.load(
+        _get_data_from_tests('lineplot-md.tsv')
+    )
+
+
 def scatterplot_defaults(use):
     metadata = use.init_metadata('metadata', md_factory)
 
@@ -55,7 +60,109 @@ def scatterplot_all_measures(use):
     )
 
 
-# heatmap usage example
+def lineplot_median_replicates_with_grouping(use):
+    metadata = use.init_metadata('metadata', lineplot_md_factory)
+
+    lineplot_viz, = use.action(
+        use.UsageAction('vizard', 'lineplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='x',
+            y_measure='y',
+            group_by='group',
+            replicate_method='median',
+        ),
+        use.UsageOutputNames(
+            visualization='lineplot'
+        )
+    )
+
+
+def lineplot_mean_replicates_with_grouping(use):
+    metadata = use.init_metadata('metadata', lineplot_md_factory)
+
+    lineplot_viz, = use.action(
+        use.UsageAction('vizard', 'lineplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='x',
+            y_measure='y',
+            group_by='group',
+            replicate_method='mean',
+        ),
+        use.UsageOutputNames(
+            visualization='lineplot'
+        )
+    )
+
+
+def lineplot_median_replicates_no_grouping(use):
+    metadata = use.init_metadata('metadata', lineplot_md_factory)
+
+    lineplot_viz, = use.action(
+        use.UsageAction('vizard', 'lineplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='x',
+            y_measure='y',
+            replicate_method='median',
+        ),
+        use.UsageOutputNames(
+            visualization='lineplot'
+        )
+    )
+
+
+def lineplot_mean_replicates_no_grouping(use):
+    metadata = use.init_metadata('metadata', lineplot_md_factory)
+
+    lineplot_viz, = use.action(
+        use.UsageAction('vizard', 'lineplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='x',
+            y_measure='y',
+            replicate_method='mean',
+        ),
+        use.UsageOutputNames(
+            visualization='lineplot'
+        )
+    )
+
+
+def lineplot_no_replicates_with_grouping(use):
+    metadata = use.init_metadata('metadata', lineplot_md_factory)
+
+    lineplot_viz, = use.action(
+        use.UsageAction('vizard', 'lineplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='a',
+            y_measure='y',
+            group_by='group',
+        ),
+        use.UsageOutputNames(
+            visualization='lineplot'
+        )
+    )
+
+
+def lineplot_no_replicates_no_grouping(use):
+    metadata = use.init_metadata('metadata', lineplot_md_factory)
+
+    lineplot_viz, = use.action(
+        use.UsageAction('vizard', 'lineplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='b',
+            y_measure='y',
+        ),
+        use.UsageOutputNames(
+            visualization='lineplot'
+        )
+    )
+
+
 def heatmap(use):
     metadata = use.init_metadata('metadata', md_factory)
 

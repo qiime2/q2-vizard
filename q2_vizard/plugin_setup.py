@@ -6,10 +6,11 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Metadata
+from qiime2.plugin import Plugin, Str, Metadata, Choices
 
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
+from q2_vizard.lineplot import lineplot
 
 import q2_vizard._examples as ex
 
@@ -21,7 +22,7 @@ plugin = Plugin(name='vizard',
                             ' lizards for protection and entertainment.',
                 short_description='The first choice of wizard lizards.')
 
-
+# TODO: refactor
 plugin.visualizers.register_function(
     function=heatmap,
     inputs={},
@@ -74,4 +75,44 @@ plugin.visualizers.register_function(
                 ' measures with optional categorical color grouping.',
     examples={'scatterplot_defaults': ex.scatterplot_defaults,
               'scatterplot_all_measures': ex.scatterplot_all_measures}
+)
+
+
+plugin.visualizers.register_function(
+    function=lineplot,
+    inputs={},
+    parameters={
+        'metadata': Metadata,
+        'x_measure': Str,
+        'y_measure': Str,
+        'replicate_method': Str % Choices('none', 'median', 'mean'),
+        'group_by': Str,
+        'title': Str
+    },
+    parameter_descriptions={
+        'metadata': 'Any metadata-like input with at least two'
+                    ' numeric measures for visualizing.',
+        'x_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the x-axis.',
+        'y_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the y-axis.',
+        'replicate_method': 'The method for averaging replicates'
+                            ' if present in the chosen `x_measure`.'
+                            ' Available methods are `median` and `mean`.',
+        'group_by': 'Categorical measure from the input Metadata that'
+                    ' should be used for grouping the lineplot.',
+        'title': 'The title of the lineplot.'},
+    name='Lineplot',
+    description='Basic lineplot for visualizing two numeric Metadata'
+                ' measures with optional grouping.',
+    examples={
+        f.__name__: f for f in [
+            ex.lineplot_median_replicates_with_grouping,
+            ex.lineplot_mean_replicates_with_grouping,
+            ex.lineplot_median_replicates_no_grouping,
+            ex.lineplot_mean_replicates_no_grouping,
+            ex.lineplot_no_replicates_with_grouping,
+            ex.lineplot_no_replicates_no_grouping
+        ]
+    }
 )

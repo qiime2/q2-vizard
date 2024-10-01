@@ -38,7 +38,7 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
                              col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
-    # and adding 'none' for removing color-coding
+    # and adding 'legendDefault' for removing color-coding
     md_cols_categorical.append('legendDefault')
     if color_by:
         group_dropdown_default = color_by
