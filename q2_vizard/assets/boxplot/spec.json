@@ -22,6 +22,10 @@
       "bind": {"input": "input"}
     },
     {
+      "name": "idField",
+      "value": {"{{REPLACE_PARAM}}": "md_ids"}
+    },
+    {
       "name": "xField",
       "value": {"{{REPLACE_PARAM}}": "distribution_measure"}
     },
@@ -166,6 +170,14 @@
         {
           "type": "filter",
           "expr": {"{{REPLACE_PARAM}}": "expr"}
+        },
+        {
+          "type": "project",
+          "fields": [
+            {"signal": "idField"},
+            {"signal": "xField"},
+            {"signal": "yField"}
+          ]
         }
       ]
     }
@@ -185,6 +197,7 @@
     {
       "name": "y_scale",
       "type": "band",
+      "padding": 0.4,
       "range": {"signal": "[0, height]"},
       "domain": {
         "data": "table",
@@ -279,7 +292,7 @@
               "yc": {
                 "scale": "y_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.4
+                "band": 0.5
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5}
@@ -298,11 +311,11 @@
               "yc": {
                 "scale": "y_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.4
+                "band": 0.5
               },
               "height": {
                 "scale": "y_scale",
-                "band": 0.4
+                "band": 0.8
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5}
@@ -321,11 +334,11 @@
               "yc": {
                 "scale": "y_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.4
+                "band": 0.5
               },
               "height": {
                 "scale": "y_scale",
-                "band": 0.4
+                "band": 0.8
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5}
@@ -345,13 +358,14 @@
                 "scale": "x_scale",
                 "field": "q3"
               },
-              "y": {
+              "yc": {
                 "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"}
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
               },
               "height": {
                 "scale": "y_scale",
-                "band": 0.8
+                "band": 1
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 1.5},
@@ -359,7 +373,8 @@
                 "scale": "color_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
               },
-              "cornerRadius": {"value": 5}
+              "cornerRadius": {"value": 5},
+              "tooltip": {"signal": "datum"}
             }
           }
         },
@@ -372,16 +387,18 @@
                 "scale": "x_scale",
                 "field": "median"
               },
-              "y": {
+              "yc": {
                 "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"}
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
               },
               "height": {
                 "scale": "y_scale",
-                "band": 0.8
+                "band": 1
               },
               "stroke": {"value": "black"},
-              "strokeWidth": {"value": 4}
+              "strokeWidth": {"value": 4},
+              "tooltip": {"signal": "datum"}
             }
           }
         },
@@ -397,7 +414,7 @@
               "yc": {
                 "scale": "y_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.4
+                "band": 0.5
               },
               "shape": {"value": "circle"},
               "size": {"value": 80},
@@ -407,7 +424,8 @@
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
               },
               "stroke": {"value": "black"},
-              "strokeWidth": {"value": 1.5}
+              "strokeWidth": {"value": 1.5},
+              "tooltip": {"signal": "datum"}
             }
           }
         }

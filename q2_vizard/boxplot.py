@@ -22,6 +22,7 @@ def boxplot(output_dir: str, metadata: Metadata,
 
     # input handling for initial metadata
     md = metadata.to_dataframe().reset_index()
+    md_ids = metadata.id_header
 
     # input validation for distribution & group_by measures
     _col_type_validation(metadata=metadata, measure=distribution_measure,
@@ -60,7 +61,7 @@ def boxplot(output_dir: str, metadata: Metadata,
         " > datum.summary.whiskerHigh"
     )
 
-    full_spec = _json_replace(json_obj, metadata=metadata_obj,
+    full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
                               distribution_measure=distribution_measure,
                               whisker_range=whisker_range,
                               group_by=group_by, title=title, expr=expr)

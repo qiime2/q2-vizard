@@ -96,8 +96,8 @@ plugin.visualizers.register_function(
                                 ' create each box plot distribution.',
         'whisker_range': 'The range that will be used for calculating the'
                          ' whisker lengths for each box. Options are'
-                         ' `tukeys_iqr` (1.5 IQR), `percentile`'
-                         ' (91th/9th percentile), or `minmax`.'
+                         ' `tukeys_iqr` (1.5 IQR clamped to the data extent),'
+                         ' `percentile` (91th/9th percentile), or `minmax`.'
                          ' Any data points that fall outside of the chosen'
                          ' range will be represented as outliers that are'
                          ' plotted as circular points, unless the'
