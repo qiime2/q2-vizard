@@ -1,0 +1,207 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "title": {
+    "text": {"signal": "title"},
+    "fontSize": 20,
+    "orient": "top",
+    "anchor": "start",
+    "subtitle": {"{{REPLACE_PARAM}}": "subtitle"}
+  },
+  "autosize": {"type": "pad"},
+  "width": 900,
+  "height": 900,
+  "padding": 20,
+
+  "signals": [
+    {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
+    },
+    {
+      "name": "subtitle",
+      "value": {"{{REPLACE_PARAM}}": "subtitle"}
+    },
+    {
+      "name": "lineType",
+      "value": "linear",
+      "bind": {
+        "input": "select",
+        "options": [
+          "linear",
+          "step"
+        ]
+      }
+    },
+    {
+      "name": "idField",
+      "value": {"{{REPLACE_PARAM}}": "md_ids"}
+    },
+    {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "x_measure"}
+    },
+    {
+      "name": "yField",
+      "value": {"{{REPLACE_PARAM}}": "y_measure"}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "scatter_table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    },
+    {
+      "name": "line_table",
+      "values": {"{{REPLACE_PARAM}}": "averaged_metadata"}
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x_scale",
+      "type": "linear",
+      "range": "width",
+      "nice": true,
+      "zero": true,
+      "domain": {
+        "data": "scatter_table",
+        "field": {"{{REPLACE_PARAM}}": "x_measure"}
+      }
+    },
+    {
+      "name": "y_scale",
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": {
+        "data": "scatter_table",
+        "field": {"{{REPLACE_PARAM}}": "y_measure"}
+      }
+    },
+    {
+      "name": "color_scale",
+      "type": "ordinal",
+      "range": "category",
+      "domain": {
+        "data": "line_table",
+        "field": {"{{REPLACE_PARAM}}": "group_by"},
+        "sort": true
+      }
+    }
+],
+
+"axes": [
+    {
+      "scale": "x_scale",
+      "labelFontSize": 12,
+      "grid": true,
+      "orient": "bottom",
+      "tickCount": 5,
+      "title": {"{{REPLACE_PARAM}}": "x_measure"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    },
+    {
+      "scale": "y_scale",
+      "labelFontSize": 12,
+      "grid": true,
+      "orient": "left",
+      "title": {"{{REPLACE_PARAM}}": "y_measure"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    }
+  ],
+
+  "legends": [
+    {
+      "stroke": "color_scale",
+      "symbolSize": 150,
+      "symbolStrokeWidth": 2.5,
+      "labelFontSize": 14,
+      "title": {"{{REPLACE_PARAM}}": "group_by"},
+      "titleFontSize": 16,
+      "encode": {
+        "symbols": {
+          "name": "legendSymbol",
+          "interactive": false
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": false
+        }
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "lines",
+          "data": "line_table",
+          "groupby": {"{{REPLACE_PARAM}}": "group_by"}
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "lines"},
+          "sort": {"field": "x"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": {"{{REPLACE_PARAM}}": "x_measure"}
+              },
+              "y": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "y_measure"}},
+              "interpolate": {"signal": "lineType"},
+              "stroke": {
+                "scale": "color_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"}
+              },
+              "strokeWidth": {"value": 2.5},
+              "strokeOpacity": {"value": 1}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "scatter_table"},
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x_scale",
+            "field": {"{{REPLACE_PARAM}}": "x_measure"}
+          },
+          "y": {
+            "scale": "y_scale",
+            "field": {"{{REPLACE_PARAM}}": "y_measure"}
+          },
+          "shape": {"value": "circle"},
+          "stroke": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
+          "strokeWidth": {"value": 2.5},
+          "fill": {"value": "white"},
+          "size": {"value": 100}
+        },
+        "hover": {
+          "fill": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
+          "tooltip": {"signal": "datum"}
+        }
+      }
+    }
+  ]
+}

@@ -23,6 +23,7 @@ def heatmap(output_dir: str, metadata: Metadata,
             title: str = None):
 
     # input handling for initial metadata
+    md_ids = metadata.id_header
     md = metadata.to_dataframe().reset_index()
 
     # md validation for all input measures
@@ -48,7 +49,7 @@ def heatmap(output_dir: str, metadata: Metadata,
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
-    full_spec = _json_replace(json_obj, metadata=metadata_obj,
+    full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
                               x_measure=x_measure, y_measure=y_measure,
                               gradient_measure=gradient_measure, title=title)
 

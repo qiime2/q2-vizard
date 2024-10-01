@@ -6,14 +6,11 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._version import get_versions
+from qiime2.plugin.testing import TestPluginBase
 
-from q2_vizard.scatterplot import scatterplot_2d
-from q2_vizard.heatmap import heatmap
-from q2_vizard.lineplot import lineplot
-from q2_vizard.boxplot import boxplot
 
-__version__ = get_versions()['version']
-del get_versions
+class TestUsageExamples(TestPluginBase):
+    package = 'q2_vizard.tests'
 
-__all__ = ['heatmap', 'scatterplot_2d', 'lineplot', 'boxplot']
+    def test_usage_examples(self):
+        self.execute_examples()

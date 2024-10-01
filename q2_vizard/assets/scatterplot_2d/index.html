@@ -27,15 +27,12 @@
       font-family: monospace;
     }
     .vega-bind {
-    margin-right: 50px;
-    vertical-align: middle
+      margin-right: 50px;
+      vertical-align: middle;
     }
-
     .vega-bind span {
-    display: flex;
+      display: flex;
     }
-
-
   </style>
 </head>
 <body>
@@ -44,8 +41,27 @@
 
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
+
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
-    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+    var view = result.view;
+    var svg = document.querySelector('#viz svg');
+
+    // Add id & xy attrs to the marks for easy selection in Selenium
+    var marks = svg.querySelectorAll('g.marks > path');
+    marks.forEach(function(mark, index) {
+      var data = view.data('table')[index];
+
+      // These are each connected to a vega signal to pull the correct field
+      var id = data[view.signal('idField')];
+      var x = data[view.signal('xField')];
+      var y = data[view.signal('yField')];
+
+      // Add attrs to the marks elements for id & xy positions
+      mark.setAttribute('data-id', id);
+      mark.setAttribute('data-x', x);
+      mark.setAttribute('data-y', y);
+    });
+
   }).catch(console.error);
 </script>
 </body>

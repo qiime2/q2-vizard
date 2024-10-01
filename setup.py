@@ -16,7 +16,9 @@ setup(
     packages=find_packages(),
     package_data={
         'q2_vizard': [
+            'tests/data/*',
             'assets/*',
+            'assets/lineplot/*',
             'assets/heatmap/*',
             'assets/scatterplot_2d/*',
             'assets/boxplot/*'],
