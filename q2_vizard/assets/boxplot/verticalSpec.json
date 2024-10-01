@@ -5,7 +5,10 @@
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": {"signal": "suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ' '"}
+    "subtitle": {
+      "signal": "[subtitle, ' ', suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ' ', ' ']"
+    },
+    "subtitlePadding": 30
   },
   "autosize": {
     "type": "pad",
@@ -20,6 +23,10 @@
       "name": "title",
       "value": {"{{REPLACE_PARAM}}": "title"},
       "bind": {"input": "input"}
+    },
+    {
+      "name": "subtitle",
+      "value": {"{{REPLACE_PARAM}}": "subtitle"}
     },
     {
       "name": "idField",

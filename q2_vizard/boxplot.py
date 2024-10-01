@@ -70,10 +70,17 @@ def boxplot(output_dir: str, metadata: Metadata,
         " > datum.summary.whiskerHigh"
     )
 
+    if whisker_range in ['percentile', 'minmax', 'tukeys_iqr']:
+        subtitle = \
+            f'Whiskers were calculated using the `{whisker_range}` method.'
+    else:
+        subtitle = ' '
+
     full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
                               distribution_measure=distribution_measure,
                               whisker_range=whisker_range,
-                              group_by=group_by, title=title, expr=expr)
+                              group_by=group_by, title=title, expr=expr,
+                              subtitle=subtitle)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
