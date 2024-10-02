@@ -43,7 +43,11 @@
     },
     {
       "name": "yField",
-      "value": {"{{REPLACE_PARAM}}": "y_measure"}
+      "value": {"{{REPLACE_PARAM}}": "y_measure"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
+      }
     }
   ],
 
@@ -78,7 +82,7 @@
       "zero": true,
       "domain": {
         "data": "scatter_table",
-        "field": {"{{REPLACE_PARAM}}": "y_measure"}
+        "field": {"signal": "yField"}
       }
     },
     {
@@ -109,7 +113,7 @@
       "labelFontSize": 12,
       "grid": true,
       "orient": "left",
-      "title": {"{{REPLACE_PARAM}}": "y_measure"},
+      "title": {"signal": "yField"},
       "titleFontSize": 14,
       "titlePadding": 20
     }
@@ -159,7 +163,7 @@
               },
               "y": {
                 "scale": "y_scale",
-                "field": {"{{REPLACE_PARAM}}": "y_measure"}},
+                "field": {"signal": "yField"}},
               "interpolate": {"signal": "lineType"},
               "stroke": {
                 "scale": "color_scale",
@@ -183,7 +187,7 @@
           },
           "y": {
             "scale": "y_scale",
-            "field": {"{{REPLACE_PARAM}}": "y_measure"}
+            "field": {"signal": "yField"}
           },
           "shape": {"value": "circle"},
           "stroke": {
