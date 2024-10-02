@@ -121,7 +121,7 @@
 
   "legends": [
     {
-      "stroke": "color_scale",
+      "fill": "color_scale",
       "symbolSize": 150,
       "symbolStrokeWidth": 2.5,
       "labelFontSize": 14,
@@ -195,14 +195,14 @@
             "field": {"{{REPLACE_PARAM}}": "group_by"}
           },
           "strokeWidth": {"value": 2.5},
-          "fill": {"value": "white"},
-          "size": {"value": 100}
-        },
-        "hover": {
+          "size": {"value": 100},
           "fill": {
             "scale": "color_scale",
             "field": {"{{REPLACE_PARAM}}": "group_by"}
-          },
+          }
+        },
+        "hover": {
+          "stroke": {"value": "black"},
           "tooltip": {"signal": "datum"}
         }
       }
