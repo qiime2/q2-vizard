@@ -46,12 +46,12 @@ This visualizer generates a heatmap displaying relationships between three Metad
 
 ## lineplot
 
-This visualizer generates a lineplot displaying relationships between two numeric Metadata measures with an optional third categorical measure for grouping your data into separate lines. If replicates are present within your first numeric measure (plotted on the x-axis), you can select either 'median' or 'mean' for replicate handling, which will create line(s) with the average at each point where replicates are present.
+This visualizer generates a lineplot displaying relationships between two numeric Metadata measures, with an optional third categorical measure for grouping your data into separate lines. If replicates are present within your first numeric measure (plotted on the X-axis), you can select either 'median' or 'mean' for replicate handling, which will create line(s) with the average at each point where replicates are present. All numeric columns present within your Metadata will be available as drop-down options on the Y-axis, but the chosen measure for the X-axis will remain fixed.
 
 ### Demo
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/lineplot_example.png)
 
-[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/1kbaxs6albopv0kze9g94/lineplot-demo.qzv?rlkey=uf241f3scq6l1ila79fy40afv)
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/r044001aj22qr8b2jrmy7/lineplot-demo.qzv?rlkey=k9nfifazsorn9p51fcy7zsjk8)
 
 ## boxplot
 
