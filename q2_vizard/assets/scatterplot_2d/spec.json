@@ -90,12 +90,12 @@
     {
       "name": "color_scale",
       "type": "ordinal",
+      "range": "category",
       "domain": {
         "data": "table",
         "field": {"signal": "colorBy"},
         "sort": true
-      },
-      "range": {"scheme": "category10"}
+      }
     }
   ],
 

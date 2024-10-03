@@ -31,7 +31,7 @@ This visualizer provides an exploratory view of your Metadata - allowing for any
 ### Demo
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/scatterplot_example.png)
 
-[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/iuwvq6tlolxzlgda27gbn/scatterplot-demo.qzv?rlkey=qjznpoqmzjafq9kfv4e0qyr94)
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/566wegb3fvc10mtms93nk/scatterplot-demo.qzv?rlkey=aay1pjsbketne6sbei8x2luoe)
 
 
 ## lineplot
