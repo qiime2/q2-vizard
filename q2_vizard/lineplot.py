@@ -42,7 +42,7 @@ def lineplot(output_dir: str, metadata: Metadata,
     # filtering md cols for the y-axis dropdown
     md_cols_numeric = \
         metadata.filter_columns(column_type='numeric').to_dataframe()
-    md_cols_numeric = list(md_cols_numeric)
+    md_cols_numeric = list(md_cols_numeric.columns)
 
     # column validation for grouping
     if group_by:
