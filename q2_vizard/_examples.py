@@ -23,12 +23,6 @@ def md_factory():
     )
 
 
-def lineplot_md_factory():
-    return qiime2.Metadata.load(
-        _get_data_from_tests('lineplot-md.tsv')
-    )
-
-
 def scatterplot_defaults(use):
     metadata = use.init_metadata('metadata', md_factory)
 
@@ -50,9 +44,9 @@ def scatterplot_all_measures(use):
         use.UsageAction('vizard', 'scatterplot_2d'),
         use.UsageInputs(
             metadata=metadata,
-            x_measure='days_post_transplant',
-            y_measure='numeric_col',
-            color_by='genotype',
+            x_measure='x',
+            y_measure='y',
+            color_by='group',
         ),
         use.UsageOutputNames(
             visualization='scatterplot'
@@ -61,7 +55,7 @@ def scatterplot_all_measures(use):
 
 
 def lineplot_median_replicates_with_grouping(use):
-    metadata = use.init_metadata('metadata', lineplot_md_factory)
+    metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
         use.UsageAction('vizard', 'lineplot'),
@@ -79,7 +73,7 @@ def lineplot_median_replicates_with_grouping(use):
 
 
 def lineplot_mean_replicates_with_grouping(use):
-    metadata = use.init_metadata('metadata', lineplot_md_factory)
+    metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
         use.UsageAction('vizard', 'lineplot'),
@@ -97,7 +91,7 @@ def lineplot_mean_replicates_with_grouping(use):
 
 
 def lineplot_median_replicates_no_grouping(use):
-    metadata = use.init_metadata('metadata', lineplot_md_factory)
+    metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
         use.UsageAction('vizard', 'lineplot'),
@@ -114,7 +108,7 @@ def lineplot_median_replicates_no_grouping(use):
 
 
 def lineplot_mean_replicates_no_grouping(use):
-    metadata = use.init_metadata('metadata', lineplot_md_factory)
+    metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
         use.UsageAction('vizard', 'lineplot'),
@@ -131,7 +125,7 @@ def lineplot_mean_replicates_no_grouping(use):
 
 
 def lineplot_no_replicates_with_grouping(use):
-    metadata = use.init_metadata('metadata', lineplot_md_factory)
+    metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
         use.UsageAction('vizard', 'lineplot'),
@@ -148,7 +142,7 @@ def lineplot_no_replicates_with_grouping(use):
 
 
 def lineplot_no_replicates_no_grouping(use):
-    metadata = use.init_metadata('metadata', lineplot_md_factory)
+    metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
         use.UsageAction('vizard', 'lineplot'),
@@ -170,9 +164,9 @@ def heatmap(use):
         use.UsageAction('vizard', 'heatmap'),
         use.UsageInputs(
             metadata=metadata,
-            x_measure='days_post_transplant',
-            y_measure='genotype',
-            gradient_measure='numeric_col',
+            x_measure='x',
+            y_measure='y',
+            gradient_measure='a',
         ),
         use.UsageOutputNames(
             visualization='heatmap'

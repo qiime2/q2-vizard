@@ -26,7 +26,7 @@ class TestLineplot(TestPluginBase):
     def setUp(self):
         super().setUp()
 
-        self.md = Metadata.load(self.get_data_path('lineplot-md.tsv'))
+        self.md = Metadata.load(self.get_data_path('sample-md.tsv'))
         exp_marks_len = self.md.id_count
 
         # first test case uses a replicates method & group_by
