@@ -26,12 +26,22 @@ The following Metadata vizualizations are available for use, with examples below
 
 ## scatterplot_2d
 
-This visualizer provides an exploratory view of your Metadata - allowing for any two NumericMetadataColumns to be plotted against each other, with an optional third CategoricalMetadataColumn used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
+This visualizer provides an exploratory view of your Metadata - allowing for any two numeric measures to be plotted against each other, with an optional third categorical measure used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
 
 ### Demo
-![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/scatterplot_2d_example.png)
+![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/scatterplot_example.png)
 
-[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/l76or6ts0bz3ueztelttd/viz.qzv?rlkey=v37s02cdzp5dp56n46p3rtdch)
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/566wegb3fvc10mtms93nk/scatterplot-demo.qzv?rlkey=aay1pjsbketne6sbei8x2luoe)
+
+
+## lineplot
+
+This visualizer generates a lineplot displaying relationships between two numeric Metadata measures, with an optional third categorical measure for grouping your data into separate lines. If replicates are present within your first numeric measure (plotted on the X-axis), you can select either 'median' or 'mean' for replicate handling, which will create line(s) with the average at each point where replicates are present. All numeric columns present within your Metadata will be available as drop-down options on the Y-axis, but the chosen measure for the X-axis will remain fixed.
+
+### Demo
+![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/lineplot_example.png)
+
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/r044001aj22qr8b2jrmy7/lineplot-demo.qzv?rlkey=k9nfifazsorn9p51fcy7zsjk8)
 
 
 ## heatmap
@@ -42,11 +52,6 @@ This visualizer generates a heatmap displaying relationships between three Metad
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/heatmap_example.png)
 
 [**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/q6yrsg1pens7fhzlv14bv/demo-heatmap.qzv?rlkey=eoomz6gw8vcku7kbfjbqurulw)
-
-
-## lineplot
-
-Coming soon!
 
 
 ## boxplot

@@ -23,6 +23,7 @@ def md_factory():
     )
 
 
+# scatterplot examples
 def scatterplot_defaults(use):
     metadata = use.init_metadata('metadata', md_factory)
 
@@ -54,6 +55,7 @@ def scatterplot_all_measures(use):
     )
 
 
+# lineplot examples
 def lineplot_median_replicates_with_grouping(use):
     metadata = use.init_metadata('metadata', md_factory)
 
@@ -65,6 +67,7 @@ def lineplot_median_replicates_with_grouping(use):
             y_measure='y',
             group_by='group',
             replicate_method='median',
+            title='Lineplot with median replicate method, grouped by `group`.'
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -83,6 +86,7 @@ def lineplot_mean_replicates_with_grouping(use):
             y_measure='y',
             group_by='group',
             replicate_method='mean',
+            title='Lineplot with mean replicate method, grouped by `group`.'
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -100,6 +104,7 @@ def lineplot_median_replicates_no_grouping(use):
             x_measure='x',
             y_measure='y',
             replicate_method='median',
+            title='Lineplot with median replicate method (no grouping).'
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -117,6 +122,7 @@ def lineplot_mean_replicates_no_grouping(use):
             x_measure='x',
             y_measure='y',
             replicate_method='mean',
+            title='Lineplot with mean replicate method (no grouping).'
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -134,6 +140,7 @@ def lineplot_no_replicates_with_grouping(use):
             x_measure='a',
             y_measure='y',
             group_by='group',
+            title='Lineplot with no replicate method, grouped by `group`.'
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -150,6 +157,7 @@ def lineplot_no_replicates_no_grouping(use):
             metadata=metadata,
             x_measure='b',
             y_measure='y',
+            title='Lineplot with no replicate method (no grouping).'
         ),
         use.UsageOutputNames(
             visualization='lineplot'
@@ -157,6 +165,7 @@ def lineplot_no_replicates_no_grouping(use):
     )
 
 
+# heatmap examples
 def heatmap(use):
     metadata = use.init_metadata('metadata', md_factory)
 

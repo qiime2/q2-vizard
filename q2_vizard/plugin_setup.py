@@ -106,7 +106,9 @@ plugin.visualizers.register_function(
         'title': 'The title of the lineplot.'},
     name='Lineplot',
     description='Basic lineplot for visualizing two numeric Metadata'
-                ' measures with optional grouping.',
+                ' measures with optional grouping. All numeric columns present'
+                ' in the Metadata will be available as drop-down options on'
+                ' the Y-axis, but the chosen `x_measure` remains fixed.',
     examples={
         f.__name__: f for f in [
             ex.lineplot_median_replicates_with_grouping,

@@ -39,6 +39,11 @@ def lineplot(output_dir: str, metadata: Metadata,
                          ' Please choose different columns in your'
                          ' metadata for these measures.')
 
+    # filtering md cols for the y-axis dropdown
+    md_cols_numeric = \
+        metadata.filter_columns(column_type='numeric').to_dataframe()
+    md_cols_numeric = list(md_cols_numeric.columns)
+
     # column validation for grouping
     if group_by:
         _col_type_validation(metadata=metadata, measure=group_by,
@@ -123,11 +128,11 @@ def lineplot(output_dir: str, metadata: Metadata,
         if replicate_method == 'median':
             averaged_md = \
                 (ordered_md.groupby([x_measure, group_by],
-                                    as_index=False)[y_measure].median())
+                                    as_index=False)[md_cols_numeric].median())
         elif replicate_method == 'mean':
             averaged_md = \
                 (ordered_md.groupby([x_measure, group_by],
-                                    as_index=False)[y_measure].mean())
+                                    as_index=False)[md_cols_numeric].mean())
 
         averaged_md = averaged_md.sort_values(by=[group_by, x_measure])
 
@@ -154,6 +159,7 @@ def lineplot(output_dir: str, metadata: Metadata,
     full_spec = \
         _json_replace(json_obj, metadata=md_obj, md_ids=md_ids,
                       averaged_metadata=averaged_md_obj,
+                      md_cols_numeric=md_cols_numeric,
                       x_measure=x_measure, y_measure=y_measure,
                       group_by=group_by, title=title, subtitle=subtitle)
 

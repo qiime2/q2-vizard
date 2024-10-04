@@ -90,12 +90,12 @@
     {
       "name": "color_scale",
       "type": "ordinal",
+      "range": "category",
       "domain": {
         "data": "table",
         "field": {"signal": "colorBy"},
         "sort": true
-      },
-      "range": {"scheme": "category10"}
+      }
     }
   ],
 
@@ -123,7 +123,7 @@
 
   "legends": [
     {
-      "stroke": "color_scale",
+      "fill": "color_scale",
       "symbolSize": 150,
       "symbolStrokeWidth": 2.5,
       "labelFontSize": 14,
@@ -165,13 +165,13 @@
               "field": {"signal": "colorBy"}
             }
           ],
-          "fill": {"value": "transparent"}
-        },
-        "hover": {
           "fill": {
             "scale": "color_scale",
             "field": {"signal": "colorBy"}
-          },
+          }
+        },
+        "hover": {
+          "stroke": {"value": "black"},
           "tooltip": {"signal": "datum"}
         }
       }
