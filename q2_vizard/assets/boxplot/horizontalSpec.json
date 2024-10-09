@@ -45,6 +45,10 @@
       "value": {"{{REPLACE_PARAM}}": "whisker_range"}
     },
     {
+      "name": "boxOrientation",
+      "value": {"{{REPLACE_PARAM}}": "box_orientation"}
+    },
+    {
       "name": "suppressOutliers",
       "value": false,
       "bind": {"input": "checkbox"}

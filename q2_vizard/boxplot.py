@@ -79,8 +79,9 @@ def boxplot(output_dir: str, metadata: Metadata,
     full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
                               distribution_measure=distribution_measure,
                               whisker_range=whisker_range,
-                              group_by=group_by, title=title, expr=expr,
-                              subtitle=subtitle)
+                              group_by=group_by, title=title,
+                              expr=expr, subtitle=subtitle,
+                              box_orientation=box_orientation)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)

@@ -49,6 +49,14 @@
     var view = result.view;
     var svg = document.querySelector('#viz svg')
 
+    if (view.signal('boxOrientation') == 'horizontal') {
+      var groupVar = view.signal('yField')
+      var distVar = view.signal('xField')
+    } else if (view.signal('boxOrientation') == 'vertical') {
+      var groupVar = view.signal('xField')
+      var distVar = view.signal('yField')
+    }
+
     // add subtitle attr to title class
     var title = svg.querySelector('g.mark-group.role-title');
     var subtitle = view.signal('subtitle');
@@ -60,7 +68,7 @@
     whiskerLines.forEach(function(mark, index) {
       var data = view.data('summary')[index];
 
-      var group = data[view.signal('yField')];
+      var group = data[groupVar];
       var whiskerLow = data['whiskerLow'];
       var whiskerHigh = data['whiskerHigh'];
 
@@ -75,7 +83,7 @@
     whiskerCapsLow.forEach(function(mark, index) {
       var data = view.data('summary')[index];
 
-      var group = data[view.signal('yField')];
+      var group = data[groupVar];
       var loc = data['whiskerLow'];
 
       // add attrs to each whiskerCapLow mark
@@ -88,7 +96,7 @@
     whiskerCapsHigh.forEach(function(mark, index) {
       var data = view.data('summary')[index];
 
-      var group = data[view.signal('yField')];
+      var group = data[groupVar];
       var loc = data['whiskerHigh'];
 
       // add attrs to each whiskerCapHigh mark
@@ -101,7 +109,7 @@
     boxGroups.forEach(function(mark, index) {
       var data = view.data('summary')[index];
 
-      var group = data[view.signal('yField')];
+      var group = data[groupVar];
       var q1 = data['q1'];
       var q3 = data['q3'];
 
@@ -116,7 +124,7 @@
     medianLines.forEach(function(mark, index) {
       var data = view.data('summary')[index];
 
-      var group = data[view.signal('yField')];
+      var group = data[groupVar];
       var loc = data['median'];
 
       // add attrs to each medianLine mark
@@ -135,8 +143,8 @@
 
         if (data) {
           var id = data[view.signal('idField')];
-          var group = data[view.signal('yField')];
-          var val = data[view.signal('xField')];
+          var group = data[groupVar];
+          var val = data[distVar];
 
           // add attrs to each mark
           mark.setAttribute('data-id', id);
