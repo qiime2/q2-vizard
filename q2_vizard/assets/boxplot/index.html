@@ -46,8 +46,106 @@
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
-    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
-    console.log(result.view.getState());
+    var view = result.view;
+    var svg = document.querySelector('#viz svg')
+
+    // add subtitle attr to title class
+    var title = svg.querySelector('g.mark-group.role-title');
+    var subtitle = view.signal('subtitle');
+
+    title.setAttribute('subtitle', subtitle);
+
+    // add group & location info for whiskerLine marks
+    var whiskerLines = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="whiskerLine"]');
+    whiskerLines.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[view.signal('yField')];
+      var whiskerLow = data['whiskerLow'];
+      var whiskerHigh = data['whiskerHigh'];
+
+      // add attrs to each whiskerLine mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-whiskerLow', whiskerLow);
+      mark.setAttribute('data-whiskerHigh', whiskerHigh);
+    });
+
+    // add group & location info for whiskerCapLow marks
+    var whiskerCapsLow = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="whiskerCapLow"]');
+    whiskerCapsLow.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[view.signal('yField')];
+      var loc = data['whiskerLow'];
+
+      // add attrs to each whiskerCapLow mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-whiskerCapLow', loc);
+    });
+
+    // add group & location info for whiskerCapHigh marks
+    var whiskerCapsHigh = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="whiskerCapHigh"]');
+    whiskerCapsHigh.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[view.signal('yField')];
+      var loc = data['whiskerHigh'];
+
+      // add attrs to each whiskerCapHigh mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-whiskerCapHigh', loc);
+    });
+
+    // add group & location info for boxGroup marks
+    var boxGroups = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="boxGroup"]')
+    boxGroups.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[view.signal('yField')];
+      var q1 = data['q1'];
+      var q3 = data['q3'];
+
+      // add attrs to each boxGroup mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-q1', q1);
+      mark.setAttribute('data-q3', q3);
+    });
+
+    // add group & location info for medianLine marks
+    var medianLines = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="medianLine"]');
+    medianLines.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[view.signal('yField')];
+      var loc = data['median'];
+
+      // add attrs to each medianLine mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-median', loc);
+    });
+
+    // add group & location info for outlierMark marks
+    var outlierMarks = svg.querySelectorAll('g.mark-symbol.role-mark path[aria-label="outlierMark"]');
+    var outlierData = view.data('outliers') || [];
+
+    // we won't always have outliers, so check for presence before assignment
+    if (outlierMarks.length > 0 && outlierData.length > 0) {
+      outlierMarks.forEach(function(mark, index) {
+        var data = view.data('outliers')[index];
+
+        if (data) {
+          var id = data[view.signal('idField')];
+          var group = data[view.signal('yField')];
+          var val = data[view.signal('xField')];
+
+          // add attrs to each mark
+          mark.setAttribute('data-id', id);
+          mark.setAttribute('data-group', group);
+          mark.setAttribute('data-outlierValue', val);
+        };
+      });
+    };
+
   }).catch(console.error);
 </script>
 </body>

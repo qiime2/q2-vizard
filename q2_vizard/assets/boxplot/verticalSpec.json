@@ -303,7 +303,8 @@
                 "field": "whiskerHigh"
               },
               "stroke": {"value": "black"},
-              "strokeWidth": {"value": 1.5}
+              "strokeWidth": {"value": 1.5},
+              "description": {"value": "whiskerLine"}
             }
           }
         },
@@ -326,7 +327,8 @@
                 "field": "whiskerLow"
               },
               "stroke": {"value": "black"},
-              "strokeWidth": {"value": 1.5}
+              "strokeWidth": {"value": 1.5},
+              "description": {"value": "whiskerCapLow"}
             }
           }
         },
@@ -349,7 +351,8 @@
                 "field": "whiskerHigh"
               },
               "stroke": {"value": "black"},
-              "strokeWidth": {"value": 1.5}
+              "strokeWidth": {"value": 1.5},
+              "description": {"value": "whiskerCapHigh"}
             }
           }
         },
@@ -382,7 +385,8 @@
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
               },
               "cornerRadius": {"value": 5},
-              "tooltip": {"signal": "datum"}
+              "tooltip": {"signal": "datum"},
+              "description": {"value": "boxGroup"}
             }
           }
         },
@@ -406,38 +410,40 @@
               },
               "stroke": {"value": "black"},
               "strokeWidth": {"value": 4},
-              "tooltip": {"signal": "datum"}
-            }
-          }
-        },
-        {
-          "type": "symbol",
-          "from": {"data": "outliers"},
-          "encode": {
-            "update": {
-              "xc": {
-                "scale": "x_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"},
-                "band": 0.5
-              },
-              "y": {
-                "scale": "y_scale",
-                "field": {"signal": "yField"}
-              },
-              "shape": {"value": "circle"},
-              "size": {"value": 80},
-              "opacity": {"signal": "suppressOutliers ? 0 : 1"},
-              "fill": {
-                "scale": "color_scale",
-                "field": {"{{REPLACE_PARAM}}": "group_by"}
-              },
-              "stroke": {"value": "black"},
-              "strokeWidth": {"value": 1.5},
-              "tooltip": {"signal": "datum"}
+              "tooltip": {"signal": "datum"},
+              "description": {"value": "medianLine"}
             }
           }
         }
       ]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "outliers"},
+      "encode": {
+        "update": {
+          "xc": {
+            "scale": "x_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"},
+            "band": 0.5
+          },
+          "y": {
+            "scale": "y_scale",
+            "field": {"signal": "yField"}
+          },
+          "shape": {"value": "circle"},
+          "size": {"value": 80},
+          "opacity": {"signal": "suppressOutliers ? 0 : 1"},
+          "fill": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1.5},
+          "tooltip": {"signal": "datum"},
+          "description": {"value": "outlierMark"}
+        }
+      }
     }
   ]
 }
