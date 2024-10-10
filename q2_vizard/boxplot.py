@@ -75,11 +75,14 @@ def boxplot(output_dir: str, metadata: Metadata,
         " > datum.summary.whiskerHigh"
     )
 
+    # set default if whisker_range is None
+    if whisker_range is None:
+        whisker_range = 'percentile'
+
+    # set subtitle
     if whisker_range in ['percentile', 'minmax', 'tukeys_iqr']:
         subtitle = \
             f'Whiskers were drawn using the `{whisker_range}` method.'
-    else:
-        subtitle = ' '
 
     full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
                               distribution_measure=distribution_measure,
