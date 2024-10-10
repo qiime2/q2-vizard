@@ -45,6 +45,11 @@ def boxplot(output_dir: str, metadata: Metadata,
     )
     index = J_ENV.get_template('index.html')
 
+    # set default if box_orientation is None
+    if box_orientation is None:
+        box_orientation = 'horizontal'
+
+    # assign relevant spec based on box_orientation
     if box_orientation == 'horizontal':
         spec = 'horizontalSpec.json'
 

@@ -10,7 +10,7 @@ import os
 import tempfile
 
 from selenium import webdriver
-# from selenium.webdriver.common.by import By
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 # from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
@@ -28,29 +28,70 @@ class TestBase(TestPluginBase):
 
         self.md = Metadata.load(self.get_data_path('sample-md.tsv'))
 
+        # first/second cases are identical, just w/different box_orientation
+        # third case doesn't include group, just producing a single box
         self.test_cases = [
-            ('')
+            ('x', 'group', 'horizontal', "titled 'group'"),
+            ('x', 'group', 'vertical', "titled 'group'"),
+            ('x', None, None, "titled 'legend'")
         ]
 
-    def _selenium_boxplot_test(self, driver, distribution_measure, group_by,
-                               whisker_range, box_orientation,
-                               exp_subtitle, exp_legend,
-                               exp_box_marks_len, exp_whisker_marks_len,
-                               exp_whisker_cap_marks_len, exp_median_marks_len,
-                               exp_total_outlier_marks_len,
-                               exp_single_box_outlier_marks_len,
-                               exp_whisker_cap_low_mark,
-                               exp_whisker_cap_high_mark,
-                               exp_median_mark, exp_outlier_mark_id,
-                               exp_outlier_mark_group, exp_outlier_mark):
+    def _selenium_boxplot_test(
+        self, driver, distribution_measure, group_by, box_orientation,
+        exp_legend
+        # whisker_range, exp_subtitle, exp_box_groups_len,
+        # exp_whisker_lines_len, exp_whisker_caps_low_len,
+        # exp_whisker_caps_high_len, exp_median_lines_len,
+        # exp_total_outlier_marks_len, exp_single_box_outlier_marks_len,
+        # exp_whisker_cap_low_mark, exp_whisker_cap_high_mark,
+        # exp_median_mark, exp_outlier_mark_id,
+        # exp_outlier_mark_group, exp_outlier_mark
+    ):
         with tempfile.TemporaryDirectory() as output_dir:
             boxplot(
                 output_dir=output_dir, metadata=self.md,
-                distribution_measure=distribution_measure, group_by=group_by,
-                whisker_range=whisker_range, box_orientation=box_orientation
+                distribution_measure=distribution_measure,
+                group_by=group_by, box_orientation=box_orientation
+                # whisker_range=whisker_range
             )
 
+            # set defaults if None - for use in test validation
+            if group_by is None:
+                group_by = 'legend'
+            if box_orientation is None:
+                box_orientation = 'horizontal'
+            # if whisker_range is None:
+            #     whisker_range = 'percentile'
+
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
+
+            # test that our axes match xy input measures
+            axis_elements = \
+                driver.find_elements(By.CSS_SELECTOR, 'g.mark-group.role-axis')
+            self.assertEqual(len(axis_elements), 2)
+
+            for _, axis in enumerate(axis_elements):
+                label = axis.get_attribute('aria-label')
+                # assign xy measures based on box orientation
+                if box_orientation == 'horizontal':
+                    x_measure = distribution_measure
+                    y_measure = group_by
+                elif box_orientation == 'vertical':
+                    x_measure = group_by
+                    y_measure = distribution_measure
+                # check for correct label on xy axes
+                if 'X-axis' in label:
+                    self.assertIn(f"axis titled '{x_measure}", label)
+                elif 'Y-axis' in label:
+                    self.assertIn(f"axis titled '{y_measure}'", label)
+
+            # test that the legend contains the correct group
+            legend_element = \
+                driver.find_element(By.CSS_SELECTOR,
+                                    'g.mark-group.role-legend')
+
+            label = legend_element.get_attribute('aria-label')
+            self.assertIn(exp_legend, label)
 
     def test_boxplot_chrome(self):
         chrome_options = ChromeOptions()
@@ -59,11 +100,18 @@ class TestBase(TestPluginBase):
         self.assertGreater(len(self.test_cases), 0)
 
         with webdriver.Chrome(options=chrome_options) as driver:
-            for () in self.test_cases:
+            for (distribution_measure, group_by,
+                 box_orientation, exp_legend) in self.test_cases:
 
-                with self.subTest():
+                with self.subTest(
+                    distribution_measure=distribution_measure,
+                    group_by=group_by, box_orientation=box_orientation,
+                    exp_legend=exp_legend
+                ):
 
-                    self._selenium_boxplot_test(driver)
+                    self._selenium_boxplot_test(
+                        driver, distribution_measure, group_by,
+                        box_orientation, exp_legend)
 
     # def test_boxplot_firefox(self):
     #     firefox_options = FirefoxOptions()

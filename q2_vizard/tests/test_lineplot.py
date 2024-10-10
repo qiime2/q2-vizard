@@ -35,7 +35,7 @@ class TestLineplot(TestPluginBase):
             ('x', 'y', 'group', 'median',
              'Data was averaged using the `median` method.',
              "titled 'group'", exp_marks_len, 'sample01', '4', '6'),
-            ('b', 'y', '', 'none', ' ', "titled 'legend'",
+            ('b', 'y', None, 'none', ' ', "titled 'legend'",
              exp_marks_len, 'sample01', '1', '6')
         ]
 
