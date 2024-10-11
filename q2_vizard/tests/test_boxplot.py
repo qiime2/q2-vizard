@@ -11,8 +11,6 @@ import tempfile
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 # from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
@@ -34,18 +32,15 @@ class TestBase(TestPluginBase):
         # just w/different box_orientation & whisker_range params
         # third case doesn't include group, just producing a single box
         self.test_cases = [
-            ('x', 'group', 'horizontal', "titled 'group'", None),
-            ('x', 'group', 'vertical', "titled 'group'", 'minmax'),
-            ('x', None, None, "titled 'legend'", 'tukeys_iqr')
+            ('x', 'group', 'horizontal', "titled 'group'", None, 3),
+            ('x', 'group', 'vertical', "titled 'group'", 'minmax', 0),
+            ('x', None, None, "titled 'legend'", 'tukeys_iqr', 0)
         ]
 
     def _selenium_boxplot_test(
         self, driver, distribution_measure, group_by, box_orientation,
-        exp_legend, whisker_range
-        # exp_box_groups_len,
-        # exp_whisker_lines_len, exp_whisker_caps_low_len,
-        # exp_whisker_caps_high_len, exp_median_lines_len,
-        # exp_total_outlier_marks_len, exp_single_box_outlier_marks_len,
+        exp_legend, whisker_range, exp_total_outlier_marks_len
+        # exp_single_box_outlier_marks_len,
         # exp_whisker_cap_low_mark, exp_whisker_cap_high_mark,
         # exp_median_mark, exp_outlier_mark_id,
         # exp_outlier_mark_group, exp_outlier_mark
@@ -103,6 +98,92 @@ class TestBase(TestPluginBase):
             subtitle = title_element.get_attribute('subtitle')
             self.assertIn(whisker_range, subtitle)
 
+            # MARKS - expected counts for each type
+            md = self.md.to_dataframe()
+
+            # boxGroup length
+            boxGroup_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'path[aria-label="boxGroup"]')
+
+            if group_by == 'legend':
+                exp_groups_len = 1
+            else:
+                exp_groups_len = len(md[group_by].unique())
+
+            self.assertEqual(len(boxGroup_elements), exp_groups_len)
+
+            # whiskerLine length - equal to unique vals in group_by column
+            whiskerLine_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'path[aria-label="whiskerLine"]')
+
+            self.assertEqual(len(whiskerLine_elements), exp_groups_len)
+
+            # whiskerCap lengths - equal to each other & exp_groups_len
+            whiskerCapLow_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'path[aria-label="whiskerCapLow"]')
+            whiskerCapHigh_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'path[aria-label="whiskerCapHigh"]')
+
+            self.assertEqual(
+                len(whiskerCapLow_elements), len(whiskerCapHigh_elements)
+            )
+            self.assertEqual(len(whiskerCapHigh_elements), exp_groups_len)
+
+            # medianLine length - equal to unique vals in group_by column
+            medianLine_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'path[aria-label="medianLine"]')
+            self.assertEqual(len(medianLine_elements), exp_groups_len)
+
+            # outlierMark len
+            outlierMark_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'path[aria-label="outlierMark"]')
+
+            self.assertEqual(
+                len(outlierMark_elements), exp_total_outlier_marks_len
+            )
+
+            # FOR A SINGLE BOX, checks for accuracy on all mark values
+            boxGroup_element_0 = boxGroup_elements[0]
+            whiskerLine_element_0 = whiskerLine_elements[0]
+            whiskerCapLow_element_0 = whiskerCapLow_elements[0]
+            whiskerCapHigh_element_0 = whiskerCapHigh_elements[0]
+            medianLine_element_0 = medianLine_elements[0]
+
+            # Group checks for a single box
+            box0_group = boxGroup_element_0.get_attribute('data-group')
+
+            # whiskerLine
+            whiskerLine0_group = \
+                whiskerLine_element_0.get_attribute('data-group')
+            self.assertEqual(whiskerLine0_group, box0_group)
+
+            # whiskerCap
+            whiskerLow0_group = \
+                whiskerCapLow_element_0.get_attribute('data-group')
+            self.assertEqual(whiskerLow0_group, box0_group)
+
+            whiskerHigh0_group = \
+                whiskerCapHigh_element_0.get_attribute('data-group')
+            self.assertEqual(whiskerHigh0_group, box0_group)
+
+            # medianLine
+            medianLine0_group = \
+                medianLine_element_0.get_attribute('data-group')
+            self.assertEqual(medianLine0_group, box0_group)
+
+            # outlierMark - just confirming expected number in group0
+
+            # TODO: stats checks
+            # box0_q1 = boxGroup_element_0.get_attribute('data-q1')
+            # box0_q3 = boxGroup_element_0.get_attribute('data-q3')
+
+            # OUTLIER MARKS - these go last for checkbox handling
             # test warning text is present when `suppressOutliers` is clicked
             checkbox = driver.find_element(By.CSS_SELECTOR,
                                            'input[name="suppressOutliers"]')
@@ -116,6 +197,12 @@ class TestBase(TestPluginBase):
 
             self.assertIn(exp_text, page_source)
 
+            # test that outlier marks are transparent while checkbox is clicked
+            if len(outlierMark_elements) > 0:
+                for _, mark in enumerate(outlierMark_elements):
+                    opacity = mark.get_attribute('opacity')
+                    self.assertEqual(opacity, '0')
+
     def test_boxplot_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
@@ -124,18 +211,20 @@ class TestBase(TestPluginBase):
 
         with webdriver.Chrome(options=chrome_options) as driver:
             for (distribution_measure, group_by,
-                 box_orientation, exp_legend,
-                 whisker_range) in self.test_cases:
+                 box_orientation, exp_legend, whisker_range,
+                 exp_total_outlier_marks_len) in self.test_cases:
 
                 with self.subTest(
                     distribution_measure=distribution_measure,
                     group_by=group_by, box_orientation=box_orientation,
-                    exp_legend=exp_legend, whisker_range=whisker_range
+                    exp_legend=exp_legend, whisker_range=whisker_range,
+                    exp_total_outlier_marks_len=exp_total_outlier_marks_len
                 ):
 
                     self._selenium_boxplot_test(
                         driver, distribution_measure, group_by,
-                        box_orientation, exp_legend, whisker_range)
+                        box_orientation, exp_legend, whisker_range,
+                        exp_total_outlier_marks_len)
 
     # def test_boxplot_firefox(self):
     #     firefox_options = FirefoxOptions()
