@@ -18,6 +18,7 @@ from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
 from q2_vizard import boxplot
+# from .._util import _stats_util
 
 
 class TestBase(TestPluginBase):
@@ -32,15 +33,15 @@ class TestBase(TestPluginBase):
         # just w/different box_orientation & whisker_range params
         # third case doesn't include group, just producing a single box
         self.test_cases = [
-            ('x', 'group', 'horizontal', "titled 'group'", None, 3),
-            ('x', 'group', 'vertical', "titled 'group'", 'minmax', 0),
-            ('x', None, None, "titled 'legend'", 'tukeys_iqr', 0)
+            ('x', 'group', 'horizontal', "titled 'group'", None, 3, 1),
+            ('x', 'group', 'vertical', "titled 'group'", 'minmax', 0, 0),
+            ('x', None, None, "titled 'legend'", 'tukeys_iqr', 0, 0)
         ]
 
     def _selenium_boxplot_test(
         self, driver, distribution_measure, group_by, box_orientation,
-        exp_legend, whisker_range, exp_total_outlier_marks_len
-        # exp_single_box_outlier_marks_len,
+        exp_legend, whisker_range, exp_total_outlier_marks_len,
+        exp_single_box_outlier_marks_len,
         # exp_whisker_cap_low_mark, exp_whisker_cap_high_mark,
         # exp_median_mark, exp_outlier_mark_id,
         # exp_outlier_mark_group, exp_outlier_mark
@@ -143,10 +144,14 @@ class TestBase(TestPluginBase):
             outlierMark_elements = \
                 driver.find_elements(By.CSS_SELECTOR,
                                      'path[aria-label="outlierMark"]')
-
             self.assertEqual(
                 len(outlierMark_elements), exp_total_outlier_marks_len
             )
+            # check initial opacity for outliers
+            # opacity should be 1 unless `suppressOutliers` checkbox is clicked
+            for _, mark in enumerate(outlierMark_elements):
+                opacity = mark.get_attribute('opacity')
+                self.assertEqual(opacity, '1')
 
             # FOR A SINGLE BOX, checks for accuracy on all mark values
             boxGroup_element_0 = boxGroup_elements[0]
@@ -177,13 +182,28 @@ class TestBase(TestPluginBase):
                 medianLine_element_0.get_attribute('data-group')
             self.assertEqual(medianLine0_group, box0_group)
 
-            # outlierMark - just confirming expected number in group0
+            # outlierMark - confirming expected number in group0
+            outlier0_marks = []
+            for _, mark in enumerate(outlierMark_elements):
+                if mark.get_attribute('data-group') == box0_group:
+                    outlier0_marks.append(mark)
+            self.assertEqual(len(outlier0_marks),
+                             exp_single_box_outlier_marks_len)
 
             # TODO: stats checks
+            # need to calculate subsets of dist_measure based on unique groups
+            # and then do stats checks for each group
+            # (minimum, maximum, median, q1, q3,
+            #  lower_fence, upper_fence, p09, p91) = \
+            #     _stats_util(md[distribution_measure].values)
+
             # box0_q1 = boxGroup_element_0.get_attribute('data-q1')
             # box0_q3 = boxGroup_element_0.get_attribute('data-q3')
 
-            # OUTLIER MARKS - these go last for checkbox handling
+            # self.assertEqual()
+
+            # OUTLIER MARKS WHEN CHECKBOX IS CLICKED
+            # these checks go last so the checkbox doesn't have to be unclicked
             # test warning text is present when `suppressOutliers` is clicked
             checkbox = driver.find_element(By.CSS_SELECTOR,
                                            'input[name="suppressOutliers"]')
@@ -212,19 +232,23 @@ class TestBase(TestPluginBase):
         with webdriver.Chrome(options=chrome_options) as driver:
             for (distribution_measure, group_by,
                  box_orientation, exp_legend, whisker_range,
-                 exp_total_outlier_marks_len) in self.test_cases:
+                 exp_total_outlier_marks_len,
+                 exp_single_box_outlier_marks_len) in self.test_cases:
 
                 with self.subTest(
                     distribution_measure=distribution_measure,
                     group_by=group_by, box_orientation=box_orientation,
                     exp_legend=exp_legend, whisker_range=whisker_range,
-                    exp_total_outlier_marks_len=exp_total_outlier_marks_len
+                    exp_total_outlier_marks_len=exp_total_outlier_marks_len,
+                    exp_single_box_outlier_marks_len=(
+                        exp_single_box_outlier_marks_len)
                 ):
 
                     self._selenium_boxplot_test(
                         driver, distribution_measure, group_by,
                         box_orientation, exp_legend, whisker_range,
-                        exp_total_outlier_marks_len)
+                        exp_total_outlier_marks_len,
+                        exp_single_box_outlier_marks_len)
 
     # def test_boxplot_firefox(self):
     #     firefox_options = FirefoxOptions()
