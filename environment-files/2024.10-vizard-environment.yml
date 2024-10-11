@@ -4,7 +4,6 @@ channels:
 - bioconda
 dependencies:
   - qiime2-amplicon
-  - q2-stats
   - pip
   - pip:
     - q2_vizard@git+https://github.com/qiime2/q2-vizard.git@dev
