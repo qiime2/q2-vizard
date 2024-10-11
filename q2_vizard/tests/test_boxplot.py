@@ -103,27 +103,18 @@ class TestBase(TestPluginBase):
             subtitle = title_element.get_attribute('subtitle')
             self.assertIn(whisker_range, subtitle)
 
-            # TODO: still not working yet
-            # test warning text is present when `suppressOutliers` is enabled
-            # suppress_outliers = \
-            #     driver.find_element(By.CSS_SELECTOR,
-            #                         'input[name="suppressOutliers"]')
+            # test warning text is present when `suppressOutliers` is clicked
+            checkbox = driver.find_element(By.CSS_SELECTOR,
+                                           'input[name="suppressOutliers"]')
+            driver.execute_script("arguments[0].click();", checkbox)
 
-            # tspan_xpath = ("//tspan[contains(normalize-space(text()),"
-            #                "'NOTE: Outliers have been suppressed.')]")
+            # Confirm the checkbox is selected
+            self.assertTrue(checkbox.is_selected())
 
-            # driver.execute_script("arguments[0].click();", suppress_outliers)
+            page_source = driver.page_source
+            exp_text = 'NOTE: Outliers have been suppressed.'
 
-            # wait = WebDriverWait(driver, 10)
-            # wait.until(EC.visibility_of_element_located((By.XPATH,
-            #                                              tspan_xpath)))
-
-            # tspan_element = driver.find_element(By.XPATH, tspan_xpath)
-
-            # actual_text = tspan_element.text.strip()
-            # exp_text = 'NOTE: Outliers have been suppressed.'
-
-            # self.assertEqual(exp_text, actual_text)
+            self.assertIn(exp_text, page_source)
 
     def test_boxplot_chrome(self):
         chrome_options = ChromeOptions()
