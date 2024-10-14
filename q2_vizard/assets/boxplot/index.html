@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.22.1"></script>
+  <!-- Import vega-embed -->
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.20.8"></script>
+  <script type="application/json" id="spec">
+    {{ spec }}
+  </script>
+  <style>
+    body {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0px;
+      padding: 10px;
+      /* padding: 50px 212px 0px 50px; */
+    }
+    #viz {
+      margin: 100px auto;
+      position: relative;
+    }
+    .vega-bindings {
+      top: 25px;
+      left: 25px;
+      display: flex;
+      position: fixed;
+      font-family: monospace;
+    }
+    .vega-bind {
+    margin-right: 50px;
+    vertical-align: middle
+    }
+
+    .vega-bind span {
+    display: flex;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<div id="viz"></div>
+
+<script type="text/javascript">
+  var spec = JSON.parse(document.getElementById('spec').innerHTML);
+  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
+    var view = result.view;
+    var svg = document.querySelector('#viz svg')
+
+    if (view.signal('boxOrientation') == 'horizontal') {
+      var groupVar = view.signal('yField')
+      var distVar = view.signal('xField')
+    } else if (view.signal('boxOrientation') == 'vertical') {
+      var groupVar = view.signal('xField')
+      var distVar = view.signal('yField')
+    }
+
+    // add subtitle attr to title class
+    var title = svg.querySelector('g.mark-group.role-title');
+    var subtitle = view.signal('subtitle');
+
+    title.setAttribute('subtitle', subtitle);
+
+    // add group & location info for whiskerLine marks
+    var whiskerLines = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="whiskerLine"]');
+    whiskerLines.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[groupVar];
+      var whiskerLow = data['whiskerLow'];
+      var whiskerHigh = data['whiskerHigh'];
+
+      // add attrs to each whiskerLine mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-low', whiskerLow);
+      mark.setAttribute('data-high', whiskerHigh);
+    });
+
+    // add group & location info for whiskerCapLow marks
+    var whiskerCapsLow = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="whiskerCapLow"]');
+    whiskerCapsLow.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[groupVar];
+      var loc = data['whiskerLow'];
+
+      // add attrs to each whiskerCapLow mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-val', loc);
+    });
+
+    // add group & location info for whiskerCapHigh marks
+    var whiskerCapsHigh = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="whiskerCapHigh"]');
+    whiskerCapsHigh.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[groupVar];
+      var loc = data['whiskerHigh'];
+
+      // add attrs to each whiskerCapHigh mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-val', loc);
+    });
+
+    // add group & location info for boxGroup marks
+    var boxGroups = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="boxGroup"]')
+    boxGroups.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[groupVar];
+      var q1 = data['q1'];
+      var q3 = data['q3'];
+
+      // add attrs to each boxGroup mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-q1', q1);
+      mark.setAttribute('data-q3', q3);
+    });
+
+    // add group & location info for medianLine marks
+    var medianLines = svg.querySelectorAll('g.mark-rect.role-mark path[aria-label="medianLine"]');
+    medianLines.forEach(function(mark, index) {
+      var data = view.data('summary')[index];
+
+      var group = data[groupVar];
+      var loc = data['median'];
+
+      // add attrs to each medianLine mark
+      mark.setAttribute('data-group', group);
+      mark.setAttribute('data-median', loc);
+    });
+
+    // add group & location info for outlierMark marks
+    var outlierMarks = svg.querySelectorAll('g.mark-symbol.role-mark path[aria-label="outlierMark"]');
+    var outlierData = view.data('outliers') || [];
+
+    // we won't always have outliers, so check for presence before assignment
+    if (outlierMarks.length > 0 && outlierData.length > 0) {
+      outlierMarks.forEach(function(mark, index) {
+        var data = view.data('outliers')[index];
+
+        if (data) {
+          var id = data[view.signal('idField')];
+          var group = data[groupVar];
+          var val = data[distVar];
+
+          // add attrs to each mark
+          mark.setAttribute('data-id', id);
+          mark.setAttribute('data-group', group);
+          mark.setAttribute('data-val', val);
+        };
+      });
+    };
+
+  }).catch(console.error);
+</script>
+</body>
+</html>

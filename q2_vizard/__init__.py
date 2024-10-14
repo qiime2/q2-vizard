@@ -7,11 +7,13 @@
 # ----------------------------------------------------------------------------
 
 from ._version import get_versions
-from q2_vizard.heatmap import heatmap
+
 from q2_vizard.scatterplot import scatterplot_2d
+from q2_vizard.heatmap import heatmap
 from q2_vizard.lineplot import lineplot
+from q2_vizard.boxplot import boxplot
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['heatmap', 'scatterplot_2d', 'lineplot']
+__all__ = ['heatmap', 'scatterplot_2d', 'lineplot', 'boxplot']
