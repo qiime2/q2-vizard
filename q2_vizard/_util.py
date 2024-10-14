@@ -6,6 +6,9 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import numpy as np
+
+
 def _json_replace(json_obj, **values):
     """
     Search for elements of `{"{{REPLACE_PARAM}}": "some_key"}` and replace
@@ -61,68 +64,38 @@ def _measure_validation(metadata, measure):
                 ' from this Metadata column name.'
             )
 
-    # manual check for the rendered stats for boxplot
-    def _stats_util(data):
-        # Sort the data
-        sorted_data = data.sort()
 
-        # Calculate min/max
-        minimum = data[0]
-        maximum = data[-1]
+# manual checks for the rendered stats in boxplot
+def _calculate_median(sorted_values):
+    n = len(sorted_values)
+    middle = n // 2
 
-        # calculate median
-        def _calculate_median(sorted_data):
-            n = len(sorted_data)
-            middle = n // 2
+    if n % 2 == 0:
+        median = (sorted_values.iloc[middle - 1] +
+                  sorted_values.iloc[middle]) / 2.0
+    else:
+        median = sorted_values.iloc[middle]
+    return median
 
-            if n % 2 == 0:
-                median = (sorted_data[middle - 1] + sorted_data[middle]) / 2
-            else:
-                median = sorted_data[middle]
-            return median
 
-        # Function to calculate quartiles
-        def _calculate_quartiles(sorted_data):
-            n = len(sorted_data)
-            middle = n // 2
+def _calculate_quartiles(sorted_values):
+    q1 = np.percentile(sorted_values, 25, interpolation='linear')
+    q3 = np.percentile(sorted_values, 75, interpolation='linear')
+    return q1, q3
 
-            if n % 2 == 0:
-                lower_half = sorted_data[:middle]
-                upper_half = sorted_data[middle:]
-            else:
-                lower_half = sorted_data[:middle]
-                upper_half = sorted_data[middle+1:]
 
-            q1 = _calculate_median(lower_half)
-            q3 = _calculate_median(upper_half)
-            return q1, q3
+def _calculate_percentile(sorted_values, percentile):
+    n = len(sorted_values)
+    rank = (percentile / 100) * (n - 1)
 
-        # calculate percentiles
-        def _calculate_percentile(sorted_data, percentile):
-            n = len(sorted_data)
-            rank = (percentile / 100) * (n - 1)
-            lower_index = int(rank)
-            upper_index = lower_index + 1
-            weight = rank - lower_index
+    lower_index = int(rank)
+    upper_index = min(lower_index + 1, n - 1)
 
-            if upper_index >= n:
-                return sorted_data[lower_index]
-            else:
-                return (sorted_data[lower_index] * (1 - weight) +
-                        sorted_data[upper_index] * weight)
+    weight = rank - lower_index
 
-        # Perform calculations
-        median = _calculate_median(sorted_data)
-        q1, q3 = _calculate_quartiles(sorted_data)
-        iqr = q3 - q1
+    lower_value = sorted_values.iloc[lower_index]
+    upper_value = sorted_values.iloc[upper_index]
 
-        # Calculate Tukey's fences (lower and upper bounds)
-        lower_fence = q1 - 1.5 * iqr
-        upper_fence = q3 + 1.5 * iqr
+    percentile_value = lower_value * (1 - weight) + upper_value * weight
 
-        # Calculate percentiles
-        p09 = _calculate_percentile(data, 9)
-        p91 = _calculate_percentile(data, 91)
-
-        return (minimum, maximum, median, q1, q3,
-                lower_fence, upper_fence, p09, p91)
+    return percentile_value

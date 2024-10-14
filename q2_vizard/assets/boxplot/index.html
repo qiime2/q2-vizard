@@ -74,8 +74,8 @@
 
       // add attrs to each whiskerLine mark
       mark.setAttribute('data-group', group);
-      mark.setAttribute('data-whiskerLow', whiskerLow);
-      mark.setAttribute('data-whiskerHigh', whiskerHigh);
+      mark.setAttribute('data-low', whiskerLow);
+      mark.setAttribute('data-high', whiskerHigh);
     });
 
     // add group & location info for whiskerCapLow marks
@@ -88,7 +88,7 @@
 
       // add attrs to each whiskerCapLow mark
       mark.setAttribute('data-group', group);
-      mark.setAttribute('data-whiskerCapLow', loc);
+      mark.setAttribute('data-val', loc);
     });
 
     // add group & location info for whiskerCapHigh marks
@@ -101,7 +101,7 @@
 
       // add attrs to each whiskerCapHigh mark
       mark.setAttribute('data-group', group);
-      mark.setAttribute('data-whiskerCapHigh', loc);
+      mark.setAttribute('data-val', loc);
     });
 
     // add group & location info for boxGroup marks
@@ -149,7 +149,7 @@
           // add attrs to each mark
           mark.setAttribute('data-id', id);
           mark.setAttribute('data-group', group);
-          mark.setAttribute('data-outlierValue', val);
+          mark.setAttribute('data-val', val);
         };
       });
     };
