@@ -1,0 +1,452 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "title": {
+    "text": {"signal": "title"},
+    "fontSize": 20,
+    "orient": "top",
+    "anchor": "start",
+    "subtitle": {
+      "signal": "[subtitle, ' ', suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ' ', ' ']"
+    },
+    "subtitlePadding": 30
+  },
+  "autosize": {
+    "type": "pad",
+    "resize": true
+  },
+  "width": 900,
+  "height": {"signal": "rowHeight * nRows"},
+  "padding": 20,
+
+  "signals": [
+    {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
+    },
+    {
+      "name": "subtitle",
+      "value": {"{{REPLACE_PARAM}}": "subtitle"}
+    },
+    {
+      "name": "idField",
+      "value": {"{{REPLACE_PARAM}}": "md_ids"}
+    },
+    {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "distribution_measure"}
+    },
+    {
+      "name": "yField",
+      "value": {"{{REPLACE_PARAM}}": "group_by"}
+    },
+    {
+      "name": "whiskerMethod",
+      "value": {"{{REPLACE_PARAM}}": "whisker_range"}
+    },
+    {
+      "name": "boxOrientation",
+      "value": {"{{REPLACE_PARAM}}": "box_orientation"}
+    },
+    {
+      "name": "suppressOutliers",
+      "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "nRows",
+      "value": 1,
+      "update": "length(data('rowTable'))"
+    },
+    {
+      "name": "rowHeight",
+      "value": 45,
+      "bind": {
+        "input": "range",
+        "min": 5,
+        "max": 200
+      }
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    },
+    {
+      "name": "rowTable",
+      "source": "table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [{"{{REPLACE_PARAM}}": "group_by"}]
+        }
+      ]
+    },
+    {
+      "name": "percentiles_table",
+      "source": "table",
+      "transform": [
+        {
+          "type": "quantile",
+          "field": {"{{REPLACE_PARAM}}": "distribution_measure"},
+          "probs": [0.09, 0.91],
+          "groupby":[{"{{REPLACE_PARAM}}": "group_by"}],
+          "as": ["prob", "value"]
+        }
+      ]
+    },
+    {
+      "name": "p09_data",
+      "source": "percentiles_table",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.prob == 0.09"
+        }
+      ]
+    },
+    {
+      "name": "p91_data",
+      "source": "percentiles_table",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.prob == 0.91"
+        }
+      ]
+    },
+    {
+      "name": "summary",
+      "source": "table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "fields": [
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"},
+            {"{{REPLACE_PARAM}}": "distribution_measure"}
+          ],
+          "ops": ["min","q1", "median", "q3", "max"],
+          "as": ["min", "q1", "median", "q3", "max"]
+        },
+        {
+          "type": "formula",
+          "as": "iqr",
+          "expr": "datum.q3 - datum.q1"
+        },
+        {
+          "type": "lookup",
+          "from": "p09_data",
+          "key": {"{{REPLACE_PARAM}}": "group_by"},
+          "fields": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "values": ["value"],
+          "as": ["p09"]
+        },
+        {
+          "type": "lookup",
+          "from": "p91_data",
+          "key": {"{{REPLACE_PARAM}}": "group_by"},
+          "fields": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "values": ["value"],
+          "as": ["p91"]
+        },
+        {
+          "type": "formula",
+          "as": "whiskerLow",
+          "expr": "whiskerMethod == 'tukeys_iqr' ? max(datum.q1 - 1.5 * datum.iqr, datum.min) : whiskerMethod == 'percentile' ? datum.p09 : datum.min"
+        },
+        {
+          "type": "formula",
+          "as": "whiskerHigh",
+          "expr": "whiskerMethod == 'tukeys_iqr' ? min(datum.q3 + 1.5 * datum.iqr, datum.max) : whiskerMethod == 'percentile' ? datum.p91 : datum.max"
+        }
+      ]
+    },
+    {
+      "name": "outliers",
+      "source": "table",
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "summary",
+          "key": {"{{REPLACE_PARAM}}": "group_by"},
+          "fields": [{"{{REPLACE_PARAM}}": "group_by"}],
+          "as": ["summary"]
+        },
+        {
+          "type": "filter",
+          "expr": {"{{REPLACE_PARAM}}": "expr"}
+        },
+        {
+          "type": "project",
+          "fields": [
+            {"signal": "idField"},
+            {"signal": "xField"},
+            {"signal": "yField"}
+          ]
+        }
+      ]
+    }
+
+  ],
+
+  "scales": [
+    {
+      "name": "x_scale",
+      "type": "linear",
+      "range": "width",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
+      "nice": true
+    },
+    {
+      "name": "y_scale",
+      "type": "band",
+      "padding": 0.4,
+      "range": "height",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "group_by"}}
+    },
+    {
+      "name": "color_scale",
+      "type": "ordinal",
+      "domain": {
+        "data": "table",
+        "field": {"{{REPLACE_PARAM}}": "group_by"},
+        "sort": true
+      },
+      "range": {"scheme": "category10"}
+    }
+  ],
+
+  "axes": [
+    {
+      "scale": "x_scale",
+      "labelFontSize": 12,
+      "orient": "bottom",
+      "title": {"signal": "xField"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    },
+    {
+      "scale": "y_scale",
+      "labelFontSize": 12,
+      "orient": "left",
+      "title": {"signal": "yField"},
+      "titleFontSize": 14,
+      "titlePadding": 20
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color_scale",
+      "symbolType": "square",
+      "symbolSize": 150,
+      "symbolStrokeWidth": 1.5,
+      "labelFontSize": 14,
+      "title": {"signal": "yField"},
+      "titleFontSize": 16,
+      "encode": {
+        "symbols": {
+          "update": {
+            "stroke": {"value": "black"}
+          }
+        },
+        "labels": {
+          "name": "legendLabel",
+          "interactive": false
+        }
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "facet",
+          "data": "summary",
+          "groupby": [{"{{REPLACE_PARAM}}": "group_by"}]
+        }
+      },
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "width": {"signal": "width"},
+          "y": {"value": 0},
+          "height": {"signal": "height"}
+        }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "whiskerLow"
+              },
+              "x2": {
+                "scale": "x_scale",
+                "field": "whiskerHigh"
+              },
+              "yc": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 1.5},
+              "description": {"value": "whiskerLine"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "whiskerLow"
+              },
+              "yc": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "height": {
+                "scale": "y_scale",
+                "band": 0.8
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 1.5},
+              "description": {"value": "whiskerCapLow"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "whiskerHigh"
+              },
+              "yc": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "height": {
+                "scale": "y_scale",
+                "band": 0.8
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 1.5},
+              "description": {"value": "whiskerCapHigh"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "q1"
+              },
+              "x2": {
+                "scale": "x_scale",
+                "field": "q3"
+              },
+              "yc": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "height": {
+                "scale": "y_scale",
+                "band": 1
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 1.5},
+              "fill": {
+                "scale": "color_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"}
+              },
+              "cornerRadius": {"value": 5},
+              "tooltip": {"signal": "datum"},
+              "description": {"value": "boxGroup"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x_scale",
+                "field": "median"
+              },
+              "yc": {
+                "scale": "y_scale",
+                "field": {"{{REPLACE_PARAM}}": "group_by"},
+                "band": 0.5
+              },
+              "height": {
+                "scale": "y_scale",
+                "band": 1
+              },
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 4},
+              "tooltip": {"signal": "datum"},
+              "description": {"value": "medianLine"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "outliers"},
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x_scale",
+            "field": {"signal": "xField"}
+          },
+          "yc": {
+            "scale": "y_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"},
+            "band": 0.5
+          },
+          "shape": {"value": "circle"},
+          "size": {"value": 80},
+          "opacity": {"signal": "suppressOutliers ? 0 : 1"},
+          "fill": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1.5},
+          "tooltip": {"signal": "datum"},
+          "description": {"value": "outlierMark"}
+        }
+      }
+    }
+  ]
+}

@@ -11,6 +11,7 @@ from qiime2.plugin import Plugin, Str, Metadata, Choices
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
 from q2_vizard.lineplot import lineplot
+from q2_vizard.boxplot import boxplot
 
 import q2_vizard._examples as ex
 
@@ -19,10 +20,11 @@ plugin = Plugin(name='vizard',
                 website='https://github.com/qiime2/q2-vizard',
                 package='q2_vizard',
                 description='This QIIME 2 plugin is the first choice of wizard'
-                            ' lizards for protection and entertainment.',
-                short_description='The first choice of wizard lizards.')
+                            ' lizards for generalized microbiome data'
+                            ' visualization!',
+                short_description='Generalized microbiome data visualization.')
 
-# TODO: refactor
+
 plugin.visualizers.register_function(
     function=heatmap,
     inputs={},
@@ -116,5 +118,44 @@ plugin.visualizers.register_function(
             ex.lineplot_no_replicates_with_grouping,
             ex.lineplot_no_replicates_no_grouping
         ]
+    }
+)
+
+
+plugin.visualizers.register_function(
+    function=boxplot,
+    inputs={},
+    parameters={
+        'metadata': Metadata,
+        'distribution_measure': Str,
+        'group_by': Str,
+        'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
+        'box_orientation': Str % Choices('horizontal', 'vertical'),
+        'title': Str
+    },
+    name='Boxplot',
+    description='Basic boxplot for visualizing a numeric Metadata measure'
+                ' grouped by a categorical Metadata measure with choices for'
+                ' the whisker range.',
+    parameter_descriptions={
+        'metadata': 'Any metadata-like input with at least one numeric measure'
+                    ' and one categorical measure for visualizing.',
+        'distribution_measure': 'The numeric measure that will be used to'
+                                ' create each box plot distribution.',
+        'group_by': 'The categorical measure that will be used to group the'
+                    ' data into separate box plots. If left blank, all data'
+                    ' will be represented within a single box.',
+        'whisker_range': 'The range that will be used for calculating the'
+                         ' whisker lengths for each box. Options are'
+                         ' `tukeys_iqr` (1.5 IQR clamped to the data extent),'
+                         ' `percentile` (91th/9th percentile), or `minmax`.'
+                         ' Any data points that fall outside of the chosen'
+                         ' range will be represented as outliers that are'
+                         ' plotted as circular points, unless the'
+                         ' `suppressOutliers` checkbox has been enabled'
+                         ' on the rendered visualization.',
+        'box_orientation': 'The visual orientataion of the boxes (either'
+                           ' horizontal or vertical).',
+        'title': 'The title of the boxplot.'
     }
 )
