@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import numpy as np
 import os
 import tempfile
 
@@ -18,8 +19,6 @@ from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
 from q2_vizard import boxplot
-from .._util import (_calculate_median, _calculate_quartiles,
-                     _calculate_percentile)
 
 
 class TestBase(TestPluginBase):
@@ -220,12 +219,20 @@ class TestBase(TestPluginBase):
                     sorted_values = (group_df[distribution_measure]
                                      .sort_values().reset_index(drop=True))
 
-                    # Perform calculations
-                    median = _calculate_median(sorted_values)
-                    q1, q3 = _calculate_quartiles(sorted_values)
+                    # Perform stats calculations to check against vega results
+                    median = np.median(sorted_values)
+
+                    q1 = np.percentile(sorted_values, 25,
+                                       interpolation='linear')
+                    q3 = np.percentile(sorted_values, 75,
+                                       interpolation='linear')
+
                     iqr = q3 - q1
-                    percentile_9 = _calculate_percentile(sorted_values, 9)
-                    percentile_91 = _calculate_percentile(sorted_values, 91)
+
+                    percentile_9 = np.percentile(sorted_values, 9,
+                                                 interpolation='linear')
+                    percentile_91 = np.percentile(sorted_values, 91,
+                                                  interpolation='linear')
 
                     # Determine lower and upper whiskers based on whisker_range
                     if whisker_range == 'tukeys_iqr':
@@ -264,11 +271,19 @@ class TestBase(TestPluginBase):
                                  .reset_index(drop=True))
 
                 # Perform calculations on the whole dataset
-                median = _calculate_median(sorted_values)
-                q1, q3 = _calculate_quartiles(sorted_values)
+                median = np.median(sorted_values)
+
+                q1 = np.percentile(sorted_values, 25,
+                                   interpolation='linear')
+                q3 = np.percentile(sorted_values, 75,
+                                   interpolation='linear')
+
                 iqr = q3 - q1
-                percentile_9 = _calculate_percentile(sorted_values, 9)
-                percentile_91 = _calculate_percentile(sorted_values, 91)
+
+                percentile_9 = np.percentile(sorted_values, 9,
+                                             interpolation='linear')
+                percentile_91 = np.percentile(sorted_values, 91,
+                                              interpolation='linear')
 
                 # Determine lower and upper whiskers based on whisker_range
                 if whisker_range == 'tukeys_iqr':

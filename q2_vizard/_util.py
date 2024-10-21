@@ -6,9 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import numpy as np
-
-
 def _json_replace(json_obj, **values):
     """
     Search for elements of `{"{{REPLACE_PARAM}}": "some_key"}` and replace
@@ -63,39 +60,3 @@ def _measure_validation(metadata, measure):
                 f' be parsed by this visualization. Please remove `{char}`'
                 ' from this Metadata column name.'
             )
-
-
-# manual checks for the rendered stats in boxplot
-def _calculate_median(sorted_values):
-    n = len(sorted_values)
-    middle = n // 2
-
-    if n % 2 == 0:
-        median = (sorted_values.iloc[middle - 1] +
-                  sorted_values.iloc[middle]) / 2.0
-    else:
-        median = sorted_values.iloc[middle]
-    return median
-
-
-def _calculate_quartiles(sorted_values):
-    q1 = np.percentile(sorted_values, 25, interpolation='linear')
-    q3 = np.percentile(sorted_values, 75, interpolation='linear')
-    return q1, q3
-
-
-def _calculate_percentile(sorted_values, percentile):
-    n = len(sorted_values)
-    rank = (percentile / 100) * (n - 1)
-
-    lower_index = int(rank)
-    upper_index = min(lower_index + 1, n - 1)
-
-    weight = rank - lower_index
-
-    lower_value = sorted_values.iloc[lower_index]
-    upper_value = sorted_values.iloc[upper_index]
-
-    percentile_value = lower_value * (1 - weight) + upper_value * weight
-
-    return percentile_value
