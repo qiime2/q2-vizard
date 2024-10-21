@@ -56,4 +56,9 @@ This visualizer generates a heatmap displaying relationships between three Metad
 
 ## boxplot
 
-Coming soon!
+This visualizer generates boxplot(s) displaying relationships between a numerical Metadata measure and a categorical Metadata measure. Users can choose from three whisker calculation methods: percentile-based (9th/91st), min-max, and Tukey's Interquartile Range (IQR).
+
+### Demo
+![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/boxplot_example.png)
+
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/ua9m4ayplk19n1pndanpe/boxplot-demo.qzv?rlkey=7rtzze6jl4ryndi6ukullpg2k)
