@@ -1,9 +1,9 @@
 channels:
-- https://packages.qiime2.org/qiime2/2024.10/amplicon/passed
+- https://packages.qiime2.org/qiime2/2024.10/tiny/released
 - conda-forge
 - bioconda
 dependencies:
-  - qiime2-amplicon
+  - qiime2-tiny
   - pip
   - pip:
     - q2_vizard@git+https://github.com/qiime2/q2-vizard.git@dev
