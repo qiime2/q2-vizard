@@ -5,7 +5,8 @@
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": " "
+    "subtitle": " ",
+    "subtitlePadding": 30
   },
   "autosize": {
     "type": "pad",
