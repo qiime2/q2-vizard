@@ -5,7 +5,8 @@
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": {"{{REPLACE_PARAM}}": "subtitle"}
+    "subtitle": {"{{REPLACE_PARAM}}": "subtitle"},
+    "subtitlePadding": 30
   },
   "autosize": {"type": "pad"},
   "width": 900,
