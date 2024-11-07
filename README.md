@@ -5,22 +5,23 @@
 The first choice of wizard lizards for interactive, generalized microbiome data visualization!
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/vizarded-lizard-wizard.png)
 
-**Please note that q2-vizard is currently in an alpha release state.** While this plugin can be installed as a conda package, _it has not been tested in integration against our other plugins yet and its API is still subject to change_. It is slated to be officially released in 2024.10 within the QIIME 2 Amplicon and Metagenome distributions. In the meantime, please follow install instructions below if you'd like to take it for a test drive!
+## Installing q2-vizard
 
-## Installing q2-vizard (pre-2024.10 Release)
+`q2-vizard` is included in the [QIIME 2 Amplicon Distribution](https://docs.qiime2.org/2024.10/install/native/#qiime-2-amplicon-distribution) as of 2024.10!
+If you'd like to install it separately (within a QIIME 2 Tiny Distribution), please follow the instructions below.
 
-1. Install conda using the same instructions provided in the [QIIME 2 User Docs](https://docs.qiime2.org/2024.5/install/native/#miniconda).
+1. Start by installing conda using the same instructions provided in the [QIIME 2 User Docs](https://docs.qiime2.org/2024.5/install/native/#miniconda).
 
-2. Create a `q2-vizard development environment` using the 2024.5 environment file included in this repository:
+2. Contained in this plugin is an environment file for easy installation within the QIIME 2 Tiny Distribution. You can use the following command to create this environment:
 ```
-conda env create -n q2dev-vizard -f https://raw.githubusercontent.com/qiime2/q2-vizard/dev/environment-files/2024.5-vizard-environment.yml
+conda env create -n q2vizard-2024.10 -f https://raw.githubusercontent.com/qiime2/q2-vizard/dev/environment-files/2024.10-vizard-environment.yml
 ```
 2. Activate your new environment and enjoy!
 ```
-conda activate q2dev-vizard
+conda activate q2vizard-2024.10
 ```
 
-## Using q2-vizard (pre-2024.10 Release)
+## Using q2-vizard
 
 The following Metadata vizualizations are available for use, with examples below!
 
