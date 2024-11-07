@@ -27,10 +27,7 @@
       "value": "linear",
       "bind": {
         "input": "select",
-        "options": [
-          "linear",
-          "step"
-        ]
+        "options": ["linear", "step"]
       }
     },
     {
