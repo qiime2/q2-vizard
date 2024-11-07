@@ -18,7 +18,7 @@ from ._util import _json_replace, _measure_validation, _col_type_validation
 
 def lineplot(output_dir: str, metadata: Metadata,
              x_measure: NumericMetadataColumn,
-             y_measure: NumericMetadataColumn,
+             y_measure: NumericMetadataColumn = None,
              replicate_method: str = 'none',
              group_by: CategoricalMetadataColumn = None,
              title: str = None):
@@ -27,22 +27,31 @@ def lineplot(output_dir: str, metadata: Metadata,
     md_ids = metadata.id_header
     md = metadata.to_dataframe().reset_index()
 
-    # column validation for x_measure and y_measure
-    for measure in [x_measure, y_measure]:
-        _col_type_validation(metadata=metadata, measure=measure,
-                             col_type='numeric')
-        _measure_validation(metadata=metadata, measure=measure)
-
-    if y_measure == x_measure:
-        raise ValueError(f'The same column `{x_measure}` has been used'
-                         ' for `x_measure` and `y_measure`.'
-                         ' Please choose different columns in your'
-                         ' metadata for these measures.')
+    # column validation for x_measure
+    _col_type_validation(metadata=metadata, measure=x_measure,
+                         col_type='numeric')
+    _measure_validation(metadata=metadata, measure=x_measure)
 
     # filtering md cols for the y-axis dropdown
     md_cols_numeric = \
         metadata.filter_columns(column_type='numeric').to_dataframe()
     md_cols_numeric = list(md_cols_numeric.columns)
+
+    # column validation for y_measure
+    if y_measure:
+        _col_type_validation(metadata=metadata, measure=y_measure,
+                             col_type='numeric')
+        _measure_validation(metadata=metadata, measure=y_measure)
+
+        if y_measure == x_measure:
+            raise ValueError(f'The same column `{x_measure}` has been used'
+                             ' for `x_measure` and `y_measure`.'
+                             ' Please choose different columns in your'
+                             ' metadata for these measures.')
+
+        y_dropdown_default = y_measure
+    else:
+        y_dropdown_default = md_cols_numeric[0]
 
     # column validation for grouping
     if group_by:
@@ -159,8 +168,8 @@ def lineplot(output_dir: str, metadata: Metadata,
     full_spec = \
         _json_replace(json_obj, metadata=md_obj, md_ids=md_ids,
                       averaged_metadata=averaged_md_obj,
-                      md_cols_numeric=md_cols_numeric,
-                      x_measure=x_measure, y_measure=y_measure,
+                      md_cols_numeric=md_cols_numeric, x_measure=x_measure,
+                      y_dropdown_default=y_dropdown_default,
                       group_by=group_by, title=title, subtitle=subtitle)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
