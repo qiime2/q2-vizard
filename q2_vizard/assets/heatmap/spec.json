@@ -116,7 +116,7 @@
           "order": "ascending"
         }
       },
-      "range": [0, {"signal": "columnWidth * nColumns"}]
+      "range": [0, {"signal": "width"}]
     },
     {
       "name": "y_scale",
@@ -128,7 +128,7 @@
           "order": "descending"
         }
       },
-      "range": [0, {"signal": "rowHeight * nRows"}]
+      "range": [0, {"signal": "height"}]
     },
     {
       "name": "color",
