@@ -60,32 +60,26 @@
 
   "scales": [
     {
-      "name": "x_scale_width",
+      "name": "x_scale",
+      "type": "linear",
+      "range": "width",
+      "nice": true,
+      "zero": true,
       "domain": {
         "data": "table",
         "field": {"signal": "xField"}
-      },
-      "range": "width",
-      "nice": true
-    },
-    {
-      "name": "y_scale_height",
-      "domain": {
-        "data": "table",
-        "field": {"signal": "yField"}
-      },
-      "range": "height",
-      "nice": true
-    },
-    {
-      "name": "x_scale",
-      "domain": {"signal": "domain('x_scale_width')"},
-      "range": "width"
+      }
     },
     {
       "name": "y_scale",
-      "domain": {"signal": "domain('y_scale_height')"},
-      "range": "height"
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": {
+        "data": "table",
+        "field": {"signal": "yField"}
+      }
     },
     {
       "name": "color_scale",
