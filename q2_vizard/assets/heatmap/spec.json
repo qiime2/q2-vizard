@@ -15,29 +15,6 @@
   "height": {"signal": "rowHeight * nRows"},
   "padding": 20,
 
-  "data": [
-    {
-      "name": "table",
-      "values": {"{{REPLACE_PARAM}}": "metadata"}
-    },
-    {
-      "name": "rowTable",
-      "source": "table",
-      "transform": [{
-        "type": "aggregate",
-        "groupby": [{"{{REPLACE_PARAM}}": "y_measure"}]
-      }]
-    },
-    {
-      "name": "columnTable",
-      "source": "table",
-      "transform": [{
-        "type": "aggregate",
-        "groupby": [{"{{REPLACE_PARAM}}": "x_measure"}]
-      }]
-    }
-  ],
-
   "signals": [
     {
       "name": "title",
@@ -102,6 +79,29 @@
     {
       "name": "gradientField",
       "value": {"{{REPLACE_PARAM}}": "gradient_measure"}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": {"{{REPLACE_PARAM}}": "metadata"}
+    },
+    {
+      "name": "rowTable",
+      "source": "table",
+      "transform": [{
+        "type": "aggregate",
+        "groupby": [{"{{REPLACE_PARAM}}": "y_measure"}]
+      }]
+    },
+    {
+      "name": "columnTable",
+      "source": "table",
+      "transform": [{
+        "type": "aggregate",
+        "groupby": [{"{{REPLACE_PARAM}}": "x_measure"}]
+      }]
     }
   ],
 
