@@ -33,7 +33,7 @@
       "bind": {
         "input": "select",
         "options": [
-          "Inferno", "Viridis", "Magma", "Greys", "Plasma", "Cividis"
+          "Viridis", "Cividis", "Magma", "Plasma", "Inferno", "Greys"
         ]
       }
     },
@@ -135,7 +135,8 @@
       "name": "color",
       "type": "linear",
       "range": {
-        "scheme": {"signal": "gradientPalette"}},
+        "scheme": {"signal": "gradientPalette"}
+      },
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "gradient_measure"}},
