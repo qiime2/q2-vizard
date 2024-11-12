@@ -31,6 +31,17 @@
       }
     },
     {
+      "name": "colorPalette",
+      "value": "Viridis",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Viridis", "Cividis", "Plasma", "Turbo",
+          "category10", "dark2", "set1", "tableau10"
+        ]
+      }
+    },
+    {
       "name": "idField",
       "value": {"{{REPLACE_PARAM}}": "md_ids"}
     },
@@ -85,7 +96,9 @@
     {
       "name": "color_scale",
       "type": "ordinal",
-      "range": "category",
+      "range": {
+        "scheme": {"signal": "colorPalette"}
+      },
       "domain": {
         "data": "table",
         "field": {"signal": "colorBy"},
