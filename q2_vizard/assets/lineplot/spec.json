@@ -121,14 +121,17 @@
     {
       "fill": "color_scale",
       "symbolSize": 150,
-      "symbolStrokeWidth": 2.5,
+      "symbolStrokeWidth": 1.5,
       "labelFontSize": 14,
       "title": {"{{REPLACE_PARAM}}": "group_by"},
       "titleFontSize": 16,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
-          "interactive": false
+          "interactive": false,
+          "update": {
+            "stroke": {"value": "black"}
+          }
         },
         "labels": {
           "name": "legendLabel",
@@ -188,11 +191,8 @@
             "field": {"signal": "yField"}
           },
           "shape": {"value": "circle"},
-          "stroke": {
-            "scale": "color_scale",
-            "field": {"{{REPLACE_PARAM}}": "group_by"}
-          },
-          "strokeWidth": {"value": 2.5},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1.5},
           "size": {"value": 100},
           "fill": {
             "scale": "color_scale",
@@ -200,7 +200,10 @@
           }
         },
         "hover": {
-          "stroke": {"value": "black"},
+          "stroke": {
+            "scale": "color_scale",
+            "field": {"{{REPLACE_PARAM}}": "group_by"}
+          },
           "tooltip": {"signal": "datum"}
         }
       }
