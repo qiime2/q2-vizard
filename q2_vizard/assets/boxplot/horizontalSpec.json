@@ -29,6 +29,17 @@
       "value": {"{{REPLACE_PARAM}}": "subtitle"}
     },
     {
+      "name": "colorPalette",
+      "value": "Viridis",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Viridis", "Cividis", "Plasma", "Turbo",
+          "category10", "dark2", "set1", "tableau10"
+        ]
+      }
+    },
+    {
       "name": "idField",
       "value": {"{{REPLACE_PARAM}}": "md_ids"}
     },
@@ -222,7 +233,9 @@
         "field": {"{{REPLACE_PARAM}}": "group_by"},
         "sort": true
       },
-      "range": {"scheme": "category10"}
+      "range": {
+        "scheme": {"signal": "colorPalette"}
+      }
     }
   ],
 
