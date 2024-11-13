@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.support.ui import Select
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
@@ -31,12 +32,16 @@ class TestLineplot(TestPluginBase):
 
         # first test case uses a replicates method & group_by
         # second test case doesn't have replicates or grouping
+        # third test case doesn't include y measure to test its default
         self.test_cases = [
             ('x', 'y', 'group', 'median',
              'Data was averaged using the `median` method.',
-             "titled 'group'", exp_marks_len, 'sample01', '4', '6'),
+             "titled 'group'", exp_marks_len, 'sample01', '4', '6', 'y'),
             ('b', 'y', None, 'none', ' ', "titled 'legend'",
-             exp_marks_len, 'sample01', '1', '6')
+             exp_marks_len, 'sample01', '1', '6', 'y'),
+            ('x', None, 'group', 'median',
+             'Data was averaged using the `median` method.',
+             "titled 'group'", exp_marks_len, 'sample01', '4', '4', 'x')
         ]
 
     # testing error handling within the actual method
@@ -70,7 +75,7 @@ class TestLineplot(TestPluginBase):
     def _selenium_lineplot_test(self, driver, x_measure, y_measure,
                                 group_measure, replicate_method, exp_subtitle,
                                 exp_legend, exp_marks_len, exp_mark_id,
-                                exp_x_mark, exp_y_mark):
+                                exp_x_mark, exp_y_mark, exp_y_measure):
         with tempfile.TemporaryDirectory() as output_dir:
             lineplot(
                 output_dir=output_dir, metadata=self.md,
@@ -80,6 +85,14 @@ class TestLineplot(TestPluginBase):
             )
 
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
+
+            # test that we get the expected value in the y dropdown
+            y_dropdown = Select(driver.find_element(By.NAME, 'yField'))
+            selected_y = y_dropdown.first_selected_option.text
+            self.assertEqual(selected_y, exp_y_measure)
+
+            if y_measure is None:
+                y_measure = exp_y_measure
 
             # test that our axes match xy input measures
             axis_elements = \
@@ -151,7 +164,7 @@ class TestLineplot(TestPluginBase):
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, group_measure, replicate_method,
                  exp_subtitle, exp_legend, exp_marks_len, exp_mark_id,
-                 exp_x_mark, exp_y_mark) in self.test_cases:
+                 exp_x_mark, exp_y_mark, exp_y_measure) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
@@ -159,13 +172,15 @@ class TestLineplot(TestPluginBase):
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
                     exp_marks_len=exp_marks_len, exp_mark_id=exp_mark_id,
-                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark
+                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
+                    exp_y_measure=exp_y_measure
                 ):
 
                     self._selenium_lineplot_test(
                         driver, x_measure, y_measure, group_measure,
                         replicate_method, exp_subtitle, exp_legend,
-                        exp_marks_len, exp_mark_id, exp_x_mark, exp_y_mark)
+                        exp_marks_len, exp_mark_id, exp_x_mark, exp_y_mark,
+                        exp_y_measure)
 
     def test_lineplot_firefox(self):
         firefox_options = FirefoxOptions()
@@ -177,7 +192,7 @@ class TestLineplot(TestPluginBase):
         with webdriver.Firefox(options=firefox_options) as driver:
             for (x_measure, y_measure, group_measure, replicate_method,
                  exp_subtitle, exp_legend, exp_marks_len, exp_mark_id,
-                 exp_x_mark, exp_y_mark) in self.test_cases:
+                 exp_x_mark, exp_y_mark, exp_y_measure) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
@@ -185,10 +200,12 @@ class TestLineplot(TestPluginBase):
                     replicate_method=replicate_method,
                     exp_subtitle=exp_subtitle, exp_legend=exp_legend,
                     exp_marks_len=exp_marks_len, exp_mark_id=exp_mark_id,
-                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark
+                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
+                    exp_y_measure=exp_y_measure
                 ):
 
                     self._selenium_lineplot_test(
                         driver, x_measure, y_measure, group_measure,
                         replicate_method, exp_subtitle, exp_legend,
-                        exp_marks_len, exp_mark_id, exp_x_mark, exp_y_mark)
+                        exp_marks_len, exp_mark_id, exp_x_mark, exp_y_mark,
+                        exp_y_measure)
