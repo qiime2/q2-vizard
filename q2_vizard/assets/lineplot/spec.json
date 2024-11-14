@@ -43,6 +43,15 @@
       }
     },
     {
+      "name": "markSize",
+      "value": 150,
+      "bind": {
+        "input": "range",
+        "min": 150,
+        "max": 1100
+      }
+    },
+    {
       "name": "idField",
       "value": {"{{REPLACE_PARAM}}": "md_ids"}
     },
@@ -132,6 +141,7 @@
 
   "legends": [
     {
+      "offset": 35,
       "fill": "color_scale",
       "symbolSize": 150,
       "symbolStrokeWidth": 1.5,
@@ -206,17 +216,14 @@
           "shape": {"value": "circle"},
           "stroke": {"value": "black"},
           "strokeWidth": {"value": 1.5},
-          "size": {"value": 100},
+          "size": {"signal": "markSize"},
           "fill": {
             "scale": "color_scale",
             "field": {"{{REPLACE_PARAM}}": "group_by"}
           }
         },
         "hover": {
-          "stroke": {
-            "scale": "color_scale",
-            "field": {"{{REPLACE_PARAM}}": "group_by"}
-          },
+          "strokeWidth": {"value": 2.5},
           "tooltip": {"signal": "datum"}
         }
       }
