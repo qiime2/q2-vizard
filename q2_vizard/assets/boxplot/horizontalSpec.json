@@ -20,24 +20,8 @@
 
   "signals": [
     {
-      "name": "title",
-      "value": {"{{REPLACE_PARAM}}": "title"},
-      "bind": {"input": "input"}
-    },
-    {
       "name": "subtitle",
       "value": {"{{REPLACE_PARAM}}": "subtitle"}
-    },
-    {
-      "name": "colorPalette",
-      "value": "Viridis",
-      "bind": {
-        "input": "select",
-        "options": [
-          "Viridis", "Cividis", "Plasma", "Turbo",
-          "category10", "dark2", "set1", "tableau10"
-        ]
-      }
     },
     {
       "name": "idField",
@@ -65,6 +49,11 @@
       "update": "length(data('rowTable'))"
     },
     {
+      "name": "title",
+      "value": {"{{REPLACE_PARAM}}": "title"},
+      "bind": {"input": "input"}
+    },
+    {
       "name": "rowHeight",
       "value": 45,
       "bind": {
@@ -72,6 +61,11 @@
         "min": 5,
         "max": 200
       }
+    },
+    {
+      "name": "includeZero",
+      "value": true,
+      "bind": {"input": "checkbox"}
     },
     {
       "name": "outlierMarkSize",
@@ -86,6 +80,17 @@
       "name": "suppressOutliers",
       "value": false,
       "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "colorPalette",
+      "value": "Viridis",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Viridis", "Cividis", "Plasma", "Turbo",
+          "category10", "dark2", "set1", "tableau10"
+        ]
+      }
     }
   ],
 
@@ -223,7 +228,8 @@
       "domain": {
         "data": "table",
         "field": {"{{REPLACE_PARAM}}": "distribution_measure"}},
-      "nice": true
+      "nice": true,
+      "zero": {"signal": "includeZero"}
     },
     {
       "name": "y_scale",
@@ -251,19 +257,21 @@
   "axes": [
     {
       "scale": "x_scale",
-      "labelFontSize": 12,
       "orient": "bottom",
       "title": {"signal": "xField"},
-      "titleFontSize": 14,
-      "titlePadding": 20
+      "titleFontSize": 18,
+      "titlePadding": 20,
+      "labelFontSize": 16,
+      "labelPadding": 15
     },
     {
       "scale": "y_scale",
-      "labelFontSize": 12,
       "orient": "left",
       "title": {"signal": "yField"},
-      "titleFontSize": 14,
-      "titlePadding": 20
+      "titleFontSize": 18,
+      "titlePadding": 20,
+      "labelFontSize": 16,
+      "labelPadding": 15
     }
   ],
 
