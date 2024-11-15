@@ -60,11 +60,6 @@
       "value": {"{{REPLACE_PARAM}}": "box_orientation"}
     },
     {
-      "name": "suppressOutliers",
-      "value": false,
-      "bind": {"input": "checkbox"}
-    },
-    {
       "name": "nRows",
       "value": 1,
       "update": "length(data('rowTable'))"
@@ -77,6 +72,20 @@
         "min": 5,
         "max": 200
       }
+    },
+    {
+      "name": "outlierMarkSize",
+      "value": 80,
+      "bind": {
+        "input": "range",
+        "min": 80,
+        "max": 500
+      }
+    },
+    {
+      "name": "suppressOutliers",
+      "value": false,
+      "bind": {"input": "checkbox"}
     }
   ],
 
@@ -451,7 +460,7 @@
             "band": 0.5
           },
           "shape": {"value": "circle"},
-          "size": {"value": 80},
+          "size": {"signal": "outlierMarkSize"},
           "opacity": {"signal": "suppressOutliers ? 0 : 1"},
           "fill": {
             "scale": "color_scale",
