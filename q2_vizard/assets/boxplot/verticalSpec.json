@@ -402,8 +402,11 @@
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
               },
               "cornerRadius": {"value": 5},
-              "tooltip": {"signal": "datum"},
               "description": {"value": "boxGroup"}
+            },
+            "hover": {
+              "strokeWidth": {"value": 3},
+              "tooltip": {"signal": "datum"}
             }
           }
         },
@@ -457,8 +460,11 @@
           },
           "stroke": {"value": "black"},
           "strokeWidth": {"value": 1.5},
-          "tooltip": {"signal": "datum"},
           "description": {"value": "outlierMark"}
+        },
+        "hover": {
+          "strokeWidth": {"value": 2.5},
+          "tooltip": {"signal": "datum"}
         }
       }
     }
