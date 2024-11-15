@@ -204,9 +204,11 @@
             "scale": "color",
             "field": {"{{REPLACE_PARAM}}": "gradient_measure"}
           },
-          "stroke": {
-            "value": "white"
-          },
+          "stroke": {"value": "white"},
+          "strokeWidth": {"value": 2}
+        },
+        "hover": {
+          "strokeWidth": {"value": 0},
           "tooltip": {"signal": "datum"}
         }
       }
