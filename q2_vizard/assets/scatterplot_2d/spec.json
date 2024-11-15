@@ -48,7 +48,7 @@
       "bind": {
         "input": "range",
         "min": 150,
-        "max": 1100
+        "max": 800
       }
     },
     {
