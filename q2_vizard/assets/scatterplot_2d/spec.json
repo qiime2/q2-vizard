@@ -18,9 +18,43 @@
 
   "signals": [
     {
+      "name": "idField",
+      "value": {"{{REPLACE_PARAM}}": "md_ids"}
+    },
+    {
       "name": "title",
       "value": {"{{REPLACE_PARAM}}": "title"},
       "bind": {"input": "input"}
+    },
+    {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
+      }
+    },
+    {
+      "name": "yField",
+      "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
+      "bind": {
+        "input": "select",
+        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
+      }
+    },
+    {
+      "name": "markSize",
+      "value": 150,
+      "bind": {
+        "input": "range",
+        "min": 150,
+        "max": 1100
+      }
+    },
+    {
+      "name": "includeZero",
+      "value": true,
+      "bind": {"input": "checkbox"}
     },
     {
       "name": "colorBy",
@@ -40,35 +74,6 @@
           "category10", "dark2", "set1", "tableau10"
         ]
       }
-    },
-    {
-      "name": "markSize",
-      "value": 150,
-      "bind": {
-        "input": "range",
-        "min": 150,
-        "max": 1100
-      }
-    },
-    {
-      "name": "idField",
-      "value": {"{{REPLACE_PARAM}}": "md_ids"}
-    },
-    {
-      "name": "xField",
-      "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
-      "bind": {
-        "input": "select",
-        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-      }
-    },
-    {
-      "name": "yField",
-      "value": {"{{REPLACE_PARAM}}": "y_dropdown_default"},
-      "bind": {
-        "input": "select",
-        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-      }
     }
   ],
 
@@ -85,7 +90,7 @@
       "type": "linear",
       "range": "width",
       "nice": true,
-      "zero": true,
+      "zero": {"signal": "includeZero"},
       "domain": {
         "data": "table",
         "field": {"signal": "xField"}
@@ -96,7 +101,7 @@
       "type": "linear",
       "range": "height",
       "nice": true,
-      "zero": true,
+      "zero": {"signal": "includeZero"},
       "domain": {
         "data": "table",
         "field": {"signal": "yField"}
@@ -119,22 +124,24 @@
   "axes": [
     {
       "scale": "x_scale",
-      "labelFontSize": 12,
       "grid": true,
       "orient": "bottom",
       "tickCount": 5,
       "title": {"signal": "xField"},
-      "titleFontSize": 14,
-      "titlePadding": 20
+      "titleFontSize": 18,
+      "titlePadding": 20,
+      "labelFontSize": 16,
+      "labelPadding": 15
     },
     {
       "scale": "y_scale",
-      "labelFontSize": 12,
       "grid": true,
       "orient": "left",
       "title": {"signal": "yField"},
-      "titleFontSize": 14,
-      "titlePadding": 20
+      "titleFontSize": 18,
+      "titlePadding": 20,
+      "labelFontSize": 16,
+      "labelPadding": 15
     }
   ],
 
