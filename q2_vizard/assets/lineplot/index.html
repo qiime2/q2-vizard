@@ -48,22 +48,25 @@
     var view = result.view;
     var svg = document.querySelector('#viz svg');
 
-     // Add class to the marks for easy selection in Selenium
-    var rects = svg.querySelectorAll('g.mark-rect.role-mark > path');
-    rects.forEach(function(rect, index) {
-      // Grab data table and xy vals for each mark
-      var data = view.data('table')[index];
+    // add subtitle attr to title class
+    var title = svg.querySelector('g.mark-group.role-title');
+    var subtitle = view.signal('subtitle');
+
+    title.setAttribute('subtitle', subtitle);
+
+    // add class & xy info to the marks
+    var marks = svg.querySelectorAll('g.mark-symbol.role-mark > path');
+    marks.forEach(function(mark, index) {
+      var data = view.data('scatter_table')[index];
 
       var id = data[view.signal('idField')];
       var x = data[view.signal('xField')];
       var y = data[view.signal('yField')];
-      var z = data[view.signal('gradientField')];
 
-      // Add attrs for ID and xy vals for each mark
-      rect.setAttribute('data-id', id);
-      rect.setAttribute('data-x', x);
-      rect.setAttribute('data-y', y);
-      rect.setAttribute('data-gradient', z);
+      // add attrs to each mark
+      mark.setAttribute('data-id', id);
+      mark.setAttribute('data-x', x);
+      mark.setAttribute('data-y', y);
     });
 
   }).catch(console.error);
