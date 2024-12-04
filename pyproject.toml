@@ -19,9 +19,7 @@ q2-vizard = 'q2_vizard.plugin_setup:plugin'
 [build-system]
 requires = [
     'setuptools',
-    'toml',
-    'versioningit',
-    'wheel'
+    'versioningit'
 ]
 build-backend = 'setuptools.build_meta'
 
