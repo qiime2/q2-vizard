@@ -8,7 +8,7 @@ source:
 build:
   script-env:
     - PLUGIN_VERSION
-  script: {{ PYTHON }} -m pip install -v .
+  script: '{{ PYTHON }} -m pip build --wheel'
 
 requirements:
   build:
@@ -21,9 +21,7 @@ requirements:
     - python {{ python }}
     - pip
     - setuptools
-    # now that we're not vendoring versioneer, we need to add it into the host
-    # reqs in order for it to get added to the conda env for build pkg step
-    - versioneer
+    - wheel
 
   run:
     - python {{ python }}
