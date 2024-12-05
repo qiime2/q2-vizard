@@ -3,7 +3,8 @@ package:
   version: {{ PLUGIN_VERSION }}
 
 source:
-  git_url: ../..
+  git_url: https://github.com/qiime2/q2-vizard.git
+  git_rev: GH_REPO_SHA
 
 build:
   script-env:
