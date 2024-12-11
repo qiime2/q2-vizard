@@ -1,8 +1,6 @@
-{% set plugin_version = environ.get('PLUGIN_VERSION', '0.1.0') %}
-
 package:
   name: q2-vizard
-  version: {{ plugin_version }}
+  version: {{ PLUGIN_VERSION }}
 
 source:
   path: ../..
