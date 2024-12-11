@@ -17,6 +17,7 @@ requirements:
     # once rendered, node is no longer necessary. don't set this in host reqs.
     - nodejs
     - versioningit
+    - setuptools
 
   host:
     - python {{ python }}
