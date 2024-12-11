@@ -24,7 +24,6 @@ requirements:
     - pip
     - setuptools
     - wheel
-    - versioningit
 
   run:
     - python {{ python }}
