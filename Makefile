@@ -14,6 +14,7 @@ test-cov: all
 
 install: all
 	ls -alh $(pwd)
+	git describe
 	pip install -v .
 
 dev: all
