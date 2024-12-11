@@ -13,6 +13,7 @@ test-cov: all
 	py.test --cov=q2_vizard
 
 install: all
+	ls -alh $(pwd)
 	pip install -v .
 
 dev: all
