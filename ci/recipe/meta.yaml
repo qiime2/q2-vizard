@@ -9,8 +9,6 @@ build:
   script: make install
 
 requirements:
-  build:
-
   host:
     - python {{ python }}
     - pip
