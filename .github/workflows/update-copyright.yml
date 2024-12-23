@@ -1,25 +1,45 @@
 name: Update Copyright Headers
+
 on:
   # Runs at 00:00 UTC on Jan 1st or via manual trigger
   schedule:
     - cron: '0 0 1 1 *'
   workflow_dispatch:
+    inputs:
+      newYear:
+        description: "Desired year to update to (e.g. 2025). If not provided, will auto-detect."
+        required: false
 
 jobs:
   update-headers:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-      - name: Set environment variables (year math)
+      - name: Determine years for update
+        id: determine-years
         run: |
-          echo "PREVIOUS_YEAR=$(( $(date +'%Y') - 1 ))" >> $GITHUB_ENV
-          echo "CURRENT_YEAR=$(date +'%Y')" >> $GITHUB_ENV
+          INPUT_YEAR="${{ github.event.inputs.newYear }}"
+
+          if [ -z "$INPUT_YEAR" ]; then
+            PREVIOUS_YEAR=$(( $(date +'%Y') - 1 ))
+            CURRENT_YEAR=$(date +'%Y')
+            echo "Using scheduled run logic: ${PREVIOUS_YEAR} -> ${CURRENT_YEAR}"
+          else
+            PREVIOUS_YEAR=$(( INPUT_YEAR - 1 ))
+            CURRENT_YEAR=$INPUT_YEAR
+            echo "Using manual input logic: ${PREVIOUS_YEAR} -> ${CURRENT_YEAR}"
+          fi
+
+          echo "PREVIOUS_YEAR=$PREVIOUS_YEAR" >> $GITHUB_ENV
+          echo "CURRENT_YEAR=$CURRENT_YEAR" >> $GITHUB_ENV
 
       - name: Bump ending year in copyright headers
         run: |
+          echo "Replacing year $PREVIOUS_YEAR with $CURRENT_YEAR ..."
           find . -type f \
-            -exec sed -i -E "s/(Copyright \(c\) [0-9]{4})-$PREVIOUS_YEAR/\1-$CURRENT_YEAR/g" {} +
+            -exec sed -i -E "s/(Copyright \\(c\\) [0-9]{4})-$PREVIOUS_YEAR/\\1-$CURRENT_YEAR/g" {} +
 
       - name: Commit and push changes
         run: |
