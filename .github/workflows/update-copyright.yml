@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       newYear:
-        description: "Desired year to update to (e.g. 2025). If not provided, will auto-detect."
+        description: "Desired year to update to (e.g., 2025). If not provided, will auto-detect."
         required: false
 
 jobs:
@@ -23,23 +23,25 @@ jobs:
           INPUT_YEAR="${{ github.event.inputs.newYear }}"
 
           if [ -z "$INPUT_YEAR" ]; then
-            PREVIOUS_YEAR=$(( $(date +'%Y') - 1 ))
-            CURRENT_YEAR=$(date +'%Y')
-            echo "Using scheduled run logic: ${PREVIOUS_YEAR} -> ${CURRENT_YEAR}"
+            CURRENT_YEAR="$(date +'%Y')"
+            echo "No 'newYear' input. Using current year: ${CURRENT_YEAR}"
           else
-            PREVIOUS_YEAR=$(( INPUT_YEAR - 1 ))
-            CURRENT_YEAR=$INPUT_YEAR
-            echo "Using manual input logic: ${PREVIOUS_YEAR} -> ${CURRENT_YEAR}"
+            CURRENT_YEAR="$INPUT_YEAR"
+            echo "Received user input. Updating to: ${CURRENT_YEAR}"
           fi
 
-          echo "PREVIOUS_YEAR=$PREVIOUS_YEAR" >> $GITHUB_ENV
           echo "CURRENT_YEAR=$CURRENT_YEAR" >> $GITHUB_ENV
 
-      - name: Bump ending year in copyright headers
+      - name: Bump ending year in QIIME 2 headers
         run: |
-          echo "Replacing year $PREVIOUS_YEAR with $CURRENT_YEAR ..."
-          find . -type f \
-            -exec sed -i -E "s/(Copyright \\(c\\) [0-9]{4})-$PREVIOUS_YEAR/\\1-$CURRENT_YEAR/g" {} +
+          source $GITHUB_ENV
+
+          echo "Will update any QIIME 2 header years in [2015..$((CURRENT_YEAR-1))] to $CURRENT_YEAR"
+
+          for OLD_YEAR in $(seq 2015 $((CURRENT_YEAR - 1))); do
+            find . -type f -exec \
+              sed -i -E "s/(Copyright \(c\) [0-9]{4})-${OLD_YEAR}, QIIME 2 development team\./\1-${CURRENT_YEAR}, QIIME 2 development team./g" {} +
+          done
 
       - name: Commit and push changes
         run: |
@@ -52,4 +54,5 @@ jobs:
             git push
           else
             echo "No changes to commit."
+            exit 0
           fi
