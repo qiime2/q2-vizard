@@ -13,12 +13,10 @@
       width: 100%;
       box-sizing: border-box;
       margin: 0px;
-      padding: 80px 10px 10px 10px;
+      padding: 10px;
     }
     #viz {
-      width: 100%;
-      height: 100%;
-      margin: 0 auto;
+      margin: 100px auto;
       position: relative;
     }
     .vega-bindings {
@@ -42,25 +40,41 @@
 <div id="viz"></div>
 
 <script type="text/javascript">
-  // Parse the spec once and store it
-  var initialSpec = JSON.parse(document.getElementById('spec').innerHTML);
+  var spec = JSON.parse(document.getElementById('spec').innerHTML);
 
   // Calculate initial width and height
-  initialSpec.width = window.innerWidth * 0.9;
-  initialSpec.height = window.innerHeight * 0.9;
-
+  spec.width = window.innerWidth * 0.9;
+  spec.height = window.innerHeight * 0.9;
+  
   // Embed the Vega spec
-  vegaEmbed('#viz', initialSpec, {'renderer': 'svg'}).then(function(result) {
+  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     // Store the Vega view instance for later resizing
     var view = result.view;
+    var svg = document.querySelector('#viz svg');
+
+    // Add id & xy attrs to the marks for easy selection in Selenium
+    var marks = svg.querySelectorAll('g.marks > path');
+    marks.forEach(function(mark, index) {
+      var data = view.data('table')[index];
 
     // Function to resize the view without reloading the spec
     function resizeVega() {
-      view.width(window.innerWidth * 0.9).height(window.innerHeight * 0.9).run();
+      view.width(window.innerWidth * 0.80).height(window.innerHeight * 0.70).run();
     }
-
+    resizeVega();
     // Resize on window resize
     window.addEventListener('resize', resizeVega);
+    
+    // These are each connected to a vega signal to pull the correct field
+    var id = data[view.signal('idField')];
+    var x = data[view.signal('xField')];
+    var y = data[view.signal('yField')];
+
+    // Add attrs to the marks elements for id & xy positions
+    mark.setAttribute('data-id', id);
+    mark.setAttribute('data-x', x);
+    mark.setAttribute('data-y', y);
+   });
   }).catch(console.error);
 
 </script>
