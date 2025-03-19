@@ -43,7 +43,7 @@
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
 
   // Calculate initial width and height
-  spec.width = window.innerWidth * 0.8;
+  spec.width = window.innerWidth * 0.7;
   spec.height = window.innerHeight * 0.7;
   
   // Embed the Vega spec
@@ -59,7 +59,7 @@
 
     // Function to resize the view without reloading the spec
     function resizeVega() {
-      view.width(window.innerWidth * 0.8).height(window.innerHeight * 0.7).run();
+      view.width(window.innerWidth * 0.7).height(window.innerHeight * 0.7).run();
     }
     
     // Resize on window resize

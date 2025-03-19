@@ -251,14 +251,20 @@
       "name": "x_scale",
       "type": "linear",
       "zero": {"signal": "includeZero"},
-      "domain": {"signal": "xdom"},
+      "domain": [
+        {"signal": "xdom[0] - span(xdom) * 0.008"},
+        {"signal": "xdom[1] + span(xdom) * 0.008"}
+      ],
       "range": {"signal": "xrange"}
     },
     {
       "name": "y_scale",
       "type": "linear",
       "zero": {"signal": "includeZero"},
-      "domain": {"signal": "ydom"},
+      "domain": [
+        {"signal": "ydom[0] - span(xdom) * 0.008"},
+        {"signal": "ydom[1] + span(ydom) * 0.008"}
+      ],
       "range": {"signal": "yrange"}
     },
     {
@@ -308,6 +314,7 @@
       "labelFontSize": 14,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
+      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
