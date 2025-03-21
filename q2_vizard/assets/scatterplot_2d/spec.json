@@ -153,6 +153,7 @@
       "labelFontSize": 14,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
+      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
