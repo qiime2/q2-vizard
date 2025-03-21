@@ -248,14 +248,20 @@
       "type": "linear",
       "range": {"signal": "xrange"},
       "zero": {"signal": "includeZero"},
-      "domain": {"signal": "xdom"}
+      "domain": [
+        {"signal": "xdom[0] - span(xdom) * 0.008"},
+        {"signal": "xdom[1] + span(xdom) * 0.008"}
+      ]
     },
     {
       "name": "y_scale",
       "type": "linear",
       "range": {"signal": "yrange"},
       "zero": {"signal": "includeZero"},
-      "domain": {"signal": "ydom"}
+      "domain": [
+        {"signal": "ydom[0] - span(xdom) * 0.008"},
+        {"signal": "ydom[1] + span(ydom) * 0.008"}
+      ]
     },
     {
       "name": "color_scale",
@@ -323,6 +329,7 @@
   "marks": [
     {
       "type": "group",
+      "clip": true,
       "from": {
         "facet": {
           "name": "lines",
@@ -358,6 +365,7 @@
     },
     {
       "type": "symbol",
+      "clip": true,
       "from": {"data": "scatter_table"},
       "encode": {
         "update": {
