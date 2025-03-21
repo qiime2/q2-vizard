@@ -9,8 +9,7 @@
     "subtitlePadding": 30
   },
   "autosize": {
-    "type": "pad",
-    "contains": "padding"
+    "type": "pad"
   },
   "width": 900, 
   "height": 900,
@@ -309,7 +308,6 @@
       "labelFontSize": 14,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
-      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
