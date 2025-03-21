@@ -52,8 +52,17 @@
       "value": 150,
       "bind": {
         "input": "range",
-        "min": 150,
+        "min": 0,
         "max": 800
+      }
+    },
+    {
+      "name": "strokeWidth",
+      "value": 2.5,
+      "bind": {
+        "input": "range",
+        "min": 0.5,
+        "max": 5
       }
     },
     {
@@ -200,7 +209,7 @@
                 "scale": "color_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
               },
-              "strokeWidth": {"value": 2.5},
+              "strokeWidth": {"signal": "strokeWidth"},
               "strokeOpacity": {"value": 1}
             }
           }
