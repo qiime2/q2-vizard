@@ -17,7 +17,7 @@ from ._util import _json_replace, _measure_validation, _col_type_validation
 
 
 def lineplot(output_dir: str, metadata: Metadata,
-             x_measure: NumericMetadataColumn,
+             x_measure: NumericMetadataColumn = None,
              y_measure: NumericMetadataColumn = None,
              replicate_method: str = 'none',
              group_by: CategoricalMetadataColumn = None,
@@ -37,7 +37,15 @@ def lineplot(output_dir: str, metadata: Metadata,
         metadata.filter_columns(column_type='numeric').to_dataframe()
     md_cols_numeric = list(md_cols_numeric.columns)
 
-    # column validation for y_measure
+    # validation for x/y measures
+    if x_measure:
+        _measure_validation(metadata=metadata, measure=x_measure)
+        _col_type_validation(metadata=metadata, measure=x_measure,
+                             col_type='numeric')
+        x_dropdown_default = x_measure
+    else:
+        x_dropdown_default = md_cols_numeric[0]
+
     if y_measure:
         _col_type_validation(metadata=metadata, measure=y_measure,
                              col_type='numeric')
@@ -168,8 +176,9 @@ def lineplot(output_dir: str, metadata: Metadata,
     full_spec = \
         _json_replace(json_obj, metadata=md_obj, md_ids=md_ids,
                       averaged_metadata=averaged_md_obj,
-                      md_cols_numeric=md_cols_numeric, x_measure=x_measure,
+                      md_cols_numeric=md_cols_numeric,
                       y_dropdown_default=y_dropdown_default,
+                      x_dropdown_default=x_dropdown_default,
                       group_by=group_by, title=title, subtitle=subtitle)
 
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
