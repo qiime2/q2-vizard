@@ -9,12 +9,11 @@
     "subtitlePadding": 30
   },
   "autosize": {
-    "type": "pad",
-    "resize": true
+    "type": "pad"
   },
-  "width": 900,
-  "height": 900,
-  "padding": 20,
+  "padding": {
+    "left": 10 
+  },
 
   "signals": [
     {

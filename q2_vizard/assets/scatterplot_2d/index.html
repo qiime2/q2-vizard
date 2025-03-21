@@ -41,7 +41,23 @@
 
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
+  
+  function calculateWidth() {
+    const minWidth = 350;
+    return Math.max(window.innerWidth - 500, minWidth);
+  }
+  
+  function calculateHeight() {
+    const minHeight = 250;
+    return Math.max(window.innerHeight - 380, minHeight);
+  }
 
+
+  // Calculate initial width and height
+  spec.width = calculateWidth();
+  spec.height = calculateHeight();
+  
+  // Embed the Vega spec
   vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
     var view = result.view;
     var svg = document.querySelector('#viz svg');
@@ -51,10 +67,17 @@
     marks.forEach(function(mark, index) {
       var data = view.data('table')[index];
 
-      // These are each connected to a vega signal to pull the correct field
-      var id = data[view.signal('idField')];
-      var x = data[view.signal('xField')];
-      var y = data[view.signal('yField')];
+    // Function to resize the view without reloading the spec
+    function resizeVega() {
+      view.width(calculateWidth()).height(calculateHeight()).run();
+    }
+    // Resize on window resize
+    window.addEventListener('resize', resizeVega);
+    
+    // These are each connected to a vega signal to pull the correct field
+    var id = data[view.signal('idField')];
+    var x = data[view.signal('xField')];
+    var y = data[view.signal('yField')];
 
       // Add attrs to the marks elements for id & xy positions
       mark.setAttribute('data-id', id);
