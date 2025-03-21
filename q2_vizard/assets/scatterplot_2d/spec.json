@@ -12,14 +12,9 @@
     "type": "pad",
     "contains": "padding"
   },
-  "width": {"signal": "width"}, 
-  "height": {"signal": "height"},
-  "padding": {
-    "top": 5,
-    "left": 10,  
-    "bottom": 5,
-    "right": 5
-  },
+  "width": 900, 
+  "height": 900,
+  "padding": {"left": 10},
   
   "signals": [
     {
