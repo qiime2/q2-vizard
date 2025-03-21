@@ -8,10 +8,12 @@
     "subtitle": {"{{REPLACE_PARAM}}": "subtitle"},
     "subtitlePadding": 30
   },
-  "autosize": {"type": "pad"},
-  "width": 900,
-  "height": 900,
-  "padding": 20,
+  "autosize": {
+    "type": "pad"
+  },
+  "padding": {
+    "left": 10 
+  },
 
   "signals": [
     {
@@ -155,6 +157,7 @@
       "labelFontSize": 14,
       "title": {"{{REPLACE_PARAM}}": "group_by"},
       "titleFontSize": 16,
+      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
