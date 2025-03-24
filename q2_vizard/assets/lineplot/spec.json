@@ -22,18 +22,14 @@
       "name": "idField",
       "value": {"{{REPLACE_PARAM}}": "md_ids"}
     },
-        {
+    {
+      "name": "xField",
+      "value": {"{{REPLACE_PARAM}}": "x_measure"}
+    },
+    {
       "name": "title",
       "value": {"{{REPLACE_PARAM}}": "title"},
       "bind": {"input": "input"}
-    },
-    {
-      "name": "xField",
-      "value": {"{{REPLACE_PARAM}}": "x_dropdown_default"},
-      "bind": {
-        "input": "select",
-        "options": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
-      }
     },
     {
       "name": "yField",
@@ -107,7 +103,7 @@
       "zero": {"signal": "includeZero"},
       "domain": {
         "data": "scatter_table",
-        "field": {"signal": "xField"}
+        "field": {"{{REPLACE_PARAM}}": "x_measure"}
       }
     },
     {
@@ -141,7 +137,7 @@
       "grid": true,
       "orient": "bottom",
       "tickCount": 5,
-      "title": {"signal": "xField"},
+      "title": {"{{REPLACE_PARAM}}": "x_measure"},
       "titleFontSize": 18,
       "titlePadding": 20,
       "labelFontSize": 16,
@@ -203,7 +199,7 @@
             "update": {
               "x": {
                 "scale": "x_scale",
-                "field": {"signal": "xField"}
+                "field": {"{{REPLACE_PARAM}}": "x_measure"}
               },
               "y": {
                 "scale": "y_scale",
@@ -227,7 +223,7 @@
         "update": {
           "x": {
             "scale": "x_scale",
-            "field": {"signal": "xField"}
+            "field": {"{{REPLACE_PARAM}}": "x_measure"}
           },
           "y": {
             "scale": "y_scale",
