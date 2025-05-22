@@ -63,7 +63,7 @@
     },
     {
       "name": "colorPalette",
-      "value": "Viridis",
+      "value": "category10",
       "bind": {
         "input": "select",
         "options": [
