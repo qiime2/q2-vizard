@@ -5,8 +5,11 @@
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": {"{{REPLACE_PARAM}}": "subtitle"},
-    "subtitlePadding": 30
+    "subtitle": {
+      "signal": "[subtitle, ' ', suppressMarks ? 'NOTE: Actual data marks have been suppressed.' : ' ', ' ']"
+    },
+    "subtitlePadding": 30,
+    "subtitleFontSize": 16
   },
   "autosize": {"type": "pad"},
   "width": 900,
@@ -52,9 +55,14 @@
       "value": 150,
       "bind": {
         "input": "range",
-        "min": 0,
+        "min": 1,
         "max": 800
       }
+    },
+    {
+      "name": "suppressMarks",
+      "value": false,
+      "bind": {"input": "checkbox"}
     },
     {
       "name": "strokeWidth",
@@ -233,6 +241,7 @@
           "stroke": {"value": "black"},
           "strokeWidth": {"value": 1.5},
           "size": {"signal": "markSize"},
+          "opacity": {"signal": "suppressMarks ? 0 : 1" },
           "fill": {
             "scale": "color_scale",
             "field": {"{{REPLACE_PARAM}}": "group_by"}
