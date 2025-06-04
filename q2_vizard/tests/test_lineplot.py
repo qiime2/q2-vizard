@@ -153,6 +153,26 @@ class TestLineplot(TestPluginBase):
             self.assertEqual(mark_x, exp_x_mark)
             self.assertEqual(mark_y, exp_y_mark)
 
+            # check initial opacity for marks
+            # opacity should be 1 unless `suppressMarks` checkbox is clicked
+            for _, mark in enumerate(mark_elements):
+                opacity = mark.get_attribute('opacity')
+                self.assertEqual(opacity, '1')
+
+            # mark opacity (post-checkbox clicked)
+            # test warning text is present when `suppressMarks` is clicked
+            checkbox = driver.find_element(By.CSS_SELECTOR,
+                                           'input[name="suppressMarks"]')
+            driver.execute_script("arguments[0].click();", checkbox)
+
+            # Confirm the checkbox is selected
+            self.assertTrue(checkbox.is_selected())
+
+            page_source = driver.page_source
+            exp_text = 'NOTE: Actual data marks have been suppressed.'
+
+            self.assertIn(exp_text, page_source)
+
     # run selenium checks with a chrome driver
     def test_lineplot_chrome(self):
         chrome_options = ChromeOptions()
