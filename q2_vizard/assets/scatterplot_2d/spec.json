@@ -9,12 +9,11 @@
     "subtitlePadding": 30
   },
   "autosize": {
-    "type": "pad",
-    "resize": true
+    "type": "pad"
   },
-  "width": 900,
-  "height": 900,
-  "padding": 20,
+  "padding": {
+    "left": 10 
+  },
 
   "signals": [
     {
@@ -154,6 +153,7 @@
       "labelFontSize": 14,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
+      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
