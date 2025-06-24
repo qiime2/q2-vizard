@@ -9,7 +9,7 @@
 import os
 import jinja2
 import json
-import pkg_resources
+import importlib
 
 from qiime2 import Metadata, MetadataColumn, NumericMetadataColumn
 
@@ -41,9 +41,9 @@ def heatmap(output_dir: str, metadata: Metadata,
     )
     index = J_ENV.get_template('index.html')
 
-    spec_fp = pkg_resources.resource_filename(
-        'q2_vizard', os.path.join('assets', 'heatmap', 'spec.json')
-    )
+    spec_fp = importlib.resources.files(
+        'q2_vizard') / 'assets' / 'heatmap' / 'spec.json'
+
     with open(spec_fp) as fh:
         json_obj = json.load(fh)
 

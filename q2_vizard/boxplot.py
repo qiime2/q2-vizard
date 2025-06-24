@@ -8,7 +8,7 @@
 
 import os
 import json
-import pkg_resources
+import importlib
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
@@ -56,9 +56,8 @@ def boxplot(output_dir: str, metadata: Metadata,
     elif box_orientation == 'vertical':
         spec = 'verticalSpec.json'
 
-    spec_fp = pkg_resources.resource_filename(
-        'q2_vizard', os.path.join('assets', 'boxplot', spec)
-    )
+    spec_fp = importlib.resources.files(
+        'q2_vizard') / 'assets' / 'boxplot' / spec
 
     with open(spec_fp) as fh:
         json_obj = json.load(fh)

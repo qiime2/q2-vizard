@@ -5,13 +5,18 @@
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": {"{{REPLACE_PARAM}}": "subtitle"},
-    "subtitlePadding": 30
+    "subtitle": {
+      "signal": "[subtitle, ' ', suppressMarks ? 'NOTE: Actual data marks have been suppressed.' : ' ', ' ']"
+    },
+    "subtitlePadding": 30,
+    "subtitleFontSize": 16
   },
-  "autosize": {"type": "pad"},
-  "width": 900,
-  "height": 900,
-  "padding": 20,
+  "autosize": {
+    "type": "pad"
+  },
+  "padding": {
+    "left": 10 
+  },
 
   "signals": [
     {
@@ -52,8 +57,22 @@
       "value": 150,
       "bind": {
         "input": "range",
-        "min": 150,
+        "min": 1,
         "max": 800
+      }
+    },
+    {
+      "name": "suppressMarks",
+      "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "strokeWidth",
+      "value": 2.5,
+      "bind": {
+        "input": "range",
+        "min": 0.5,
+        "max": 5
       }
     },
     {
@@ -63,7 +82,7 @@
     },
     {
       "name": "colorPalette",
-      "value": "Viridis",
+      "value": "category10",
       "bind": {
         "input": "select",
         "options": [
@@ -155,6 +174,7 @@
       "labelFontSize": 14,
       "title": {"{{REPLACE_PARAM}}": "group_by"},
       "titleFontSize": 16,
+      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
@@ -200,7 +220,7 @@
                 "scale": "color_scale",
                 "field": {"{{REPLACE_PARAM}}": "group_by"}
               },
-              "strokeWidth": {"value": 2.5},
+              "strokeWidth": {"signal": "strokeWidth"},
               "strokeOpacity": {"value": 1}
             }
           }
@@ -224,6 +244,7 @@
           "stroke": {"value": "black"},
           "strokeWidth": {"value": 1.5},
           "size": {"signal": "markSize"},
+          "opacity": {"signal": "suppressMarks ? 0 : 1" },
           "fill": {
             "scale": "color_scale",
             "field": {"{{REPLACE_PARAM}}": "group_by"}

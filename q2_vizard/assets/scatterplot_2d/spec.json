@@ -11,10 +11,10 @@
   "autosize": {
     "type": "pad"
   },
-  "width": 900, 
-  "height": 900,
-  "padding": {"left": 10},
-  
+  "padding": {
+    "left": 10 
+  },
+
   "signals": [
     {
       "name": "idField",
@@ -73,7 +73,7 @@
     },
     {
       "name": "colorPalette",
-      "value": "Viridis",
+      "value": "category10",
       "bind": {
         "input": "select",
         "options": [
@@ -308,6 +308,7 @@
       "labelFontSize": 14,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
+      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
