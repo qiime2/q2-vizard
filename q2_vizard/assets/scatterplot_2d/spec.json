@@ -9,14 +9,32 @@
     "subtitlePadding": 30
   },
   "autosize": {
-    "type": "pad",
-    "resize": true
+    "type": "fit",
+    "contains": "padding"
   },
-  "width": 900,
-  "height": 900,
   "padding": 20,
 
   "signals": [
+    {
+      "name": "width",
+      "init": "isFinite(containerSize()[0]) ? containerSize()[0] : 300",
+      "on": [
+        {
+          "update": "isFinite(containerSize()[0]) ? containerSize()[0] : 300",
+          "events": "window:resize"
+        }
+      ]
+    },
+    {
+      "name": "height",
+      "init": "isFinite(containerSize()[1]) ? containerSize()[1] : 600",
+      "on": [
+        {
+          "update": "isFinite(containerSize()[1]) ? containerSize()[1] : 600",
+          "events": "window:resize"
+        }
+      ]
+    },
     {
       "name": "idField",
       "value": {"{{REPLACE_PARAM}}": "md_ids"}
