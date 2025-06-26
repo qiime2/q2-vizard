@@ -12,7 +12,7 @@
     "type": "fit",
     "contains": "padding"
   },
-  "padding": 20,
+  "padding": 100,
 
   "signals": [
     {
@@ -32,6 +32,97 @@
         {
           "update": "isFinite(containerSize()[1]) ? containerSize()[1] : 600",
           "events": "window:resize"
+        }
+      ]
+    },
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {
+          "events": "mousemove",
+          "update": "isTuple(group()) ? group() : unit"
+        }
+      ]
+    },
+    {
+      "name": "grid_value",
+      "on": [
+        {
+          "events": [
+            {"source": "view", "type": "dblclick"},
+            {"signal": "includeZero"}
+          ],
+          "update": "null"
+        },
+        {
+          "events": {"signal": "grid_translate_delta"},
+          "update": "panLinear(grid_translate_anchor.extent_x, -grid_translate_delta.x / width)"
+        },
+        {
+          "events": {"signal": "grid_zoom_delta"},
+          "update": "zoomLinear(domain(\"x_scale\"), grid_zoom_anchor.x, grid_zoom_delta)"
+        }
+      ]
+    },
+    {
+      "name": "grid_translate_anchor",
+      "value": {},
+      "on": [
+        {
+          "events": [{"source": "view", "type": "mousedown"}],
+          "update": "{x: x(unit), extent_x: domain(\"x_scale\")}"
+        }
+      ]
+    },
+    {
+      "name": "grid_translate_delta",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {"source": "view", "type": "mousedown"},
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{x: grid_translate_anchor.x - x(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_anchor",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "wheel",
+              "consume": true
+            }
+          ],
+          "update": "{x: invert(\"x_scale\", x(unit))}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_delta",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "wheel",
+              "consume": true
+            }
+          ],
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
         }
       ]
     },
@@ -109,6 +200,7 @@
       "range": "width",
       "nice": true,
       "zero": {"signal": "includeZero"},
+      "domainRaw": {"signal": "grid_value"},
       "domain": {
         "data": "table",
         "field": {"signal": "xField"}
@@ -191,6 +283,7 @@
   "marks": [
     {
       "name": "marks",
+      "clip": true,
       "type": "symbol",
       "from": {"data": "table"},
       "encode": {
