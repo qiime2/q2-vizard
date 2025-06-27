@@ -12,13 +12,32 @@
     "subtitleFontSize": 16
   },
   "autosize": {
-    "type": "pad"
+    "type": "fit",
+    "contains": "padding"
   },
-  "padding": {
-    "left": 10 
-  },
+  "padding": 120,
 
   "signals": [
+    {
+      "name": "width",
+      "init": "isFinite(containerSize()[0]) ? containerSize()[0] : 300",
+      "on": [
+        {
+          "update": "isFinite(containerSize()[0]) ? containerSize()[0] : 300",
+          "events": "window:resize"
+        }
+      ]
+    },
+    {
+      "name": "height",
+      "init": "isFinite(containerSize()[1]) ? containerSize()[1] : 600",
+      "on": [
+        {
+          "update": "isFinite(containerSize()[1]) ? containerSize()[1] : 600",
+          "events": "window:resize"
+        }
+      ]
+    },
     {
       "name": "subtitle",
       "value": {"{{REPLACE_PARAM}}": "subtitle"}
@@ -174,7 +193,6 @@
       "labelFontSize": 14,
       "title": {"{{REPLACE_PARAM}}": "group_by"},
       "titleFontSize": 16,
-      "labelLimit": 350,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
