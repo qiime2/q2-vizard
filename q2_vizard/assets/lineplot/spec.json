@@ -39,6 +39,152 @@
       ]
     },
     {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {
+          "events": "mousemove",
+          "update": "isTuple(group()) ? group() : unit"
+        }
+      ]
+    },
+    {
+      "name": "grid_value_x",
+      "on": [
+        {
+          "events": [
+            {"source": "view", "type": "dblclick"},
+            {"signal": "includeZero"}
+          ],
+          "update": "null"
+        },
+        {
+          "events": {"signal": "grid_translate_delta_x"},
+          "update": "panLinear(grid_translate_anchor.extent_x, -grid_translate_delta_x.x / width)"
+        },
+        {
+          "events": {"signal": "grid_zoom_delta"},
+          "update": "zoomLinear(domain(\"x_scale\"), grid_zoom_anchor_x.x, grid_zoom_delta)"
+        }
+      ]
+    },
+    {
+      "name": "grid_value_y",
+      "on": [
+        {
+          "events": [
+            {"source": "view", "type": "dblclick"},
+            {"signal": "includeZero"}
+          ],
+          "update": "null"
+        },
+        {
+          "events": {"signal": "grid_translate_delta_y"},
+          "update": "panLinear(grid_translate_anchor.extent_y, grid_translate_delta_y.y / height)"
+        },
+        {
+          "events": {"signal": "grid_zoom_delta"},
+          "update": "zoomLinear(domain(\"y_scale\"), grid_zoom_anchor_y.y, grid_zoom_delta)"
+        }
+      ]
+    },
+    {
+      "name": "grid_translate_anchor",
+      "value": {},
+      "on": [
+        {
+          "events": [{"source": "view", "type": "mousedown"}],
+          "update": "{x: x(unit), extent_x: domain(\"x_scale\"), y: y(unit), extent_y: domain(\"y_scale\")}"
+        }
+      ]
+    },
+    {
+      "name": "grid_translate_delta_x",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {"source": "view", "type": "mousedown"},
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{x: grid_translate_anchor.x - x(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "grid_translate_delta_y",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {"source": "view", "type": "mousedown"},
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{y: grid_translate_anchor.y - y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_anchor_x",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "wheel",
+              "consume": true
+            }
+          ],
+          "update": "{x: invert(\"x_scale\", x(unit))}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_anchor_y",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "wheel",
+              "consume": true
+            }
+          ],
+          "update": "{y: invert(\"y_scale\", y(unit))}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_delta",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "wheel",
+              "consume": true
+            }
+          ],
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        }
+      ]
+    },
+    {
       "name": "subtitle",
       "value": {"{{REPLACE_PARAM}}": "subtitle"}
     },
@@ -130,6 +276,7 @@
       "range": "width",
       "nice": true,
       "zero": {"signal": "includeZero"},
+      "domainRaw": {"signal": "grid_value_x"},
       "domain": {
         "data": "scatter_table",
         "field": {"{{REPLACE_PARAM}}": "x_measure"}
@@ -141,6 +288,7 @@
       "range": "height",
       "nice": true,
       "zero": {"signal": "includeZero"},
+      "domainRaw": {"signal": "grid_value_y"},
       "domain": {
         "data": "scatter_table",
         "field": {"signal": "yField"}
@@ -212,6 +360,7 @@
   "marks": [
     {
       "type": "group",
+      "clip": true,
       "from": {
         "facet": {
           "name": "lines",
@@ -247,6 +396,7 @@
     },
     {
       "type": "symbol",
+      "clip": true,
       "from": {"data": "scatter_table"},
       "encode": {
         "update": {
