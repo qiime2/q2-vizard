@@ -28,11 +28,12 @@ test:
   - q2-types >={{ q2_types }}
   - pytest
   - selenium
+  - pytest-xdist
   imports:
   - q2_vizard
   - qiime2.plugins.vizard
   commands:
-  - py.test --pyargs q2_vizard
+  - py.test -n auto --pyargs q2_vizard
 about:
   home: https://qiime2.org
   license: BSD-3-Clause
