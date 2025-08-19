@@ -2,17 +2,17 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "title": {
     "text": {"signal": "title"},
+    "limit": 900,
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
-    "subtitle": " ",
-    "subtitlePadding": 30
+    "subtitle": " "
   },
   "autosize": {
     "type": "fit",
     "contains": "padding"
   },
-  "padding": 20,
+  "padding": 100,
 
   "signals": [
     {

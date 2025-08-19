@@ -2,13 +2,14 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "title": {
     "text": {"signal": "title"},
+    "limit": 900,
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
     "subtitle": {
       "signal": "[subtitle, ' ', suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ' ', ' ']"
     },
-    "subtitlePadding": 30,
+    "subtitlePadding": 10,
     "subtitleFontSize": 16
   },
   "autosize": {
