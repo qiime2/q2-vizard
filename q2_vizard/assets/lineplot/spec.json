@@ -2,20 +2,21 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "title": {
     "text": {"signal": "title"},
+    "limit": 900,
     "fontSize": 20,
     "orient": "top",
     "anchor": "start",
     "subtitle": {
       "signal": "[subtitle, ' ', suppressMarks ? 'NOTE: Actual data marks have been suppressed.' : ' ', ' ']"
     },
-    "subtitlePadding": 30,
+    "subtitlePadding": 10,
     "subtitleFontSize": 16
   },
   "autosize": {
     "type": "fit",
     "contains": "padding"
   },
-  "padding": 120,
+  "padding": 100,
 
   "signals": [
     {
@@ -54,8 +55,7 @@
       "name": "title",
       "value": {"{{REPLACE_PARAM}}": "title"},
       "bind": {
-        "input": "input",
-        "maxlength": 90
+        "input": "input"
       }
     },
     {
