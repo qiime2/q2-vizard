@@ -8,7 +8,8 @@
     "subtitle": {
       "signal": "[subtitle, ' ', suppressOutliers ? 'NOTE: Outliers have been suppressed.' : ' ', ' ']"
     },
-    "subtitlePadding": 30
+    "subtitlePadding": 30,
+    "subtitleFontSize": 16
   },
   "autosize": {
     "type": "pad",
