@@ -148,7 +148,7 @@
   "axes": [
     {
       "scale": "x_scale",
-      "grid": true,
+      "grid": false,
       "orient": "bottom",
       "tickCount": 5,
       "title": {"{{REPLACE_PARAM}}": "x_measure"},
@@ -159,7 +159,7 @@
     },
     {
       "scale": "y_scale",
-      "grid": true,
+      "grid": false,
       "orient": "left",
       "title": {"{{REPLACE_PARAM}}": "y_measure"},
       "titleFontSize": 18,
