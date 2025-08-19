@@ -54,9 +54,7 @@
     {
       "name": "title",
       "value": {"{{REPLACE_PARAM}}": "title"},
-      "bind": {
-        "input": "input"
-      }
+      "bind": {"input": "input"}
     },
     {
       "name": "yField",
