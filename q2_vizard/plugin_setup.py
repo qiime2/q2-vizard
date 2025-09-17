@@ -16,7 +16,7 @@ from q2_vizard.boxplot import boxplot
 import q2_vizard._examples as ex
 
 plugin = Plugin(name='vizard',
-                version='0.0.1.dev0',
+                version=q2_vizard.__version__,
                 website='https://github.com/qiime2/q2-vizard',
                 package='q2_vizard',
                 description='This QIIME 2 plugin is the first choice of wizard'
