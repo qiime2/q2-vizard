@@ -1,5 +1,7 @@
 .PHONY: all lint test test-cov install dev clean distclean
 
+PYTHON ?= python
+
 all: ;
 
 lint:
