@@ -8,6 +8,7 @@
 
 from qiime2.plugin import Plugin, Str, Metadata, Choices
 
+import q2_vizard
 from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d
 from q2_vizard.lineplot import lineplot
