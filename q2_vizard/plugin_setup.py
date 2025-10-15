@@ -49,6 +49,8 @@ plugin.visualizers.register_function(
         'title': 'The title of the heatmap.'},
     name='Heatmap',
     description='Basic heatmap for visualizing three Metadata measures.',
+    migrated={'to_plugin': 'q2-foo', 'from_distro': 'amplicon',
+              'to_distro': 'moshpit', 'epoch': '2026.1'},
     examples={'heatmap': ex.heatmap}
 )
 
