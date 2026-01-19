@@ -9,6 +9,7 @@
 import os
 import tempfile
 import pandas as pd
+import pytest
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,6 +22,7 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_vizard.heatmap import heatmap
 
 
+@pytest.mark.selenium
 class TestHeatmap(TestPluginBase):
     package = 'q2_vizard.tests'
 

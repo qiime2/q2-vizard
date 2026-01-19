@@ -9,6 +9,7 @@
 import os
 import tempfile
 import pandas as pd
+import pytest
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -22,6 +23,7 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_vizard.scatterplot import scatterplot_2d
 
 
+@pytest.mark.selenium
 class TestScatterplot(TestPluginBase):
     package = 'q2_vizard.tests'
 

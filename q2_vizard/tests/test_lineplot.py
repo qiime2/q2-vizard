@@ -8,6 +8,7 @@
 
 import os
 import tempfile
+import pytest
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,6 +22,7 @@ from qiime2 import Metadata
 from q2_vizard import lineplot
 
 
+@pytest.mark.selenium
 class TestLineplot(TestPluginBase):
     package = 'q2_vizard.tests'
 
