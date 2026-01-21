@@ -19,6 +19,7 @@ from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
 from q2_vizard import lineplot
+from .test_util import skip_selenium
 
 
 class TestLineplot(TestPluginBase):
@@ -174,6 +175,7 @@ class TestLineplot(TestPluginBase):
             self.assertIn(exp_text, page_source)
 
     # run selenium checks with a chrome driver
+    @skip_selenium
     def test_lineplot_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
@@ -202,6 +204,7 @@ class TestLineplot(TestPluginBase):
                         exp_marks_len, exp_mark_id, exp_x_mark, exp_y_mark,
                         exp_y_measure)
 
+    @skip_selenium
     def test_lineplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')

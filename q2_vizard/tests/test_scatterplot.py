@@ -20,6 +20,7 @@ from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
 
 from q2_vizard.scatterplot import scatterplot_2d
+from .test_util import skip_selenium
 
 
 class TestScatterplot(TestPluginBase):
@@ -122,6 +123,7 @@ class TestScatterplot(TestPluginBase):
             self.assertEqual(mark_y, exp_y_mark)
 
     # run selenium checks with a chrome driver
+    @skip_selenium
     def test_scatterplot_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
@@ -149,6 +151,7 @@ class TestScatterplot(TestPluginBase):
                         exp_x_measure, exp_y_measure, exp_color_measure)
 
     # run selenium checks with a firefox driver
+    @skip_selenium
     def test_scatterplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
