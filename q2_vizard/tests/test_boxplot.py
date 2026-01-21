@@ -407,6 +407,7 @@ class TestBase(TestPluginBase):
                         exp_single_box_outlier_marks_len)
 
     # run selenium tests using a headless firefox driver
+    @skip_linux
     def test_boxplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')

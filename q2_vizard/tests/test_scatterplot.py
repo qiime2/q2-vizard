@@ -151,6 +151,7 @@ class TestScatterplot(TestPluginBase):
                         exp_x_measure, exp_y_measure, exp_color_measure)
 
     # run selenium checks with a firefox driver
+    @skip_linux
     def test_scatterplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')

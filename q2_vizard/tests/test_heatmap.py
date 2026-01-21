@@ -135,6 +135,7 @@ class TestHeatmap(TestPluginBase):
                         exp_y_mark, exp_gradient_mark, exp_mark_id)
 
     # run selenium checks with a firefox driver
+    @skip_linux
     def test_heatmap_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')

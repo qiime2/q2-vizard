@@ -204,6 +204,7 @@ class TestLineplot(TestPluginBase):
                         exp_marks_len, exp_mark_id, exp_x_mark, exp_y_mark,
                         exp_y_measure)
 
+    @skip_linux
     def test_lineplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
