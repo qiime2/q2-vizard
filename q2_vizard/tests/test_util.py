@@ -22,7 +22,7 @@ from .._util import _col_type_validation, _measure_validation
 # A. None of the tests are run within a container, or
 # B. The chrome & firefox tests on mac will fill in enough gaps
 # that we can see if something goes wrong that is interesting.
-skip_linux = pytest.mark.skipif(
+skip_selenium = pytest.mark.skipif(
     os.getenv('SKIP_SELENIUM', '') == '1',
     reason='skipping Selenium tests within linux container'
     )

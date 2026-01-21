@@ -19,7 +19,7 @@ from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
 
 from q2_vizard.heatmap import heatmap
-from .test_util import skip_linux
+from .test_util import skip_selenium
 
 
 class TestHeatmap(TestPluginBase):
@@ -107,7 +107,7 @@ class TestHeatmap(TestPluginBase):
             self.assertEqual(mark_gradient, exp_gradient_mark)
 
     # run selenium checks with a chrome driver
-    @skip_linux
+    @skip_selenium
     def test_heatmap_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
@@ -135,7 +135,7 @@ class TestHeatmap(TestPluginBase):
                         exp_y_mark, exp_gradient_mark, exp_mark_id)
 
     # run selenium checks with a firefox driver
-    @skip_linux
+    @skip_selenium
     def test_heatmap_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
