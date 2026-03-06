@@ -224,16 +224,16 @@ class TestBase(TestPluginBase):
                     median = np.median(sorted_values)
 
                     q1 = np.percentile(sorted_values, 25,
-                                       interpolation='linear')
+                                       method='linear')
                     q3 = np.percentile(sorted_values, 75,
-                                       interpolation='linear')
+                                       method='linear')
 
                     iqr = q3 - q1
 
                     percentile_9 = np.percentile(sorted_values, 9,
-                                                 interpolation='linear')
+                                                 method='linear')
                     percentile_91 = np.percentile(sorted_values, 91,
-                                                  interpolation='linear')
+                                                  method='linear')
 
                     # Determine lower and upper whiskers based on whisker_range
                     if whisker_range == 'tukeys_iqr':
@@ -275,16 +275,16 @@ class TestBase(TestPluginBase):
                 median = np.median(sorted_values)
 
                 q1 = np.percentile(sorted_values, 25,
-                                   interpolation='linear')
+                                   method='linear')
                 q3 = np.percentile(sorted_values, 75,
-                                   interpolation='linear')
+                                   method='linear')
 
                 iqr = q3 - q1
 
                 percentile_9 = np.percentile(sorted_values, 9,
-                                             interpolation='linear')
+                                             method='linear')
                 percentile_91 = np.percentile(sorted_values, 91,
-                                              interpolation='linear')
+                                              method='linear')
 
                 # Determine lower and upper whiskers based on whisker_range
                 if whisker_range == 'tukeys_iqr':
