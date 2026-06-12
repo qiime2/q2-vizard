@@ -265,7 +265,8 @@
       "titleFontSize": 18,
       "titlePadding": 20,
       "labelFontSize": 16,
-      "labelPadding": 15
+      "labelPadding": 15,
+      "labelLimit": 50
     },
     {
       "scale": "y_scale",
@@ -285,6 +286,7 @@
       "symbolSize": 150,
       "symbolStrokeWidth": 1.5,
       "labelFontSize": 14,
+      "labelLimit": 900,
       "title": {"signal": "xField"},
       "titleFontSize": 16,
       "encode": {

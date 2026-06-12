@@ -176,6 +176,7 @@
       "title": {"{{REPLACE_PARAM}}": "gradient_measure"},
       "titleFontSize": 16,
       "titlePadding": 4,
+      "titleLimit": 900,
       "gradientLength": {"signal": "(rowHeight * nRows) - 16"}
     }
   ],
