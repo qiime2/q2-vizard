@@ -107,8 +107,8 @@
         "input": "select",
         "options": [
           "Viridis", "Cividis", "Plasma", "Turbo",
-          "category10", "category20", "dark2", "set1",
-          "tableau10", "tableau20", "category20c"
+          "category10", "category20", "category20c",
+          "dark2", "set1", "tableau10", "tableau20"
         ]
       }
     }
