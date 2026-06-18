@@ -170,6 +170,7 @@
       "symbolSize": 150,
       "symbolStrokeWidth": 1.5,
       "labelFontSize": 14,
+      "labelLimit": 900,
       "title": {"signal": "colorBy"},
       "titleFontSize": 16,
       "encode": {
