@@ -52,7 +52,7 @@ This visualizer generates a heatmap displaying relationships between three Metad
 ### Demo
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/heatmap_example.png)
 
-[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/q6yrsg1pens7fhzlv14bv/demo-heatmap.qzv?rlkey=eoomz6gw8vcku7kbfjbqurulw)
+[**Interactive Link**](https://view.qiime2.org/visualization/?src=https://www.dropbox.com/scl/fi/q6yrsg1pens7fhzlv14bv/heatmap-demo.qzv?rlkey=eoomz6gw8vcku7kbfjbqurulw)
 
 
 ## boxplot
