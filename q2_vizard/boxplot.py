@@ -12,9 +12,9 @@ import importlib
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
+from ._assets import _copy_vendored_assets
 from ._util import (
-    _copy_vendored_assets, _json_replace, _measure_validation,
-    _col_type_validation)
+    _json_replace, _measure_validation, _col_type_validation)
 
 
 def boxplot(output_dir: str, metadata: Metadata,
