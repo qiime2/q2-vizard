@@ -12,7 +12,9 @@ import importlib
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._util import _json_replace, _col_type_validation, _measure_validation
+from ._util import (
+    _copy_vendored_scripts, _json_replace, _col_type_validation,
+    _measure_validation)
 
 
 def scatterplot_2d(output_dir: str, metadata: Metadata,
@@ -92,3 +94,5 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
         fh.write(index.render(spec=spec_string))
+
+    _copy_vendored_scripts(output_dir)

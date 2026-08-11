@@ -9,11 +9,17 @@
 import pandas as pd
 import pytest
 import os
+import tempfile
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
-from .._util import _col_type_validation, _measure_validation
+from ..boxplot import boxplot
+from ..heatmap import heatmap
+from ..lineplot import lineplot
+from ..scatterplot import scatterplot_2d
+from .._util import (
+    _col_type_validation, _measure_validation)
 
 # This is a temporary 'fix' to failing selenium tests when they are run
 # within a container on the GHA linux runner.
@@ -70,3 +76,43 @@ class TestColTypeValidation(TestBase):
         ):
             _col_type_validation(metadata=self.md, measure='numeric-col',
                                  col_type='categorical')
+
+
+class TestVendoredScripts(TestBase):
+    def test_visualizations_copy_vendored_scripts(self):
+        visualizers = {
+            'scatterplot_2d': lambda output_dir: scatterplot_2d(
+                output_dir, self.md),
+            'heatmap': lambda output_dir: heatmap(
+                output_dir, self.md, 'categorical-col', 'categorical-col',
+                'numeric-col'),
+            'lineplot': lambda output_dir: lineplot(
+                output_dir, self.md, 'numeric-col'),
+            'boxplot': lambda output_dir: boxplot(
+                output_dir, self.md, 'numeric-col', 'categorical-col')
+        }
+
+        for visualization, render in visualizers.items():
+            with self.subTest(visualization=visualization), \
+                    tempfile.TemporaryDirectory() as output_dir:
+                render(output_dir)
+
+                for filename in ('vega.min.js', 'vega-embed.min.js'):
+                    filepath = os.path.join(output_dir, filename)
+                    self.assertTrue(os.path.isfile(filepath))
+                    self.assertGreater(os.path.getsize(filepath), 0)
+
+    def test_templates_use_local_scripts(self):
+        assets = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), 'assets')
+
+        for visualization in (
+                'scatterplot_2d', 'heatmap', 'lineplot', 'boxplot'):
+            with self.subTest(visualization=visualization):
+                filepath = os.path.join(assets, visualization, 'index.html')
+                with open(filepath) as fh:
+                    template = fh.read()
+
+                self.assertIn('src="vega.min.js"', template)
+                self.assertIn('src="vega-embed.min.js"', template)
+                self.assertNotIn('cdn.jsdelivr.net', template)
