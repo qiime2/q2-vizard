@@ -15,3 +15,6 @@ checksums of the vendored files are:
 731f01b68116bc185a196322096ca342737424c4995c48a6674f57ebc967e9c1  vega.min.js
 e5c92904f1b614e54a6a860ecf194ca88bf948b4faeb7af9a0fe2cad93dc730e  vega-embed.min.js
 ```
+
+Both bundles and both license files are copied into every generated
+visualization archive.

@@ -11,14 +11,19 @@ import os
 import shutil
 
 
-_VENDORED_SCRIPTS = ('vega.min.js', 'vega-embed.min.js')
+_VENDORED_FILES = (
+    'vega.min.js',
+    'vega-embed.min.js',
+    'LICENSE-vega',
+    'LICENSE-vega-embed',
+)
 
 
-def _copy_vendored_scripts(output_dir):
+def _copy_vendored_assets(output_dir):
     vendor_dir = importlib.resources.files(
         'q2_vizard') / 'assets' / 'vendor'
 
-    for filename in _VENDORED_SCRIPTS:
+    for filename in _VENDORED_FILES:
         source = vendor_dir / filename
         destination = os.path.join(output_dir, filename)
 

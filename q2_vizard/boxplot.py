@@ -13,7 +13,7 @@ import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 from ._util import (
-    _copy_vendored_scripts, _json_replace, _measure_validation,
+    _copy_vendored_assets, _json_replace, _measure_validation,
     _col_type_validation)
 
 
@@ -96,4 +96,4 @@ def boxplot(output_dir: str, metadata: Metadata,
         spec_string = json.dumps(full_spec)
         fh.write(index.render(spec=spec_string))
 
-    _copy_vendored_scripts(output_dir)
+    _copy_vendored_assets(output_dir)
