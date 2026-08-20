@@ -6,8 +6,10 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import json
 import os
 import tempfile
+import re
 import pandas as pd
 
 from selenium import webdriver
@@ -15,6 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
@@ -48,17 +51,45 @@ class TestScatterplot(TestPluginBase):
 
         self.test_cases = [
             ('B', 'Z', 'foobar', exp_marks_len,
-             '5', '33', 'sample1', 'B', 'Z', 'foobar'),
+             '5', '33', 'sample1', 'B', 'Z', 'foobar', 'categorical'),
+            ('B', 'Z', 'Z', exp_marks_len,
+             '5', '33', 'sample1', 'B', 'Z', 'Z', 'continuous'),
             ('', '', '', exp_marks_len, '1', '1',
-             'sample1', 'A', 'A', 'legendDefault')
+             'sample1', 'A', 'A', 'legendDefault', 'categorical')
         ]
+
+    def test_missing_numeric_color_spec(self):
+        edge_case_md = Metadata(pd.DataFrame(
+            {
+                'x': [1, 2, 3],
+                'missing': [1.0, float('nan'), 3.0]
+            },
+            index=pd.Index(['sample1', 'sample2', 'sample3'],
+                           name='sample-id')
+        ))
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            scatterplot_2d(output_dir=output_dir, metadata=edge_case_md,
+                           color_by='missing')
+            with open(os.path.join(output_dir, 'index.html')) as fh:
+                page = fh.read()
+
+        spec = json.loads(re.search(
+            r'<script type="application/json" id="spec">\s*(.*?)\s*</script>',
+            page, re.DOTALL
+        ).group(1))
+        fill = spec['marks'][0]['encode']['update']['fill']['signal']
+
+        self.assertIn("'#808080'", fill)
+        self.assertNotIn('isConstantNumericColorField', fill)
 
     # utility method that will run all checks for scatterplot
     # used in each browser test below (firefox & chrome supported)
     def _selenium_scatterplot_test(self, driver, x_measure, y_measure,
                                    color_measure, exp_marks_len, exp_x_mark,
                                    exp_y_mark, exp_mark_id, exp_x_measure,
-                                   exp_y_measure, exp_color_measure):
+                                   exp_y_measure, exp_color_measure,
+                                   exp_color_mode):
         with tempfile.TemporaryDirectory() as output_dir:
             scatterplot_2d(
                 output_dir=output_dir, metadata=self.md,
@@ -98,13 +129,64 @@ class TestScatterplot(TestPluginBase):
                 else:
                     raise ValueError(f'Unexpected axis element {label} found.')
 
-            # test that the legend contains the correct group
-            legend_element = \
-                driver.find_element(By.CSS_SELECTOR,
-                                    'g.mark-group.role-legend')
-
+            # Only the matching native legend is present in the SVG.
+            legend_elements = driver.find_elements(
+                By.CSS_SELECTOR, 'g.mark-group.role-legend'
+            )
+            self.assertEqual(len(legend_elements), 1)
+            legend_element = legend_elements[0]
             label = legend_element.get_attribute('aria-label')
             self.assertIn(f"legend titled '{exp_color_measure}'", label)
+
+            # The one palette control exposes schemes appropriate to the
+            # selected color-field type.
+            palette_options = [
+                option.text for option in Select(
+                    driver.find_element(By.NAME, 'colorPalette')
+                ).options
+            ]
+            if exp_color_mode == 'continuous':
+                self.assertEqual(
+                    palette_options,
+                    ['Viridis', 'Cividis', 'Magma', 'Plasma', 'Inferno']
+                )
+            else:
+                self.assertNotIn('Viridis', palette_options)
+                self.assertIn('category10', palette_options)
+
+            # Switching color-field types updates the options in the same
+            # palette control; it does not create a second palette dropdown.
+            color_by_select = Select(driver.find_element(By.NAME, 'colorBy'))
+            color_by_select.select_by_visible_text('Z')
+            WebDriverWait(driver, 10).until(
+                lambda _: Select(
+                    driver.find_element(By.NAME, 'colorPalette')
+                ).options[0].text == 'Viridis'
+            )
+            palette_options = [
+                option.text for option in Select(
+                    driver.find_element(By.NAME, 'colorPalette')
+                ).options
+            ]
+            self.assertEqual(
+                palette_options,
+                ['Viridis', 'Cividis', 'Magma', 'Plasma', 'Inferno']
+            )
+
+            color_by_select = Select(driver.find_element(By.NAME, 'colorBy'))
+            color_by_select.select_by_visible_text('foobar')
+            WebDriverWait(driver, 10).until(
+                lambda _: Select(
+                    driver.find_element(By.NAME, 'colorPalette')
+                ).options[0].text == 'category10'
+            )
+            palette_options = [
+                option.text for option in Select(
+                    driver.find_element(By.NAME, 'colorPalette')
+                ).options
+            ]
+            self.assertNotIn('Viridis', palette_options)
+            self.assertIn('category10', palette_options)
 
             # test that we have the correct number of marks
             # and that a mark is where we expect it to be
@@ -134,7 +216,8 @@ class TestScatterplot(TestPluginBase):
         with webdriver.Chrome(options=chrome_options) as driver:
             for (x_measure, y_measure, color_measure, exp_marks_len,
                  exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
-                 exp_y_measure, exp_color_measure) in self.test_cases:
+                 exp_y_measure, exp_color_measure,
+                 exp_color_mode) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
@@ -142,13 +225,15 @@ class TestScatterplot(TestPluginBase):
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
                     exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
                     exp_y_measure=exp_y_measure,
-                    exp_color_measure=exp_color_measure
+                    exp_color_measure=exp_color_measure,
+                    exp_color_mode=exp_color_mode
                 ):
 
                     self._selenium_scatterplot_test(
                         driver, x_measure, y_measure, color_measure,
                         exp_marks_len, exp_x_mark, exp_y_mark, exp_mark_id,
-                        exp_x_measure, exp_y_measure, exp_color_measure)
+                        exp_x_measure, exp_y_measure, exp_color_measure,
+                        exp_color_mode)
 
     # run selenium checks with a firefox driver
     @skip_selenium
@@ -163,7 +248,8 @@ class TestScatterplot(TestPluginBase):
 
             for (x_measure, y_measure, color_measure, exp_marks_len,
                  exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
-                 exp_y_measure, exp_color_measure) in self.test_cases:
+                 exp_y_measure, exp_color_measure,
+                 exp_color_mode) in self.test_cases:
 
                 with self.subTest(
                     x_measure=x_measure, y_measure=y_measure,
@@ -171,10 +257,12 @@ class TestScatterplot(TestPluginBase):
                     exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
                     exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
                     exp_y_measure=exp_y_measure,
-                    exp_color_measure=exp_color_measure
+                    exp_color_measure=exp_color_measure,
+                    exp_color_mode=exp_color_mode
                 ):
 
                     self._selenium_scatterplot_test(
                         driver, x_measure, y_measure, color_measure,
                         exp_marks_len, exp_x_mark, exp_y_mark, exp_mark_id,
-                        exp_x_measure, exp_y_measure, exp_color_measure)
+                        exp_x_measure, exp_y_measure, exp_color_measure,
+                        exp_color_mode)

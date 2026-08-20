@@ -27,7 +27,7 @@ The following Metadata vizualizations are available for use, with examples below
 
 ## scatterplot_2d
 
-This visualizer provides an exploratory view of your Metadata - allowing for any two numeric measures to be plotted against each other, with an optional third categorical measure used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
+This visualizer provides an exploratory view of your Metadata - allowing for any two numeric measures to be plotted against each other, with an optional third categorical or numeric measure used for color-coding. You can easily toggle between different measures using the drop downs for X, Y, and colorBy.
 
 ### Demo
 ![](https://raw.githubusercontent.com/qiime2/q2-vizard/dev/_assets/scatterplot_example.png)

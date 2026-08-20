@@ -70,12 +70,12 @@ plugin.visualizers.register_function(
                      ' plotted on the x-axis.',
         'y_measure': 'Numeric measure from the input Metadata that should be'
                      ' plotted on the y-axis.',
-        'color_by': 'Categorical measure from the input Metadata that'
-                    ' should be used for color-coding the scatterplot.',
+        'color_by': 'Categorical or numeric measure from the input Metadata'
+                    ' that should be used for color-coding the scatterplot.',
         'title': 'The title of the scatterplot.'},
     name='2D Scatterplot',
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
-                ' measures with optional categorical color grouping.',
+                ' measures with optional categorical or continuous coloring.',
     examples={'scatterplot_defaults': ex.scatterplot_defaults,
               'scatterplot_all_measures': ex.scatterplot_all_measures}
 )

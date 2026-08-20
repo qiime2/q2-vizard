@@ -42,29 +42,88 @@
 <div id="viz"></div>
 
 <script type="text/javascript">
-  var spec = JSON.parse(document.getElementById('spec').innerHTML);
+  var baseSpec = JSON.parse(document.getElementById('spec').innerHTML);
+  var view;
+  var renderedMode;
+  var palettes = {
+    categorical: ['category10', 'category20', 'category20c', 'dark2', 'set1',
+                  'tableau10', 'tableau20'],
+    continuous: ['Viridis', 'Cividis', 'Magma', 'Plasma', 'Inferno']
+  };
 
-  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
-    var view = result.view;
-    var svg = document.querySelector('#viz svg');
+  function signal(spec, name) {
+    return spec.signals.find(function(item) { return item.name === name; });
+  }
 
-    // Add id & xy attrs to the marks for easy selection in Selenium
-    var marks = svg.querySelectorAll('g.marks > path');
-    marks.forEach(function(mark, index) {
-      var data = view.data('table')[index];
+  function colorMode(colorBy) {
+    return signal(baseSpec, 'numericColorFields').value.indexOf(colorBy) >= 0
+      ? 'continuous' : 'categorical';
+  }
 
-      // These are each connected to a vega signal to pull the correct field
-      var id = data[view.signal('idField')];
-      var x = data[view.signal('xField')];
-      var y = data[view.signal('yField')];
+  function currentState() {
+    return {
+      title: view.signal('title'), xField: view.signal('xField'),
+      yField: view.signal('yField'), markSize: view.signal('markSize'),
+      includeZero: view.signal('includeZero'), colorBy: view.signal('colorBy'),
+      colorPalette: view.signal('colorPalette')
+    };
+  }
 
-      // Add attrs to the marks elements for id & xy positions
-      mark.setAttribute('data-id', id);
-      mark.setAttribute('data-x', x);
-      mark.setAttribute('data-y', y);
+  function render(state) {
+    var spec = JSON.parse(JSON.stringify(baseSpec));
+    var mode = colorMode(state.colorBy);
+    var palette = palettes[mode].indexOf(state.colorPalette) >= 0
+      ? state.colorPalette : palettes[mode][0];
+
+    // Only the active native legend is included in this Vega spec.
+    spec.legends = [spec.legends[mode === 'continuous' ? 1 : 0]];
+    renderedMode = mode;
+    signal(spec, 'colorPalette').value = palette;
+    signal(spec, 'colorPalette').bind.options = palettes[mode];
+    Object.keys(state).forEach(function(name) {
+      signal(spec, name).value = name === 'colorPalette' ? palette : state[name];
     });
 
-  }).catch(console.error);
+    if (view) {
+      view.finalize();
+    }
+    document.querySelector('#viz').replaceChildren();
+    vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
+      view = result.view;
+      var svg = document.querySelector('#viz svg');
+
+      view.addSignalListener('colorBy', function(_, colorBy) {
+        var state = currentState();
+        var oldMode = renderedMode;
+        var newMode = colorMode(colorBy);
+
+        state.colorBy = colorBy;
+        if (oldMode !== newMode) {
+          state.colorPalette = palettes[newMode][0];
+        }
+        // Re-embed for every field change, not only type changes: a new
+        // legend title may require Vega to recompute the chart's layout.
+        render(state);
+      });
+
+      svg.querySelectorAll('g.marks > path').forEach(function(mark, index) {
+        var data = view.data('table')[index];
+        mark.setAttribute('data-id', data[view.signal('idField')]);
+        mark.setAttribute('data-x', data[view.signal('xField')]);
+        mark.setAttribute('data-y', data[view.signal('yField')]);
+      });
+    }).catch(console.error);
+  }
+
+  render({
+    title: signal(baseSpec, 'title').value,
+    xField: signal(baseSpec, 'xField').value,
+    yField: signal(baseSpec, 'yField').value,
+    markSize: signal(baseSpec, 'markSize').value,
+    includeZero: signal(baseSpec, 'includeZero').value,
+    colorBy: signal(baseSpec, 'colorBy').value,
+    colorPalette: signal(baseSpec, 'colorPalette').value
+  });
 </script>
 </body>
 </html>

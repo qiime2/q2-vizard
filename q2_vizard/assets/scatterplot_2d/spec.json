@@ -79,8 +79,16 @@
       "value": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
       "bind": {
         "input": "select",
-        "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
+        "options": {"{{REPLACE_PARAM}}": "md_cols_color"}
       }
+    },
+    {
+      "name": "numericColorFields",
+      "value": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
+    },
+    {
+      "name": "isNumericColorField",
+      "update": "indexof(numericColorFields, colorBy) >= 0"
     },
     {
       "name": "colorPalette",
@@ -88,7 +96,6 @@
       "bind": {
         "input": "select",
         "options": [
-          "Viridis", "Cividis", "Plasma", "Turbo",
           "category10", "category20", "category20c",
           "dark2", "set1", "tableau10", "tableau20"
         ]
@@ -127,7 +134,7 @@
       }
     },
     {
-      "name": "color_scale",
+      "name": "categorical_color_scale",
       "type": "ordinal",
       "range": {
         "scheme": {"signal": "colorPalette"}
@@ -137,6 +144,19 @@
         "field": {"signal": "colorBy"},
         "sort": true
       }
+    },
+    {
+      "name": "continuous_color_scale",
+      "type": "linear",
+      "range": {
+        "scheme": {"signal": "colorPalette"}
+      },
+      "domain": {
+        "data": "table",
+        "field": {"signal": "colorBy"}
+      },
+      "zero": false,
+      "nice": true
     }
   ],
 
@@ -167,7 +187,7 @@
   "legends": [
     {
       "offset": 35,
-      "fill": "color_scale",
+      "fill": "categorical_color_scale",
       "symbolSize": 150,
       "symbolStrokeWidth": 1.5,
       "labelFontSize": 14,
@@ -187,6 +207,15 @@
           "interactive": false
         }
       }
+    },
+    {
+      "offset": 35,
+      "fill": "continuous_color_scale",
+      "type": "gradient",
+      "title": {"signal": "colorBy"},
+      "titleFontSize": 16,
+      "titlePadding": 4,
+      "gradientLength": 200
     }
   ],
 
@@ -209,8 +238,7 @@
           "size": {"signal": "markSize"},
           "stroke": {"value": "black"},
           "fill": {
-            "scale": "color_scale",
-            "field": {"signal": "colorBy"}
+            "signal": "isNumericColorField ? (isValid(datum[colorBy]) ? scale('continuous_color_scale', datum[colorBy]) : '#808080') : scale('categorical_color_scale', datum[colorBy])"
           }
         },
         "hover": {
