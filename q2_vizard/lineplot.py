@@ -13,8 +13,8 @@ import importlib
 import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._assets import _copy_vendored_assets
-from ._util import _json_replace, _measure_validation, _col_type_validation
+from ._util import (_json_replace, _measure_validation, _col_type_validation,
+                    _copy_vendored_assets)
 
 
 def lineplot(output_dir: str, metadata: Metadata,

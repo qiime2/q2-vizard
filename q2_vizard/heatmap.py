@@ -13,8 +13,8 @@ import importlib
 
 from qiime2 import Metadata, MetadataColumn, NumericMetadataColumn
 
-from ._assets import _copy_vendored_assets
-from ._util import _json_replace, _col_type_validation, _measure_validation
+from ._util import (_json_replace, _col_type_validation, _measure_validation,
+                    _copy_vendored_assets)
 
 
 def heatmap(output_dir: str, metadata: Metadata,

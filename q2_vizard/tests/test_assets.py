@@ -16,7 +16,7 @@ import pandas as pd
 
 from qiime2 import Metadata
 
-from .._assets import _VENDORED_FILES
+from .._util import _VENDORED_FILES
 from ..boxplot import boxplot
 from ..heatmap import heatmap
 from ..lineplot import lineplot
