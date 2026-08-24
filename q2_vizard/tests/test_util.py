@@ -13,8 +13,7 @@ import os
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
-from .._util import (
-    _col_type_validation, _measure_validation)
+from .._util import _col_type_validation, _measure_validation
 
 # This is a temporary 'fix' to failing selenium tests when they are run
 # within a container on the GHA linux runner.
