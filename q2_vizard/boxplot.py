@@ -6,14 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import os
 import json
-import importlib
-import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._util import (_json_replace, _measure_validation, _col_type_validation,
-                    _copy_vendored_assets)
+
+from ._util import _measure_validation, _col_type_validation
+from ._render import _render_visualization
 
 
 def boxplot(output_dir: str, metadata: Metadata,
@@ -40,12 +38,6 @@ def boxplot(output_dir: str, metadata: Metadata,
         md['legend'] = 'data'
         group_by = 'legend'
 
-    # jinja templating & JSON-ifying
-    J_ENV = jinja2.Environment(
-        loader=jinja2.PackageLoader('q2_vizard', 'assets/boxplot')
-    )
-    index = J_ENV.get_template('index.html')
-
     # set default if box_orientation is None
     if box_orientation is None:
         box_orientation = 'horizontal'
@@ -56,12 +48,6 @@ def boxplot(output_dir: str, metadata: Metadata,
 
     elif box_orientation == 'vertical':
         spec = 'verticalSpec.json'
-
-    spec_fp = importlib.resources.files(
-        'q2_vizard') / 'assets' / 'boxplot' / spec
-
-    with open(spec_fp) as fh:
-        json_obj = json.load(fh)
 
     metadata_obj = json.loads(md.to_json(orient='records'))
 
@@ -84,15 +70,10 @@ def boxplot(output_dir: str, metadata: Metadata,
         subtitle = \
             f'Whiskers were drawn using the `{whisker_range}` method.'
 
-    full_spec = _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
-                              distribution_measure=distribution_measure,
-                              whisker_range=whisker_range,
-                              group_by=group_by, title=title,
-                              expr=expr, subtitle=subtitle,
-                              box_orientation=box_orientation)
-
-    with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        spec_string = json.dumps(full_spec)
-        fh.write(index.render(spec=spec_string))
-
-    _copy_vendored_assets(output_dir)
+    _render_visualization(output_dir, 'boxplot', spec,
+                          metadata=metadata_obj, md_ids=md_ids,
+                          distribution_measure=distribution_measure,
+                          whisker_range=whisker_range,
+                          group_by=group_by, title=title,
+                          expr=expr, subtitle=subtitle,
+                          box_orientation=box_orientation)

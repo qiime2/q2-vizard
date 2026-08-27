@@ -158,5 +158,12 @@ plugin.visualizers.register_function(
         'box_orientation': 'The visual orientataion of the boxes (either'
                            ' horizontal or vertical).',
         'title': 'The title of the boxplot.'
+    },
+    examples={
+        f.__name__: f for f in [
+            ex.boxplot_horizontal_percentile_whisker_range,
+            ex.boxplot_horizontal_tukeys_iqr_whisker_range,
+            ex.boxplot_vertical_minmax_whisker_range
+        ]
     }
 )

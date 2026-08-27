@@ -6,30 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import importlib
-import os
-import shutil
-
-
-def _json_replace(json_obj, **values):
-    """
-    Search for elements of `{"{{REPLACE_PARAM}}": "some_key"}` and replace
-    with the result of `values["some_key"]`.
-    """
-    if type(json_obj) is dict and list(json_obj) == ["{{REPLACE_PARAM}}"]:
-        param_name = json_obj["{{REPLACE_PARAM}}"]
-        return values[param_name]
-
-    if type(json_obj) is list:
-        return [_json_replace(x, **values) for x in json_obj]
-
-    elif type(json_obj) is dict:
-        return {key: _json_replace(value, **values)
-                for key, value in json_obj.items()}
-
-    else:
-        return json_obj
-
 
 def _col_type_validation(metadata, measure, col_type):
     if col_type == 'categorical':
@@ -65,24 +41,3 @@ def _measure_validation(metadata, measure):
                 f' be parsed by this visualization. Please remove `{char}`'
                 ' from this Metadata column name.'
             )
-
-
-_VENDORED_FILES = (
-    'vega.min.js',
-    'vega-embed.min.js',
-    'LICENSE-vega',
-    'LICENSE-vega-embed',
-)
-
-
-def _copy_vendored_assets(output_dir):
-    vendor_dir = importlib.resources.files(
-        'q2_vizard') / 'assets' / 'vendor'
-
-    for filename in _VENDORED_FILES:
-        source = vendor_dir / filename
-        destination = os.path.join(output_dir, filename)
-
-        with source.open('rb') as source_fh, \
-                open(destination, 'wb') as dest_fh:
-            shutil.copyfileobj(source_fh, dest_fh)

@@ -10,21 +10,25 @@ import hashlib
 import importlib.resources
 from pathlib import Path
 import tempfile
-import unittest
 
 import pandas as pd
 
 from qiime2 import Metadata
+from qiime2.plugin.testing import TestPluginBase
 
-from .._util import _VENDORED_FILES
+from .._render import _VENDORED_FILES
 from ..boxplot import boxplot
 from ..heatmap import heatmap
 from ..lineplot import lineplot
 from ..scatterplot import scatterplot_2d
 
 
-class TestVendoredAssets(unittest.TestCase):
+class TestVendoredAssets(TestPluginBase):
+    package = 'q2_vizard.tests'
+
     def setUp(self):
+        super().setUp()
+
         index = pd.Index(['sample1', 'sample2', 'sample3'],
                          name='sample-id')
         data = [
@@ -64,8 +68,7 @@ class TestVendoredAssets(unittest.TestCase):
                     self.assertEqual(emitted, packaged)
 
     def test_templates_use_local_scripts(self):
-        for visualization in (
-                'scatterplot_2d', 'heatmap', 'lineplot', 'boxplot'):
+        for visualization in self.plugin.visualizers.keys():
             with self.subTest(visualization=visualization):
                 template = (
                     self.assets / visualization / 'index.html').read_text()
@@ -74,6 +77,10 @@ class TestVendoredAssets(unittest.TestCase):
                 self.assertIn('src="vega-embed.min.js"', template)
                 self.assertNotIn('cdn.jsdelivr.net', template)
 
+    # TODO: whenever the vega version used is updated (and thus the vega embed
+    # files are changed) these checksums will fail if they are not also
+    # re-calculated and updated. When this takes place, they will need to get
+    # updated here AND in the README.md file (same relpath as vega embed files)
     def test_vendored_script_checksums(self):
         expected = {
             'vega.min.js': (
