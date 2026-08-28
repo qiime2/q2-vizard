@@ -6,66 +6,60 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import os
 import hashlib
 import importlib.resources
-from pathlib import Path
-import tempfile
 
-import pandas as pd
-
-from qiime2 import Metadata
+from qiime2.sdk import usage
 from qiime2.plugin.testing import TestPluginBase
 
 from .._render import _VENDORED_FILES
-from ..boxplot import boxplot
-from ..heatmap import heatmap
-from ..lineplot import lineplot
-from ..scatterplot import scatterplot_2d
 
 
-class TestVendoredAssets(TestPluginBase):
+class TestRenderedVisualizations(TestPluginBase):
     package = 'q2_vizard.tests'
 
     def setUp(self):
         super().setUp()
 
-        index = pd.Index(['sample1', 'sample2', 'sample3'],
-                         name='sample-id')
-        data = [
-            [1.0, 'foo'],
-            [2.0, 'bar'],
-            [3.0, 'baz'],
-        ]
-        self.md = Metadata(pd.DataFrame(
-            data=data, index=index, dtype=object,
-            columns=['numeric-col', 'categorical-col']))
         self.assets = importlib.resources.files('q2_vizard') / 'assets'
         self.vendor = self.assets / 'vendor'
 
-    def test_visualizations_copy_vendored_assets(self):
-        visualizers = {
-            'scatterplot_2d': lambda output_dir: scatterplot_2d(
-                output_dir, self.md),
-            'heatmap': lambda output_dir: heatmap(
-                output_dir, self.md, 'categorical-col', 'categorical-col',
-                'numeric-col'),
-            'lineplot': lambda output_dir: lineplot(
-                output_dir, self.md, 'numeric-col'),
-            'boxplot': lambda output_dir: boxplot(
-                output_dir, self.md, 'numeric-col', 'categorical-col'),
-        }
+    # Helper method to pull all params for each visualizer using its
+    # registered usage examples
+    def _iter_rendered_visualizations(self):
+        for action_name, action in self.plugin.visualizers.items():
+            for example_name, example_f in action.examples.items():
+                use = usage.ExecutionUsage()
+                example_f(use)
 
-        for visualization, render in visualizers.items():
-            with self.subTest(visualization=visualization), \
-                    tempfile.TemporaryDirectory() as output_dir:
-                render(output_dir)
+                for var in use.render().values():
+                    if var.var_type == 'visualization':
+                        yield action_name, example_name, var.value
+
+    def test_every_visualizer_has_a_usage_example(self):
+        for name, action in self.plugin.visualizers.items():
+            with self.subTest(visualizer=name):
+                self.assertTrue(
+                    action.examples,
+                    f'The `{name}` visualizer does not register any usage'
+                    ' examples. This is a requirement within `q2-vizard`,'
+                    ' ensuring the rendered output of each viz is covered by'
+                    ' `test_rendered_visualizations_copy_vendored_assets`.'
+                )
+
+    def test_rendered_visualizations_copy_vendored_assets(self):
+        for action_name, example_name, viz in \
+                self._iter_rendered_visualizations():
+            with self.subTest(visualizer=action_name, example=example_name):
+                output_dir = os.path.join(
+                    self.temp_dir.name, action_name, example_name)
+                viz.export_data(output_dir)
 
                 for filename in _VENDORED_FILES:
-                    packaged = (self.vendor / filename).read_bytes()
-                    with open(Path(output_dir) / filename, 'rb') as fh:
-                        emitted = fh.read()
-
-                    self.assertEqual(emitted, packaged)
+                    with open(os.path.join(output_dir, filename), 'rb') as fh:
+                        self.assertEqual(fh.read(),
+                                         (self.vendor / filename).read_bytes())
 
     def test_templates_use_local_scripts(self):
         for visualization in self.plugin.visualizers.keys():
@@ -81,7 +75,7 @@ class TestVendoredAssets(TestPluginBase):
     # files are changed) these checksums will fail if they are not also
     # re-calculated and updated. When this takes place, they will need to get
     # updated here AND in the README.md file (same relpath as vega embed files)
-    def test_vendored_script_checksums(self):
+    def test_vendored_files_checksums(self):
         expected = {
             'vega.min.js': (
                 '731f01b68116bc185a196322096ca342'
