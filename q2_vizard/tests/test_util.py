@@ -7,25 +7,11 @@
 # ----------------------------------------------------------------------------
 
 import pandas as pd
-import pytest
-import os
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
 
 from .._util import _col_type_validation, _measure_validation
-
-# This is a temporary 'fix' to failing selenium tests when they are run
-# within a container on the GHA linux runner.
-# The failures aren't interesting and the hope is that this will either be
-# fixed such that:
-# A. None of the tests are run within a container, or
-# B. The chrome & firefox tests on mac will fill in enough gaps
-# that we can see if something goes wrong that is interesting.
-skip_selenium = pytest.mark.skipif(
-    os.getenv('SKIP_SELENIUM', '') == '1',
-    reason='skipping Selenium tests within linux container'
-    )
 
 
 class TestBase(TestPluginBase):
