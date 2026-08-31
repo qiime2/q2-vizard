@@ -79,11 +79,27 @@
       "value": {"{{REPLACE_PARAM}}": "group_dropdown_default"},
       "bind": {
         "input": "select",
-        "options": {"{{REPLACE_PARAM}}": "md_cols_categorical"}
+        "options": {"{{REPLACE_PARAM}}": "md_cols_color"}
       }
     },
     {
-      "name": "colorPalette",
+      "name": "numericCols",
+      "value": {"{{REPLACE_PARAM}}": "md_cols_numeric"}
+    },
+    {
+      "name": "colorIsNumeric",
+      "update": "indexof(numericCols, colorBy) >= 0"
+    },
+    {
+      "name": "colorFieldCategorical",
+      "update": "colorIsNumeric ? 'legendDefault' : colorBy"
+    },
+    {
+      "name": "colorFieldNumeric",
+      "update": "colorIsNumeric ? colorBy : xField"
+    },
+    {
+      "name": "discretePalette",
       "value": "category10",
       "bind": {
         "input": "select",
@@ -91,6 +107,17 @@
           "Viridis", "Cividis", "Plasma", "Turbo",
           "category10", "category20", "category20c",
           "dark2", "set1", "tableau10", "tableau20"
+        ]
+      }
+    },
+    {
+      "name": "continuousPalette",
+      "value": "Viridis",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Viridis", "Cividis", "Magma",
+          "Plasma", "Inferno", "Turbo", "Greys"
         ]
       }
     }
@@ -127,16 +154,29 @@
       }
     },
     {
-      "name": "color_scale",
+      "name": "color_scale_categorical",
       "type": "ordinal",
       "range": {
-        "scheme": {"signal": "colorPalette"}
+        "scheme": {"signal": "discretePalette"}
       },
       "domain": {
         "data": "table",
-        "field": {"signal": "colorBy"},
+        "field": {"signal": "colorFieldCategorical"},
         "sort": true
       }
+    },
+    {
+      "name": "color_scale_numeric",
+      "type": "linear",
+      "range": {
+        "scheme": {"signal": "continuousPalette"}
+      },
+      "domain": {
+        "data": "table",
+        "field": {"signal": "colorFieldNumeric"}
+      },
+      "zero": false,
+      "nice": true
     }
   ],
 
@@ -166,15 +206,21 @@
 
   "legends": [
     {
+      "name": "categoricalLegend",
       "offset": 35,
-      "fill": "color_scale",
-      "symbolSize": 150,
+      "fill": "color_scale_categorical",
+      "symbolSize": {"signal": "colorIsNumeric ? 0 : 150"},
       "symbolStrokeWidth": 1.5,
-      "labelFontSize": 14,
+      "labelFontSize": {"signal": "colorIsNumeric ? 0 : 14"},
       "labelLimit": 900,
-      "title": {"signal": "colorBy"},
-      "titleFontSize": 16,
+      "title": {"signal": "colorIsNumeric ? '' : colorBy"},
+      "titleFontSize": {"signal": "colorIsNumeric ? 0 : 16"},
       "encode": {
+        "legend": {
+          "update": {
+            "opacity": {"signal": "colorIsNumeric ? 0 : 1"}
+          }
+        },
         "symbols": {
           "name": "legendSymbol",
           "interactive": false,
@@ -185,6 +231,26 @@
         "labels": {
           "name": "legendLabel",
           "interactive": false
+        }
+      }
+    },
+    {
+      "name": "numericLegend",
+      "type": "gradient",
+      "offset": 35,
+      "fill": "color_scale_numeric",
+      "gradientLength": {"signal": "colorIsNumeric ? height * 0.5 : 0"},
+      "gradientThickness": {"signal": "colorIsNumeric ? 16 : 0"},
+      "labelFontSize": {"signal": "colorIsNumeric ? 14 : 0"},
+      "labelLimit": 900,
+      "title": {"signal": "colorIsNumeric ? colorBy : ''"},
+      "titleFontSize": {"signal": "colorIsNumeric ? 16 : 0"},
+      "titleLimit": 900,
+      "encode": {
+        "legend": {
+          "update": {
+            "opacity": {"signal": "colorIsNumeric ? 1 : 0"}
+          }
         }
       }
     }
@@ -208,10 +274,17 @@
           "strokeWidth": {"value": 1.5},
           "size": {"signal": "markSize"},
           "stroke": {"value": "black"},
-          "fill": {
-            "scale": "color_scale",
-            "field": {"signal": "colorBy"}
-          }
+          "fill": [
+            {
+              "test": "colorIsNumeric",
+              "scale": "color_scale_numeric",
+              "field": {"signal": "colorBy"}
+            },
+            {
+              "scale": "color_scale_categorical",
+              "field": {"signal": "colorBy"}
+            }
+          ]
         },
         "hover": {
           "strokeWidth": {"value": 2.5},

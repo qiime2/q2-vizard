@@ -48,6 +48,8 @@ class TestScatterplot(TestPluginBase):
         self.test_cases = [
             ('B', 'Z', 'foobar', exp_marks_len,
              '5', '33', 'sample1', 'B', 'Z', 'foobar'),
+            ('B', 'Z', 'A', exp_marks_len,
+             '5', '33', 'sample1', 'B', 'Z', 'A'),
             ('', '', '', exp_marks_len, '1', '1',
              'sample1', 'A', 'A', 'legendDefault')
         ]
@@ -98,12 +100,18 @@ class TestScatterplot(TestPluginBase):
                     raise ValueError(f'Unexpected axis element {label} found.')
 
             # test that the legend contains the correct group
-            legend_element = \
-                driver.find_element(By.CSS_SELECTOR,
-                                    'g.mark-group.role-legend')
+            # both the categorical & the numeric legend are always rendered,
+            # but only the one matching the colorBy column is titled
+            legend_elements = \
+                driver.find_elements(By.CSS_SELECTOR,
+                                     'g.mark-group.role-legend')
+            self.assertEqual(len(legend_elements), 2)
 
-            label = legend_element.get_attribute('aria-label')
-            self.assertIn(f"legend titled '{exp_color_measure}'", label)
+            labels = [legend.get_attribute('aria-label')
+                      for legend in legend_elements]
+            titled = [label for label in labels
+                      if f"legend titled '{exp_color_measure}'" in label]
+            self.assertEqual(len(titled), 1)
 
             # test that we have the correct number of marks
             # and that a mark is where we expect it to be
