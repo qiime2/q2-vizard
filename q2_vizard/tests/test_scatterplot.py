@@ -22,7 +22,7 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_vizard.scatterplot import scatterplot_2d
 
 
-class TestScatterplot(TestPluginBase):
+class TestScatterplot2D(TestPluginBase):
     package = 'q2_vizard.tests'
 
     def setUp(self):

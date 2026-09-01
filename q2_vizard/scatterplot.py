@@ -93,3 +93,104 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
         spec_string = json.dumps(full_spec)
         fh.write(index.render(spec=spec_string))
+
+
+# TODO: refactor a scatterplot helper for shared validation between these two
+def scatterplot_correlation(output_dir: str, metadata: Metadata,
+                            x_measure: NumericMetadataColumn = None,
+                            y_measure: NumericMetadataColumn = None,
+                            color_by: MetadataColumn = None,
+                            title: str = None):
+
+    # input handling for initial metadata
+    md_ids = metadata.id_header
+    md = metadata.to_dataframe().reset_index()
+    md['legendDefault'] = 'data'
+
+    # handling categorical columns for color grouping
+    md_cols_categorical = \
+        metadata.filter_columns(column_type='categorical').to_dataframe()
+    md_cols_categorical = list(md_cols_categorical.columns)
+
+    # validation for group measure - both categorical & numeric columns
+    # are valid for color-coding, so only the column name is validated
+    if color_by:
+        _measure_validation(metadata=metadata, measure=color_by)
+
+    # setting default (or selected) group measure for color-coding
+    if color_by:
+        group_dropdown_default = color_by
+    else:
+        group_dropdown_default = 'legendDefault'
+
+    # handling numeric columns for x/y plotting
+    md_cols_numeric_all = \
+        metadata.filter_columns(column_type='numeric').to_dataframe()
+    md_cols_numeric = list(md_cols_numeric_all.columns)
+
+    md_cols_numeric_in_range = []
+    for col, vals in md_cols_numeric_all.items():
+        if vals.between(-1, 1).all():
+            md_cols_numeric_in_range.append(col)
+
+    # every column is available for color-coding, with 'legendDefault'
+    # included for removing color-coding
+    md_cols_color = md_cols_categorical + md_cols_numeric + ['legendDefault']
+
+    # validation for x/y measures
+    if x_measure:
+        _measure_validation(metadata=metadata, measure=x_measure)
+        _col_type_validation(metadata=metadata, measure=x_measure,
+                             col_type='numeric')
+        if x_measure not in md_cols_numeric:
+            raise ValueError(f'{x_measure} values not bounded within range'
+                             ' [-1, 1]. `scatterplot_correlation` is intended'
+                             ' for use with data in these bounds. For a more'
+                             ' flexible scatterplot without xy bounds, check'
+                             ' out `scatterplot_2d`.')
+        x_dropdown_default = x_measure
+    else:
+        x_dropdown_default = md_cols_numeric_in_range[0]
+
+    if y_measure:
+        _measure_validation(metadata=metadata, measure=y_measure)
+        _col_type_validation(metadata=metadata, measure=y_measure,
+                             col_type='numeric')
+        if y_measure not in md_cols_numeric:
+            raise ValueError(f'{x_measure} values not bounded within range'
+                             ' [-1, 1]. `scatterplot_correlation` is intended'
+                             ' for use with data in these bounds. For a more'
+                             ' flexible scatterplot without xy bounds, check'
+                             ' out `scatterplot_2d`.')
+        y_dropdown_default = y_measure
+    else:
+        y_dropdown_default = md_cols_numeric_in_range[0]
+
+    # jinja templating & JSON-ifying
+    J_ENV = jinja2.Environment(
+        loader=jinja2.PackageLoader('q2_vizard',
+                                    'assets/scatterplot_correlation')
+    )
+    index = J_ENV.get_template('index.html')
+
+    spec_fp = importlib.resources.files(
+        'q2_vizard') / 'assets' / 'scatterplot_correlation' / 'spec.json'
+
+    with open(spec_fp) as fh:
+        json_obj = json.load(fh)
+
+    metadata_obj = json.loads(md.to_json(orient='records'))
+
+    full_spec = \
+        _json_replace(json_obj, metadata=metadata_obj, md_ids=md_ids,
+                      md_cols_numeric=md_cols_numeric,
+                      md_cols_numeric_in_range=md_cols_numeric_in_range,
+                      x_dropdown_default=x_dropdown_default,
+                      y_dropdown_default=y_dropdown_default,
+                      md_cols_color=md_cols_color,
+                      group_dropdown_default=group_dropdown_default,
+                      title=title)
+
+    with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
+        spec_string = json.dumps(full_spec)
+        fh.write(index.render(spec=spec_string))
