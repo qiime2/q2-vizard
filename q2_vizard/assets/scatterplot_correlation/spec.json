@@ -53,6 +53,11 @@
       }
     },
     {
+      "name": "correlationCircles",
+      "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
       "name": "markSize",
       "value": 150,
       "bind": {
@@ -258,6 +263,38 @@
           "x": {"scale": "x_scale", "value": 0},
           "stroke": {"value": "black"},
           "strokeWidth": {"value": 1}
+        }
+      }
+    },
+    {
+      "name": "correlation_circle_radius_0_5",
+      "type": "arc",
+      "encode": {
+        "update": {
+          "x": {"scale": "x_scale", "value": 0},
+          "y": {"scale": "y_scale", "value": 0},
+          "outerRadius": {"signal": "scale('x_scale', 0.5) - scale('x_scale', 0)"},
+          "startAngle": {"value": 0},
+          "endAngle": {"signal": "2 * PI"},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"signal": "correlationCircles ? 1 : 0"}
+        }
+      }
+    },
+    {
+      "name": "correlation_circle_radius_1",
+      "type": "arc",
+      "encode": {
+        "update": {
+          "x": {"scale": "x_scale", "value": 0},
+          "y": {"scale": "y_scale", "value": 0},
+          "outerRadius": {"signal": "scale('x_scale', 1) - scale('x_scale', 0)"},
+          "startAngle": {"value": 0},
+          "endAngle": {"signal": "2 * PI"},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1},
+          "opacity": {"signal": "correlationCircles ? 1 : 0"}
         }
       }
     },
