@@ -13,7 +13,9 @@
     "contains": "padding"
   },
   "padding": 100,
-
+  "config":{
+    "axis": {"translate": 0}
+  },
   "signals": [
     {
       "name": "plotSize",
@@ -54,7 +56,7 @@
     },
     {
       "name": "correlationCircles",
-      "value": false,
+      "value": true,
       "bind": {"input": "checkbox"}
     },
     {
@@ -127,15 +129,15 @@
       "name": "x_scale",
       "type": "linear",
       "range": "width",
-      "nice": true,
-      "domain": [-1, 1]
+      "nice": false,
+      "domain": [-1.1, 1.1]
     },
     {
       "name": "y_scale",
       "type": "linear",
       "range": "height",
-      "nice": true,
-      "domain": [-1, 1]
+      "nice": false,
+      "domain": [-1.1, 1.1]
     },
     {
       "name": "color_scale_categorical",
@@ -241,28 +243,56 @@
 
   "marks": [
     {
-      "name": "x_line",
+      "name": "x_line_center",
       "type": "rule",
       "encode": {
         "update": {
-          "x": {"scale": "x_scale", "value": -1},
-          "x2": {"scale": "x_scale", "value": 1},
+          "x": {"scale": "x_scale", "value": -1.095},
+          "x2": {"scale": "x_scale", "value": 1.095},
           "y": {"scale": "y_scale", "value": 0},
           "stroke": {"value": "black"},
-          "strokeWidth": {"value": 1}
+          "strokeWidth": {"value": 0.5},
+          "strokeDash": {"value": [8, 2]}
         }
       }
     },
     {
-      "name": "y_line",
+      "name": "y_line_center",
       "type": "rule",
       "encode": {
         "update": {
-          "y": {"scale": "y_scale", "value": -1},
-          "y2": {"scale": "y_scale", "value": 1},
+          "y": {"scale": "y_scale", "value": -1.095},
+          "y2": {"scale": "y_scale", "value": 1.095},
           "x": {"scale": "x_scale", "value": 0},
           "stroke": {"value": "black"},
-          "strokeWidth": {"value": 1}
+          "strokeWidth": {"value": 0.5},
+          "strokeDash": {"value": [8, 2]}
+        }
+      }
+    },
+    {
+      "name": "x_line_border",
+      "type": "rule",
+      "encode": {
+        "update": {
+          "x": {"scale": "x_scale", "value": -1.1},
+          "x2": {"scale": "x_scale", "value": 1.1},
+          "y": {"scale": "y_scale", "value": 1.1},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 0.5}
+        }
+      }
+    },
+    {
+      "name": "y_line_border",
+      "type": "rule",
+      "encode": {
+        "update": {
+          "y": {"scale": "y_scale", "value": -1.1},
+          "y2": {"scale": "y_scale", "value": 1.1},
+          "x": {"scale": "x_scale", "value": 1.1},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 0.5}
         }
       }
     },
