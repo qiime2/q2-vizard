@@ -74,6 +74,6 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
                           md_cols_numeric=md_cols_numeric,
                           x_dropdown_default=x_dropdown_default,
                           y_dropdown_default=y_dropdown_default,
-                          md_cols_categorical=md_cols_categorical,
+                          md_cols_color=md_cols_color,
                           group_dropdown_default=group_dropdown_default,
                           title=title)
