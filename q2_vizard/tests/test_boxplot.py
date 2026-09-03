@@ -17,7 +17,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
-from .test_util import skip_selenium
 
 from q2_vizard import boxplot
 
@@ -378,7 +377,6 @@ class TestBase(TestPluginBase):
                 self.assertEqual(exp, obs)
 
     # run selenium tests using a headless chrome driver
-    @skip_selenium
     def test_boxplot_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
@@ -407,7 +405,6 @@ class TestBase(TestPluginBase):
                         exp_single_box_outlier_marks_len)
 
     # run selenium tests using a headless firefox driver
-    @skip_selenium
     def test_boxplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')

@@ -62,6 +62,30 @@
       mark.setAttribute('data-y', y);
     });
 
+    // Only one of the two color palette dropdowns applies at a time -
+    // discrete for a categorical colorBy, continuous for a numeric one
+    var paletteBindings = {};
+    var bindings = document.querySelectorAll('#viz .vega-bind');
+    bindings.forEach(function(binding) {
+      var bindName = binding.querySelector('.vega-bind-name');
+      if (bindName && (bindName.textContent === 'discretePalette' ||
+                       bindName.textContent === 'continuousPalette')) {
+        paletteBindings[bindName.textContent] = binding;
+      }
+    });
+
+    function togglePaletteBindings(colorIsNumeric) {
+      Object.keys(paletteBindings).forEach(function(bindName) {
+        var applies = (bindName === 'continuousPalette') === !!colorIsNumeric;
+        paletteBindings[bindName].style.display = applies ? '' : 'none';
+      });
+    }
+
+    togglePaletteBindings(view.signal('colorIsNumeric'));
+    view.addSignalListener('colorIsNumeric', function(_, value) {
+      togglePaletteBindings(value);
+    });
+
   }).catch(console.error);
 </script>
 </body>

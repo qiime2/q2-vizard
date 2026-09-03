@@ -8,7 +8,7 @@
 
 import json
 
-from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
+from qiime2 import Metadata, NumericMetadataColumn, MetadataColumn
 
 from ._util import _col_type_validation, _measure_validation
 from ._render import _render_visualization
@@ -17,7 +17,7 @@ from ._render import _render_visualization
 def scatterplot_2d(output_dir: str, metadata: Metadata,
                    x_measure: NumericMetadataColumn = None,
                    y_measure: NumericMetadataColumn = None,
-                   color_by: CategoricalMetadataColumn = None,
+                   color_by: MetadataColumn = None,
                    title: str = None):
 
     # input handling for initial metadata
@@ -30,15 +30,12 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
         metadata.filter_columns(column_type='categorical').to_dataframe()
     md_cols_categorical = list(md_cols_categorical.columns)
 
-    # validation for group measure
+    # validation for group measure - both categorical & numeric columns
+    # are valid for color-coding, so only the column name is validated
     if color_by:
         _measure_validation(metadata=metadata, measure=color_by)
-        _col_type_validation(metadata=metadata, measure=color_by,
-                             col_type='categorical')
 
     # setting default (or selected) group measure for color-coding
-    # and adding 'legendDefault' for removing color-coding
-    md_cols_categorical.append('legendDefault')
     if color_by:
         group_dropdown_default = color_by
     else:
@@ -48,6 +45,10 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     md_cols_numeric = \
         metadata.filter_columns(column_type='numeric').to_dataframe()
     md_cols_numeric = list(md_cols_numeric.columns)
+
+    # every column is available for color-coding, with 'legendDefault'
+    # included for removing color-coding
+    md_cols_color = md_cols_categorical + md_cols_numeric + ['legendDefault']
 
     # validation for x/y measures
     if x_measure:
