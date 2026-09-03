@@ -18,8 +18,3 @@ e5c92904f1b614e54a6a860ecf194ca88bf948b4faeb7af9a0fe2cad93dc730e  vega-embed.min
 
 Both bundles and both license files are copied into every generated
 visualization archive.
-
-Note that as of this change (27 Aug. 2026) the size of each .qzv generated
-will now increase in size by 194.6 KB (when compressed).
-This number may change in the future if/when the version of vega being used
-gets bumped (and this note will be updated accordingly).
