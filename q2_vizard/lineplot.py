@@ -7,13 +7,12 @@
 # ----------------------------------------------------------------------------
 
 import pandas as pd
-import os
 import json
-import importlib
-import jinja2
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
-from ._util import _json_replace, _measure_validation, _col_type_validation
+
+from ._util import _measure_validation, _col_type_validation
+from ._render import _render_visualization
 
 
 def lineplot(output_dir: str, metadata: Metadata,
@@ -145,18 +144,6 @@ def lineplot(output_dir: str, metadata: Metadata,
 
         averaged_md = averaged_md.sort_values(by=[group_by, x_measure])
 
-    # jinja templating & JSON-ifying
-    J_ENV = jinja2.Environment(
-        loader=jinja2.PackageLoader('q2_vizard', 'assets/lineplot')
-    )
-    index = J_ENV.get_template('index.html')
-
-    spec_fp = importlib.resources.files(
-        'q2_vizard') / 'assets' / 'lineplot' / 'spec.json'
-
-    with open(spec_fp) as fh:
-        json_obj = json.load(fh)
-
     md_obj = json.loads(md.to_json(orient='records'))
     averaged_md_obj = json.loads(averaged_md.to_json(orient='records'))
 
@@ -165,13 +152,11 @@ def lineplot(output_dir: str, metadata: Metadata,
     else:
         subtitle = ' '
 
-    full_spec = \
-        _json_replace(json_obj, metadata=md_obj, md_ids=md_ids,
-                      averaged_metadata=averaged_md_obj,
-                      md_cols_numeric=md_cols_numeric, x_measure=x_measure,
-                      y_dropdown_default=y_dropdown_default,
-                      group_by=group_by, title=title, subtitle=subtitle)
-
-    with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        spec_string = json.dumps(full_spec)
-        fh.write(index.render(spec=spec_string))
+    _render_visualization(output_dir, 'lineplot', 'spec.json',
+                          metadata=md_obj, md_ids=md_ids,
+                          averaged_metadata=averaged_md_obj,
+                          md_cols_numeric=md_cols_numeric,
+                          x_measure=x_measure,
+                          y_dropdown_default=y_dropdown_default,
+                          group_by=group_by, title=title,
+                          subtitle=subtitle)
