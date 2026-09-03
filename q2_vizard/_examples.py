@@ -179,3 +179,58 @@ def heatmap(use):
             visualization='heatmap'
         )
     )
+
+
+# boxplot examples
+def boxplot_horizontal_percentile_whisker_range(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    boxplot_viz, = use.action(
+        use.UsageAction('vizard', 'boxplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            distribution_measure='x',
+            group_by='group',
+            whisker_range='percentile',
+            box_orientation='horizontal'
+        ),
+        use.UsageOutputNames(
+            visualization='boxplot'
+        )
+    )
+
+
+def boxplot_horizontal_tukeys_iqr_whisker_range(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    boxplot_viz, = use.action(
+        use.UsageAction('vizard', 'boxplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            distribution_measure='x',
+            group_by='group',
+            whisker_range='tukeys_iqr',
+            box_orientation='horizontal'
+        ),
+        use.UsageOutputNames(
+            visualization='boxplot'
+        )
+    )
+
+
+def boxplot_vertical_minmax_whisker_range(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    boxplot_viz, = use.action(
+        use.UsageAction('vizard', 'boxplot'),
+        use.UsageInputs(
+            metadata=metadata,
+            distribution_measure='x',
+            group_by='group',
+            whisker_range='minmax',
+            box_orientation='vertical'
+        ),
+        use.UsageOutputNames(
+            visualization='boxplot'
+        )
+    )

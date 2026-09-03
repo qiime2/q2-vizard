@@ -1,1 +1,2 @@
 pyproject.toml export-subst
+q2_vizard/assets/vendor/*.min.js binary linguist-vendored
