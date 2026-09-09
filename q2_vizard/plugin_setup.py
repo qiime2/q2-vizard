@@ -79,8 +79,8 @@ plugin.visualizers.register_function(
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
                 ' measures with optional categorical or numeric color'
                 ' grouping.',
-    examples={'scatterplot_defaults': ex.scatterplot_defaults,
-              'scatterplot_all_measures': ex.scatterplot_all_measures}
+    examples={'scatterplot_2d_defaults': ex.scatterplot_2d_defaults,
+              'scatterplot_2d_all_measures': ex.scatterplot_2d_all_measures}
 )
 
 
@@ -110,7 +110,10 @@ plugin.visualizers.register_function(
     description='Correlation scatterplot for visualizing two numeric Metadata'
                 ' measures bounded from [-1, 1] with optional categorical'
                 ' or numeric color grouping.',
-    examples={}
+    examples={'scatterplot_correlation_defaults':
+              ex.scatterplot_correlation_defaults,
+              'scatterplot_correlation_all_measures':
+              ex.scatterplot_correlation_all_measures}
 )
 
 
