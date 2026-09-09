@@ -108,6 +108,14 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
         if vals.between(-1, 1).all():
             md_cols_numeric_in_range.append(col)
 
+    if len(md_cols_numeric_in_range) == 0:
+        raise ValueError('None of the numeric columns in your metadata have'
+                         ' values that remain within range [-1, 1].'
+                         ' `scatterplot_correlation` is intended for use with'
+                         ' data in these bounds. For a more flexible'
+                         ' scatterplot without xy bounds, try using' \
+                         ' `scatterplot_2d`.')
+
     # after iterating all we want is the cols from here
     md_cols_numeric = list(md_cols_numeric.columns)
 
