@@ -14,11 +14,7 @@ from ._util import _col_type_validation, _measure_validation
 from ._render import _render_visualization
 
 
-def scatterplot_2d(output_dir: str, metadata: Metadata,
-                   x_measure: NumericMetadataColumn = None,
-                   y_measure: NumericMetadataColumn = None,
-                   color_by: MetadataColumn = None,
-                   title: str = None):
+def _scatterplot_prep(metadata, x_measure, y_measure, color_by):
 
     # input handling for initial metadata
     md_ids = metadata.id_header
@@ -44,30 +40,47 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
     # handling numeric columns for x/y plotting
     md_cols_numeric = \
         metadata.filter_columns(column_type='numeric').to_dataframe()
-    md_cols_numeric = list(md_cols_numeric.columns)
 
     # every column is available for color-coding, with 'legendDefault'
     # included for removing color-coding
-    md_cols_color = md_cols_categorical + md_cols_numeric + ['legendDefault']
+    md_cols_color = (md_cols_categorical + list(md_cols_numeric.columns)
+                     + ['legendDefault'])
 
-    # validation for x/y measures
-    if x_measure:
-        _measure_validation(metadata=metadata, measure=x_measure)
-        _col_type_validation(metadata=metadata, measure=x_measure,
-                             col_type='numeric')
-        x_dropdown_default = x_measure
-    else:
-        x_dropdown_default = md_cols_numeric[0]
-
-    if y_measure:
-        _measure_validation(metadata=metadata, measure=y_measure)
-        _col_type_validation(metadata=metadata, measure=y_measure,
-                             col_type='numeric')
-        y_dropdown_default = y_measure
-    else:
-        y_dropdown_default = md_cols_numeric[0]
+    for measure in (x_measure, y_measure):
+        if measure:
+            _measure_validation(metadata=metadata, measure=measure)
+            _col_type_validation(metadata=metadata, measure=measure,
+                                 col_type='numeric')
 
     metadata_obj = json.loads(md.to_json(orient='records'))
+
+    return (metadata_obj, md_ids, md_cols_numeric, md_cols_color,
+            group_dropdown_default)
+
+
+def scatterplot_2d(output_dir: str, metadata: Metadata,
+                   x_measure: NumericMetadataColumn = None,
+                   y_measure: NumericMetadataColumn = None,
+                   color_by: MetadataColumn = None,
+                   title: str = None):
+
+    (metadata_obj, md_ids, md_cols_numeric, md_cols_color,
+     group_dropdown_default) = \
+        _scatterplot_prep(metadata=metadata, x_measure=x_measure,
+                          y_measure=y_measure, color_by=color_by)
+
+    md_cols_numeric = list(md_cols_numeric.columns)
+
+    # validation for x/y measures
+    if not x_measure:
+        x_dropdown_default = md_cols_numeric[0]
+    else:
+        x_dropdown_default = x_measure
+
+    if not y_measure:
+        y_dropdown_default = md_cols_numeric[0]
+    else:
+        y_dropdown_default = y_measure
 
     _render_visualization(output_dir, 'scatterplot_2d', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,
@@ -79,78 +92,47 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
                           title=title)
 
 
-# TODO: refactor a scatterplot helper for shared validation between these two
 def scatterplot_correlation(output_dir: str, metadata: Metadata,
                             x_measure: NumericMetadataColumn = None,
                             y_measure: NumericMetadataColumn = None,
                             color_by: MetadataColumn = None,
                             title: str = None):
 
-    # input handling for initial metadata
-    md_ids = metadata.id_header
-    md = metadata.to_dataframe().reset_index()
-    md['legendDefault'] = 'data'
-
-    # handling categorical columns for color grouping
-    md_cols_categorical = \
-        metadata.filter_columns(column_type='categorical').to_dataframe()
-    md_cols_categorical = list(md_cols_categorical.columns)
-
-    # validation for group measure - both categorical & numeric columns
-    # are valid for color-coding, so only the column name is validated
-    if color_by:
-        _measure_validation(metadata=metadata, measure=color_by)
-
-    # setting default (or selected) group measure for color-coding
-    if color_by:
-        group_dropdown_default = color_by
-    else:
-        group_dropdown_default = 'legendDefault'
-
-    # handling numeric columns for x/y plotting
-    md_cols_numeric_all = \
-        metadata.filter_columns(column_type='numeric').to_dataframe()
-    md_cols_numeric = list(md_cols_numeric_all.columns)
+    (metadata_obj, md_ids, md_cols_numeric, md_cols_color,
+     group_dropdown_default) = \
+        _scatterplot_prep(metadata=metadata, x_measure=x_measure,
+                          y_measure=y_measure, color_by=color_by)
 
     md_cols_numeric_in_range = []
-    for col, vals in md_cols_numeric_all.items():
+    for col, vals in md_cols_numeric.items():
         if vals.between(-1, 1).all():
             md_cols_numeric_in_range.append(col)
 
-    # every column is available for color-coding, with 'legendDefault'
-    # included for removing color-coding
-    md_cols_color = md_cols_categorical + md_cols_numeric + ['legendDefault']
+    # after iterating all we want is the cols from here
+    md_cols_numeric = list(md_cols_numeric.columns)
 
     # validation for x/y measures
     if x_measure:
-        _measure_validation(metadata=metadata, measure=x_measure)
-        _col_type_validation(metadata=metadata, measure=x_measure,
-                             col_type='numeric')
-        if x_measure not in md_cols_numeric:
+        if x_measure not in md_cols_numeric_in_range:
             raise ValueError(f'{x_measure} values not bounded within range'
                              ' [-1, 1]. `scatterplot_correlation` is intended'
                              ' for use with data in these bounds. For a more'
-                             ' flexible scatterplot without xy bounds, check'
-                             ' out `scatterplot_2d`.')
+                             ' flexible scatterplot without xy bounds, try'
+                             ' using `scatterplot_2d`.')
         x_dropdown_default = x_measure
     else:
         x_dropdown_default = md_cols_numeric_in_range[0]
 
     if y_measure:
-        _measure_validation(metadata=metadata, measure=y_measure)
-        _col_type_validation(metadata=metadata, measure=y_measure,
-                             col_type='numeric')
-        if y_measure not in md_cols_numeric:
-            raise ValueError(f'{x_measure} values not bounded within range'
+        if y_measure not in md_cols_numeric_in_range:
+            raise ValueError(f'{y_measure} values not bounded within range'
                              ' [-1, 1]. `scatterplot_correlation` is intended'
                              ' for use with data in these bounds. For a more'
-                             ' flexible scatterplot without xy bounds, check'
-                             ' out `scatterplot_2d`.')
+                             ' flexible scatterplot without xy bounds, try'
+                             ' using `scatterplot_2d`.')
         y_dropdown_default = y_measure
     else:
         y_dropdown_default = md_cols_numeric_in_range[0]
-
-    metadata_obj = json.loads(md.to_json(orient='records'))
 
     _render_visualization(output_dir, 'scatterplot_correlation', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,
