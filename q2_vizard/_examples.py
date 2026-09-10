@@ -85,7 +85,6 @@ def scatterplot_correlation_all_measures(use):
     )
 
 
-
 # lineplot examples
 def lineplot_median_replicates_with_grouping(use):
     metadata = use.init_metadata('metadata', md_factory)

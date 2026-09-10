@@ -22,7 +22,7 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_vizard.scatterplot import scatterplot_2d
 
 
-class TestScatterplot2D(TestPluginBase):
+class TestScatterplot(TestPluginBase):
     package = 'q2_vizard.tests'
 
     def setUp(self):
@@ -32,16 +32,16 @@ class TestScatterplot2D(TestPluginBase):
                              'sample4', 'sample5', 'sample6'],
                             name='sample-id')
         data = [
-            [1, 'foo', 5, 'left-palm', 33],
-            [2, 'foo', 10, 'right-foot', 66],
-            [3, 'bar', 15, 'gut', 55],
-            [4, 'bar', 20, 'right-foot', 44],
-            [5, 'baz', 25, 'left-palm', 77],
-            [6, 'baz', 30, 'gut', 22]
+            [1, 'foo', 5, 'left-palm', 33, 0.1, 0.01],
+            [2, 'foo', 10, 'right-foot', 66, 0.3, 0.03],
+            [3, 'bar', 15, 'gut', 55, -0.2, 0.02],
+            [4, 'bar', 20, 'right-foot', 44, -0.7, 0.033],
+            [5, 'baz', 25, 'left-palm', 77, 0, 0.025],
+            [6, 'baz', 30, 'gut', 22, 0.7, -0.05]
         ]
         self.md = Metadata(pd.DataFrame(
             data=data, index=md_index, dtype=object,
-            columns=['A', 'foobar', 'B', 'bodysite', 'Z']))
+            columns=['A', 'foobar', 'B', 'bodysite', 'Z', 'C', 'F']))
 
         exp_marks_len = len(data)
 
@@ -54,8 +54,8 @@ class TestScatterplot2D(TestPluginBase):
              'sample1', 'A', 'A', 'legendDefault')
         ]
 
-    # utility method that will run all checks for scatterplot
-    # used in each browser test below (firefox & chrome supported)
+    # utility method that will run all checks for each scatterplot method
+    # used in browser tests under each child class (firefox & chrome supported)
     def _selenium_scatterplot_test(self, driver, x_measure, y_measure,
                                    color_measure, exp_marks_len, exp_x_mark,
                                    exp_y_mark, exp_mark_id, exp_x_measure,
@@ -129,8 +129,15 @@ class TestScatterplot2D(TestPluginBase):
             self.assertEqual(mark_x, exp_x_mark)
             self.assertEqual(mark_y, exp_y_mark)
 
+
+class TestScatterplot2D(TestScatterplot):
+    package = 'q2_vizard.tests'
+
+    def setUp(self):
+        return super().setUp()
+
     # run selenium checks with a chrome driver
-    def test_scatterplot_chrome(self):
+    def test_scatterplot_2d_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
@@ -157,7 +164,7 @@ class TestScatterplot2D(TestPluginBase):
                         exp_x_measure, exp_y_measure, exp_color_measure)
 
     # run selenium checks with a firefox driver
-    def test_scatterplot_firefox(self):
+    def test_scatterplot_2d_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
 

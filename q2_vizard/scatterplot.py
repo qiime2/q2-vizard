@@ -113,7 +113,7 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
                          ' values that remain within range [-1, 1].'
                          ' `scatterplot_correlation` is intended for use with'
                          ' data in these bounds. For a more flexible'
-                         ' scatterplot without xy bounds, try using' \
+                         ' scatterplot without xy bounds, try using'
                          ' `scatterplot_2d`.')
 
     # after iterating all we want is the cols from here
