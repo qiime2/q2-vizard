@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="vega.min.js"></script>
+  <script src="vega-embed.min.js"></script>
+  <script type="application/json" id="spec">
+    {{ spec }}
+  </script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #viz {
+      display: block;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      position: relative;
+      overflow: auto;
+    }
+    .vega-bindings {
+      top: 25px;
+      left: 25px;
+      display: flex;
+      position: fixed;
+      font-family: monospace;
+    }
+    .vega-bind {
+      margin-right: 50px;
+      vertical-align: middle;
+    }
+    .vega-bind span {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+
+<div id="viz"></div>
+
+<script type="text/javascript">
+  var spec = JSON.parse(document.getElementById('spec').innerHTML);
+
+  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
+    var view = result.view;
+    var svg = document.querySelector('#viz svg');
+
+    // Keep the plot area square and as large as fits in the viewport
+    var chromeW = null, chromeH = null;
+
+    function fitSquare() {
+      // Non-plot chrome (padding + axes + legend + title)
+      // Measured once off the first render, then treated as fixed
+      if (chromeW === null) {
+        var el = document.querySelector('#viz svg');
+        if (el) {
+          var box = el.getBoundingClientRect(), cur = view.signal('plotSize');
+          chromeW = box.width - cur;
+          chromeH = box.height - cur;
+        }
+      }
+
+      var next = Math.max(200, Math.floor(Math.min(
+        document.documentElement.clientWidth - (chromeW === null ? 320 : chromeW),
+        document.documentElement.clientHeight - (chromeH === null ? 320 : chromeH)
+      )));
+
+      view.signal('plotSize', next).run();
+    }
+
+    fitSquare();
+
+    // Add id & xy attrs to the marks for easy selection in Selenium.
+    // Re-applied after every render, since resizing recreates these elements.
+    function tagMarks() {
+    var marks = svg.querySelectorAll('g.marks > path');
+    marks.forEach(function(mark, index) {
+      var data = view.data('table')[index];
+
+      // These are each connected to a vega signal to pull the correct field
+      var id = data[view.signal('idField')];
+      var x = data[view.signal('xField')];
+      var y = data[view.signal('yField')];
+
+      // Add attrs to the marks elements for id & xy positions
+      mark.setAttribute('data-id', id);
+      mark.setAttribute('data-x', x);
+      mark.setAttribute('data-y', y);
+    });
+    }
+
+    tagMarks();
+    window.addEventListener('resize', function() { fitSquare(); tagMarks(); });
+
+    // Only one of the two color palette dropdowns applies at a time -
+    // discrete for a categorical colorBy, continuous for a numeric one
+    var paletteBindings = {};
+    var bindings = document.querySelectorAll('#viz .vega-bind');
+    bindings.forEach(function(binding) {
+      var bindName = binding.querySelector('.vega-bind-name');
+      if (bindName && (bindName.textContent === 'discretePalette' ||
+                       bindName.textContent === 'continuousPalette')) {
+        paletteBindings[bindName.textContent] = binding;
+      }
+    });
+
+    function togglePaletteBindings(colorIsNumeric) {
+      Object.keys(paletteBindings).forEach(function(bindName) {
+        var applies = (bindName === 'continuousPalette') === !!colorIsNumeric;
+        paletteBindings[bindName].style.display = applies ? '' : 'none';
+      });
+    }
+
+    togglePaletteBindings(view.signal('colorIsNumeric'));
+    view.addSignalListener('colorIsNumeric', function(_, value) {
+      togglePaletteBindings(value);
+    });
+
+  }).catch(console.error);
+</script>
+</body>
+</html>
