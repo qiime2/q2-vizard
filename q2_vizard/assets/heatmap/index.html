@@ -6,6 +6,7 @@
   <script type="application/json" id="spec">
     {{ spec }}
   </script>
+  <link rel="stylesheet" href="vizard.css">
   <style>
     body {
       width: 100%;
@@ -14,35 +15,19 @@
       padding: 10px;
     }
     #viz {
-      margin: 100px auto;
+      margin: 30px auto 100px auto;
       position: relative;
     }
-    .vega-bindings {
-      top: 25px;
-      left: 25px;
-      display: flex;
-      position: fixed;
-      font-family: monospace;
-    }
-    .vega-bind {
-    margin-right: 50px;
-    vertical-align: middle
-    }
-
-    .vega-bind span {
-    display: flex;
-    }
-
-
   </style>
 </head>
 <body>
 
+<div id="controls" class="vega-bindings"></div>
 <div id="viz"></div>
 
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
-  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
+  vegaEmbed('#viz', spec, {'renderer': 'svg', 'bind': '#controls'}).then(function(result) {
     var view = result.view;
     var svg = document.querySelector('#viz svg');
 

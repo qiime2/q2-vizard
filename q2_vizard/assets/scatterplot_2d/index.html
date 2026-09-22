@@ -6,43 +6,36 @@
   <script type="application/json" id="spec">
     {{ spec }}
   </script>
+  <link rel="stylesheet" href="vizard.css">
   <style>
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
     }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
     #viz {
       display: block;
       width: 100%;
-      height: 100%;
+      flex: 1;
+      min-height: 0;
       margin: 0 auto;
       position: relative;
-    }
-    .vega-bindings {
-      top: 25px;
-      left: 25px;
-      display: flex;
-      position: fixed;
-      font-family: monospace;
-    }
-    .vega-bind {
-      margin-right: 50px;
-      vertical-align: middle;
-    }
-    .vega-bind span {
-      display: flex;
     }
   </style>
 </head>
 <body>
 
+<div id="controls" class="vega-bindings"></div>
 <div id="viz"></div>
 
 <script type="text/javascript">
   var spec = JSON.parse(document.getElementById('spec').innerHTML);
 
-  vegaEmbed('#viz', spec, {'renderer': 'svg'}).then(function(result) {
+  vegaEmbed('#viz', spec, {'renderer': 'svg', 'bind': '#controls'}).then(function(result) {
     var view = result.view;
     var svg = document.querySelector('#viz svg');
 
@@ -65,7 +58,7 @@
     // Only one of the two color palette dropdowns applies at a time -
     // discrete for a categorical colorBy, continuous for a numeric one
     var paletteBindings = {};
-    var bindings = document.querySelectorAll('#viz .vega-bind');
+    var bindings = document.querySelectorAll('#controls .vega-bind');
     bindings.forEach(function(binding) {
       var bindName = binding.querySelector('.vega-bind-name');
       if (bindName && (bindName.textContent === 'discretePalette' ||
@@ -85,6 +78,10 @@
     view.addSignalListener('colorIsNumeric', function(_, value) {
       togglePaletteBindings(value);
     });
+
+    new ResizeObserver(function() {
+      window.dispatchEvent(new Event('resize'));
+    }).observe(document.getElementById('viz'));
 
   }).catch(console.error);
 </script>
