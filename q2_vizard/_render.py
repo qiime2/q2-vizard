@@ -42,14 +42,6 @@ def _copy_assets(output_dir, asset_dir, filenames):
             shutil.copyfileobj(source_fh, dest_fh)
 
 
-def _copy_vendored_assets(output_dir):
-    _copy_assets(output_dir, 'vendor', _VENDORED_FILES)
-
-
-def _copy_shared_assets(output_dir):
-    _copy_assets(output_dir, 'shared', _SHARED_FILES)
-
-
 def _json_replace(json_obj, /, **values):
     """
     Search for elements of `{"{{REPLACE_PARAM}}": "some_key"}` and replace
@@ -108,5 +100,5 @@ def _render_visualization(output_dir, name, spec_filename='spec.json', /,
         spec_string = json.dumps(full_spec)
         fh.write(index.render(spec=spec_string))
 
-    _copy_vendored_assets(output_dir)
-    _copy_shared_assets(output_dir)
+    _copy_assets(output_dir, 'vendor', _VENDORED_FILES)
+    _copy_assets(output_dir, 'shared', _SHARED_FILES)
