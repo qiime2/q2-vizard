@@ -16,7 +16,7 @@
     "type": "fit",
     "contains": "padding"
   },
-  "padding": 100,
+  "padding": {"top": 30, "right": 100, "bottom": 100, "left": 100},
 
   "signals": [
     {

@@ -1,0 +1,35 @@
+
+.vega-bindings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 50px;
+  padding: 25px 25px 0 25px;
+  font-family: monospace;
+}
+.vega-bind {
+  vertical-align: middle;
+}
+.vega-bind span {
+  display: flex;
+}
+
+#viz svg {
+  display: block;
+}
+
+#viz.vega-embed summary {
+  right: 30px;
+}
+#viz.vega-embed .vega-actions {
+  right: 21px;
+}
+
+#viz.vega-embed.has-actions {
+  padding-right: 58px;
+}
+
+#viz {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}

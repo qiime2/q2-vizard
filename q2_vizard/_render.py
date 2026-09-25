@@ -22,13 +22,19 @@ _VENDORED_FILES = (
     'LICENSE-vega-embed',
 )
 
+# first-party assets shared by every visualization
+# (kept out of `vendor/`, which holds pinned third-party dependencies only)
+_SHARED_FILES = (
+    'vizard.css',
+)
 
-def _copy_vendored_assets(output_dir):
-    vendor_dir = importlib.resources.files(
-        'q2_vizard') / 'assets' / 'vendor'
 
-    for filename in _VENDORED_FILES:
-        source = vendor_dir / filename
+def _copy_assets(output_dir, asset_dir, filenames):
+    source_dir = importlib.resources.files(
+        'q2_vizard') / 'assets' / asset_dir
+
+    for filename in filenames:
+        source = source_dir / filename
         destination = os.path.join(output_dir, filename)
 
         with source.open('rb') as source_fh, \
@@ -94,4 +100,5 @@ def _render_visualization(output_dir, name, spec_filename='spec.json', /,
         spec_string = json.dumps(full_spec)
         fh.write(index.render(spec=spec_string))
 
-    _copy_vendored_assets(output_dir)
+    _copy_assets(output_dir, 'vendor', _VENDORED_FILES)
+    _copy_assets(output_dir, 'shared', _SHARED_FILES)
