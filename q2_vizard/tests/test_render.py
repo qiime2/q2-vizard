@@ -13,7 +13,7 @@ import importlib.resources
 from qiime2.sdk import usage
 from qiime2.plugin.testing import TestPluginBase
 
-from .._render import _VENDORED_FILES
+from .._render import _VENDORED_FILES, _SHARED_FILES
 
 
 class TestRenderedVisualizations(TestPluginBase):
@@ -24,6 +24,7 @@ class TestRenderedVisualizations(TestPluginBase):
 
         self.assets = importlib.resources.files('q2_vizard') / 'assets'
         self.vendor = self.assets / 'vendor'
+        self.shared = self.assets / 'shared'
 
     # Helper method to pull all params for each visualizer using its
     # registered usage examples
@@ -61,6 +62,19 @@ class TestRenderedVisualizations(TestPluginBase):
                         self.assertEqual(fh.read(),
                                          (self.vendor / filename).read_bytes())
 
+    def test_rendered_visualizations_copy_shared_assets(self):
+        for action_name, example_name, viz in \
+                self._iter_rendered_visualizations():
+            with self.subTest(visualizer=action_name, example=example_name):
+                output_dir = os.path.join(
+                    self.temp_dir.name, action_name, example_name)
+                viz.export_data(output_dir)
+
+                for filename in _SHARED_FILES:
+                    with open(os.path.join(output_dir, filename), 'rb') as fh:
+                        self.assertEqual(fh.read(),
+                                         (self.shared / filename).read_bytes())
+
     def test_templates_use_local_scripts(self):
         for visualization in self.plugin.visualizers.keys():
             with self.subTest(visualization=visualization):
@@ -69,7 +83,25 @@ class TestRenderedVisualizations(TestPluginBase):
 
                 self.assertIn('src="vega.min.js"', template)
                 self.assertIn('src="vega-embed.min.js"', template)
+                self.assertIn('href="vizard.css"', template)
                 self.assertNotIn('cdn.jsdelivr.net', template)
+
+    # bindings are rendered into an in-flow `#controls` element (rather than
+    # vega-embed's default container inside `#viz`) so they can wrap on narrow
+    # windows without overlapping the chart
+    def test_templates_render_bindings_into_controls(self):
+        for visualization in self.plugin.visualizers.keys():
+            with self.subTest(visualization=visualization):
+                template = (
+                    self.assets / visualization / 'index.html').read_text()
+
+                self.assertIn('<div id="controls" class="vega-bindings">',
+                              template)
+                self.assertIn("'bind': '#controls'", template)
+
+                # bindings no longer live under `#viz`, so any lookup scoped
+                # there would silently match nothing
+                self.assertNotIn('#viz .vega-bind', template)
 
     # TODO: whenever the vega version used is updated (and thus the vega embed
     # files are changed) these checksums will fail if they are not also
