@@ -93,6 +93,10 @@ plugin.visualizers.register_function(
         'y_measure': Str,
         'replicate_method': Str % Choices('none', 'median', 'mean'),
         'group_by': Str,
+        'color_palette': (Str % Choices('Viridis', 'Cividis', 'Plasma',
+                                        'Turbo', 'category10', 'category20',
+                                        'category20c', 'dark2', 'set1',
+                                        'tableau10', 'tableau20')),
         'title': Str
     },
     parameter_descriptions={
@@ -107,6 +111,10 @@ plugin.visualizers.register_function(
                             ' Available methods are `median` and `mean`.',
         'group_by': 'Categorical measure from the input Metadata that'
                     ' should be used for grouping the lineplot.',
+        'color_palette': 'The preferred color palette that the lineplot will'
+                         ' be rendered using. Can be changed manually using'
+                         ' the `colorPalette` drop-down in the rendered'
+                         ' visualization.',
         'title': 'The title of the lineplot.'},
     name='Lineplot',
     description='Basic lineplot for visualizing two numeric Metadata'

@@ -102,7 +102,7 @@
     },
     {
       "name": "colorPalette",
-      "value": "category10",
+      "value": {"{{REPLACE_PARAM}}": "color_palette"},
       "bind": {
         "input": "select",
         "options": [
