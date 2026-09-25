@@ -21,8 +21,8 @@ def md_factory():
     )
 
 
-# scatterplot examples
-def scatterplot_defaults(use):
+# scatterplot_2d examples
+def scatterplot_2d_defaults(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     scatterplot_viz, = use.action(
@@ -31,12 +31,12 @@ def scatterplot_defaults(use):
             metadata=metadata
         ),
         use.UsageOutputNames(
-            visualization='scatterplot'
+            visualization='scatterplot_2d'
         )
     )
 
 
-def scatterplot_all_measures(use):
+def scatterplot_2d_all_measures(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     scatterplot_viz, = use.action(
@@ -48,7 +48,39 @@ def scatterplot_all_measures(use):
             color_by='group',
         ),
         use.UsageOutputNames(
-            visualization='scatterplot'
+            visualization='scatterplot_2d'
+        )
+    )
+
+
+# scatterplot_correlation examples
+def scatterplot_correlation_defaults(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    scatterplot_viz, = use.action(
+        use.UsageAction('vizard', 'scatterplot_correlation'),
+        use.UsageInputs(
+            metadata=metadata
+        ),
+        use.UsageOutputNames(
+            visualization='scatterplot_correlation'
+        )
+    )
+
+
+def scatterplot_correlation_all_measures(use):
+    metadata = use.init_metadata('metadata', md_factory)
+
+    scatterplot_viz, = use.action(
+        use.UsageAction('vizard', 'scatterplot_correlation'),
+        use.UsageInputs(
+            metadata=metadata,
+            x_measure='c',
+            y_measure='f',
+            color_by='group',
+        ),
+        use.UsageOutputNames(
+            visualization='scatterplot_correlation'
         )
     )
 
