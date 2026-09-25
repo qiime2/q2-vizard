@@ -20,6 +20,7 @@ def lineplot(output_dir: str, metadata: Metadata,
              y_measure: NumericMetadataColumn = None,
              replicate_method: str = 'none',
              group_by: CategoricalMetadataColumn = None,
+             color_palette: str = 'category10',
              title: str = None):
 
     # input handling for initial metadata
@@ -158,5 +159,5 @@ def lineplot(output_dir: str, metadata: Metadata,
                           md_cols_numeric=md_cols_numeric,
                           x_measure=x_measure,
                           y_dropdown_default=y_dropdown_default,
-                          group_by=group_by, title=title,
-                          subtitle=subtitle)
+                          group_by=group_by, color_palette=color_palette,
+                          title=title, subtitle=subtitle)
