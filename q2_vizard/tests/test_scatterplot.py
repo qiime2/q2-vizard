@@ -132,11 +132,6 @@ class TestScatterplot(TestPluginBase):
 
 
 class TestScatterplot2D(TestScatterplot):
-    package = 'q2_vizard.tests'
-
-    def setUp(self):
-        return super().setUp()
-
     # run selenium checks with a chrome driver
     def test_scatterplot_2d_chrome(self):
         chrome_options = ChromeOptions()
@@ -196,8 +191,6 @@ class TestScatterplot2D(TestScatterplot):
 
 
 class TestScatterplotCorrelation(TestScatterplot):
-    package = 'q2_vizard.tests'
-
     def setUp(self):
         super().setUp()
 

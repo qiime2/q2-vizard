@@ -72,19 +72,19 @@
     // Add id & xy attrs to the marks for easy selection in Selenium.
     // Re-applied after every render, since resizing recreates these elements.
     function tagMarks() {
-    var marks = svg.querySelectorAll('g.marks > path');
-    marks.forEach(function(mark, index) {
-      var data = view.data('table')[index];
+      var marks = svg.querySelectorAll('g.marks > path');
+      marks.forEach(function(mark, index) {
+        var data = view.data('table')[index];
 
-      // These are each connected to a vega signal to pull the correct field
-      var id = data[view.signal('idField')];
-      var x = data[view.signal('xField')];
-      var y = data[view.signal('yField')];
+        // These are each connected to a vega signal to pull the correct field
+        var id = data[view.signal('idField')];
+        var x = data[view.signal('xField')];
+        var y = data[view.signal('yField')];
 
-      // Add attrs to the marks elements for id & xy positions
-      mark.setAttribute('data-id', id);
-      mark.setAttribute('data-x', x);
-      mark.setAttribute('data-y', y);
+        // Add attrs to the marks elements for id & xy positions
+        mark.setAttribute('data-id', id);
+        mark.setAttribute('data-x', x);
+        mark.setAttribute('data-y', y);
     });
     }
 

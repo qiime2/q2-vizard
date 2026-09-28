@@ -71,16 +71,9 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
 
     md_cols_numeric = list(md_cols_numeric.columns)
 
-    # validation for x/y measures
-    if not x_measure:
-        x_dropdown_default = md_cols_numeric[0]
-    else:
-        x_dropdown_default = x_measure
-
-    if not y_measure:
-        y_dropdown_default = md_cols_numeric[0]
-    else:
-        y_dropdown_default = y_measure
+    # set dropdowns for x/y measures
+    x_dropdown_default = x_measure or md_cols_numeric[0]
+    y_dropdown_default = y_measure or md_cols_numeric[0]
 
     _render_visualization(output_dir, 'scatterplot_2d', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,
@@ -120,27 +113,21 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
     md_cols_numeric = list(md_cols_numeric.columns)
 
     # validation for x/y measures
-    if x_measure:
-        if x_measure not in md_cols_numeric_in_range:
-            raise ValueError(f'{x_measure} values not bounded within range'
-                             ' [-1, 1]. `scatterplot_correlation` is intended'
-                             ' for use with data in these bounds. For a more'
-                             ' flexible scatterplot without xy bounds, try'
-                             ' using `scatterplot_2d`.')
-        x_dropdown_default = x_measure
-    else:
-        x_dropdown_default = md_cols_numeric_in_range[0]
+    if x_measure and x_measure not in md_cols_numeric_in_range:
+        raise ValueError(f'{x_measure} values not bounded within range'
+                         ' [-1, 1]. `scatterplot_correlation` is intended'
+                         ' for use with data in these bounds. For a more'
+                         ' flexible scatterplot without xy bounds, try'
+                         ' using `scatterplot_2d`.')
+    x_dropdown_default = x_measure or md_cols_numeric_in_range[0]
 
-    if y_measure:
-        if y_measure not in md_cols_numeric_in_range:
-            raise ValueError(f'{y_measure} values not bounded within range'
-                             ' [-1, 1]. `scatterplot_correlation` is intended'
-                             ' for use with data in these bounds. For a more'
-                             ' flexible scatterplot without xy bounds, try'
-                             ' using `scatterplot_2d`.')
-        y_dropdown_default = y_measure
-    else:
-        y_dropdown_default = md_cols_numeric_in_range[0]
+    if y_measure and y_measure not in md_cols_numeric_in_range:
+        raise ValueError(f'{y_measure} values not bounded within range'
+                         ' [-1, 1]. `scatterplot_correlation` is intended'
+                         ' for use with data in these bounds. For a more'
+                         ' flexible scatterplot without xy bounds, try'
+                         ' using `scatterplot_2d`.')
+    y_dropdown_default = y_measure or md_cols_numeric_in_range[0]
 
     _render_visualization(output_dir, 'scatterplot_correlation', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,
