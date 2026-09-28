@@ -11,7 +11,8 @@ import json
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 
-from ._util import _measure_validation, _col_type_validation
+from ._util import (_measure_validation, _col_type_validation,
+                    _DISCRETE_COLOR_PALETTES)
 from ._render import _render_visualization
 
 
@@ -160,4 +161,5 @@ def lineplot(output_dir: str, metadata: Metadata,
                           x_measure=x_measure,
                           y_dropdown_default=y_dropdown_default,
                           group_by=group_by, color_palette=color_palette,
+                          discrete_color_palettes=_DISCRETE_COLOR_PALETTES,
                           title=title, subtitle=subtitle)
