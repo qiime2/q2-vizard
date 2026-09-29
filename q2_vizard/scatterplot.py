@@ -15,8 +15,9 @@ from ._util import (_col_type_validation, _measure_validation,
 from ._render import _render_visualization
 
 
-def _scatterplot_prep(metadata, x_measure, y_measure, color_by,
-                      discrete_color_palette, continuous_color_palette):
+def _scatterplot_prep(metadata, x_measure=None, y_measure=None, color_by=None,
+                      discrete_color_palette=None,
+                      continuous_color_palette=None):
     # input handling for initial metadata
     md_ids = metadata.id_header
     md = metadata.to_dataframe().reset_index()

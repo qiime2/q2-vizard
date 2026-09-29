@@ -19,7 +19,8 @@ from selenium.webdriver.support.ui import Select
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_vizard.scatterplot import scatterplot_2d, scatterplot_correlation
+from q2_vizard.scatterplot import (_scatterplot_prep, scatterplot_2d,
+                                   scatterplot_correlation)
 
 
 class TestScatterplot(TestPluginBase):
@@ -129,6 +130,118 @@ class TestScatterplot(TestPluginBase):
             self.assertEqual(mark_id, exp_mark_id)
             self.assertEqual(mark_x, exp_x_mark)
             self.assertEqual(mark_y, exp_y_mark)
+
+
+class TestScatterplotPrepMethod(TestScatterplot):
+    # no inputs; group_dropdown_default should be legendDefault
+    # with a discrete selection of category10
+    # and a continuous selection of Viridis
+    def test_defaults(self):
+        (_, _, _, _, group_dropdown_default, discrete_selection,
+         continuous_selection) = _scatterplot_prep(metadata=self.md)
+
+        self.assertEqual(group_dropdown_default, 'legendDefault')
+        self.assertEqual(discrete_selection, 'category10')
+        self.assertEqual(continuous_selection, 'Viridis')
+
+    def test_no_color_by_with_discrete_palette_type(self):
+        _, _, _, _, group_dropdown_default, discrete_selection, _ = \
+            _scatterplot_prep(metadata=self.md,
+                              discrete_color_palette='category20')
+
+        self.assertEqual(group_dropdown_default, 'foobar')
+        self.assertEqual(discrete_selection, 'category20')
+
+    def test_no_color_by_with_continuous_selection(self):
+        _, _, _, _, group_dropdown_default, _, continuous_selection = \
+            _scatterplot_prep(metadata=self.md,
+                              continuous_color_palette='Cividis')
+
+        self.assertEqual(group_dropdown_default, 'A')
+        self.assertEqual(continuous_selection, 'Cividis')
+
+    def test_color_by_retained_with_palette_defaults(self):
+        (_, _, _, _, group_dropdown_default, discrete_selection,
+         continuous_selection) = _scatterplot_prep(metadata=self.md,
+                                                   color_by='bodysite')
+
+        self.assertEqual(group_dropdown_default, 'bodysite')
+        self.assertEqual(discrete_selection, 'category10')
+        self.assertEqual(continuous_selection, 'Viridis')
+
+    def test_color_by_retained_with_discrete_palette_type(self):
+        _, _, _, _, group_dropdown_default, discrete_selection, _ = \
+            _scatterplot_prep(metadata=self.md, color_by='bodysite',
+                              discrete_color_palette='category20')
+
+        self.assertEqual(group_dropdown_default, 'bodysite')
+        self.assertEqual(discrete_selection, 'category20')
+
+    def test_color_by_retained_with_continuous_palette_type(self):
+        _, _, _, _, group_dropdown_default, _, continuous_selection = \
+            _scatterplot_prep(metadata=self.md, color_by='B',
+                              continuous_color_palette='Cividis')
+
+        self.assertEqual(group_dropdown_default, 'B')
+        self.assertEqual(continuous_selection, 'Cividis')
+
+    # checks for utils moved into prep method (x/y & color_by validation)
+    def test_error_on_categorical_xy_measure(self):
+        for measure in ['x_measure', 'y_measure']:
+            with self.subTest(measure=measure):
+                with self.assertRaisesRegex(
+                    TypeError, r'not.*NumericMetadataColumn'
+                ):
+                    _scatterplot_prep(metadata=self.md, **{measure: 'foobar'})
+
+    def test_error_on_invalid_color_by(self):
+        with self.assertRaisesRegex(ValueError, r'.*not found as a column.*'):
+            _scatterplot_prep(metadata=self.md, color_by='notacolumn')
+
+    def test_error_on_discrete_and_continuous_palettes(self):
+        with self.assertRaisesRegex(
+            ValueError, 'Only one of `discrete_color_palette` and'
+            ' `continuous_color_palette` can be chosen.'
+        ):
+            _scatterplot_prep(metadata=self.md,
+                              discrete_color_palette='category10',
+                              continuous_color_palette='Viridis')
+
+    def test_error_on_categorical_color_by_and_continuous_palette(self):
+        with self.assertRaisesRegex(
+            ValueError, 'The selected `color_by` measure contains'
+            ' discrete values, but a palette was chosen from'
+            r' the `continuous_color_palette` scale.*'
+        ):
+            _scatterplot_prep(metadata=self.md, color_by='foobar',
+                              continuous_color_palette='Viridis')
+
+    def test_error_on_numeric_color_by_and_discrete_palette(self):
+        with self.assertRaisesRegex(
+            ValueError, 'The selected `color_by` measure contains'
+            ' continuous values, but a palette was chosen'
+            r' from the `discrete_color_palette` scale.*'
+        ):
+            _scatterplot_prep(metadata=self.md, color_by='A',
+                              discrete_color_palette='category10')
+
+    def test_error_on_discrete_palette_with_no_categorical_cols(self):
+        md_index = pd.Index(['sample1', 'sample2'], name='sample-id')
+        data = [
+            [1, 5, 33, 0.1, 0.01],
+            [2, 10, 66, 0.3, 0.03],
+        ]
+        md_numeric = Metadata(pd.DataFrame(
+            data=data, index=md_index, dtype=object,
+            columns=['A', 'B', 'Z', 'C', 'F']))
+
+        with self.assertRaisesRegex(
+            ValueError, 'A `discrete_color_palette` was chosen but'
+            ' there are no categorical metadata columns'
+            ' present in the data.'
+        ):
+            _scatterplot_prep(metadata=md_numeric,
+                              discrete_color_palette='category10')
 
 
 class TestScatterplot2D(TestScatterplot):
