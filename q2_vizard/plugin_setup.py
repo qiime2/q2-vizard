@@ -10,7 +10,7 @@ from qiime2.plugin import Plugin, Str, Metadata, Choices
 
 import q2_vizard
 from q2_vizard.heatmap import heatmap
-from q2_vizard.scatterplot import scatterplot_2d
+from q2_vizard.scatterplot import scatterplot_2d, scatterplot_correlation
 from q2_vizard.lineplot import lineplot
 from q2_vizard.boxplot import boxplot
 
@@ -79,8 +79,41 @@ plugin.visualizers.register_function(
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
                 ' measures with optional categorical or numeric color'
                 ' grouping.',
-    examples={'scatterplot_defaults': ex.scatterplot_defaults,
-              'scatterplot_all_measures': ex.scatterplot_all_measures}
+    examples={'scatterplot_2d_defaults': ex.scatterplot_2d_defaults,
+              'scatterplot_2d_all_measures': ex.scatterplot_2d_all_measures}
+)
+
+
+plugin.visualizers.register_function(
+    function=scatterplot_correlation,
+    inputs={},
+    parameters={
+        'metadata': Metadata,
+        'x_measure': Str,
+        'y_measure': Str,
+        'color_by': Str,
+        'title': Str
+    },
+    parameter_descriptions={
+        'metadata': 'Any metadata-like input with at least two'
+                    ' numeric measures within range [-1, 1] for visualizing.',
+        'x_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the x-axis with data bounded from [-1, 1].',
+        'y_measure': 'Numeric measure from the input Metadata that should be'
+                     ' plotted on the y-axis with data bounded from [-1, 1].',
+        'color_by': 'Categorical or numeric measure from the input Metadata'
+                    ' that should be used for color-coding the scatterplot.'
+                    ' A categorical measure is rendered with a discrete color'
+                    ' scheme, and a numeric measure with a continuous one.',
+        'title': 'The title of the scatterplot.'},
+    name='Correlation Scatterplot',
+    description='Correlation scatterplot for visualizing two numeric Metadata'
+                ' measures bounded from [-1, 1] with optional categorical'
+                ' or numeric color grouping.',
+    examples={'scatterplot_correlation_defaults':
+              ex.scatterplot_correlation_defaults,
+              'scatterplot_correlation_all_measures':
+              ex.scatterplot_correlation_all_measures}
 )
 
 
