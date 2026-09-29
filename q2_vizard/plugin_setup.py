@@ -110,6 +110,8 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'color_by': Str,
+        'discrete_color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
+        'continuous_color_palette': Str % Choices(_CONTINUOUS_COLOR_PALETTES),
         'title': Str
     },
     parameter_descriptions={
@@ -123,6 +125,20 @@ plugin.visualizers.register_function(
                     ' that should be used for color-coding the scatterplot.'
                     ' A categorical measure is rendered with a discrete color'
                     ' scheme, and a numeric measure with a continuous one.',
+        'discrete_color_palette': 'The preferred discrete color palette that'
+                                  ' the plot will be rendered using.'
+                                  ' For use with categorical measures; data'
+                                  ' must contain at least one categorical'
+                                  ' measure for this parameter to be used.'
+                                  ' Can be changed manually using the'
+                                  ' `discretePalette` drop-down in the'
+                                  ' rendered visualization.',
+        'continuous_color_palette': 'The preferred continuous color palette'
+                                    ' that the plot will be rendered using'
+                                    ' (for use with numeric measures).'
+                                    ' Can be changed manually using the'
+                                    ' `continuousPalette` drop-down in the'
+                                    ' rendered visualization.',
         'title': 'The title of the scatterplot.'},
     name='Correlation Scatterplot',
     description='Correlation scatterplot for visualizing two numeric Metadata'

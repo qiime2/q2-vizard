@@ -15,16 +15,14 @@ from ._util import (_col_type_validation, _measure_validation,
 from ._render import _render_visualization
 
 
-def _scatterplot_prep(metadata, x_measure, y_measure, color_by):
+def _scatterplot_prep(metadata, x_measure, y_measure, color_by,
+                      discrete_color_palette, continuous_color_palette):
     # input handling for initial metadata
     md_ids = metadata.id_header
     md = metadata.to_dataframe().reset_index()
     md['legendDefault'] = 'data'
 
-    # measure validation for x/y & color_by
-    if color_by:
-        _measure_validation(metadata=metadata, measure=color_by)
-
+    # measure validation for x/y
     for measure in (x_measure, y_measure):
         if measure:
             _measure_validation(metadata=metadata, measure=measure)
@@ -45,34 +43,16 @@ def _scatterplot_prep(metadata, x_measure, y_measure, color_by):
     md_cols_color = (md_cols_categorical + list(md_cols_numeric.columns)
                      + ['legendDefault'])
 
-    metadata_obj = json.loads(md.to_json(orient='records'))
-
-    return (metadata_obj, md_ids, md_cols_numeric,
-            md_cols_categorical, md_cols_color)
-
-
-def scatterplot_2d(output_dir: str, metadata: Metadata,
-                   x_measure: NumericMetadataColumn = None,
-                   y_measure: NumericMetadataColumn = None,
-                   color_by: MetadataColumn = None,
-                   discrete_color_palette: str = None,
-                   continuous_color_palette: str = None,
-                   title: str = None):
-
-    (metadata_obj, md_ids, md_cols_numeric,
-     md_cols_categorical, md_cols_color) = \
-        _scatterplot_prep(metadata=metadata, x_measure=x_measure,
-                          y_measure=y_measure, color_by=color_by)
-
-    md_cols_numeric = list(md_cols_numeric.columns)
-
+    # validate only one palette type is chosen
     if discrete_color_palette and continuous_color_palette:
         raise ValueError('Only one of `discrete_color_palette` and'
                          ' `continuous_color_palette` can be chosen.')
 
     group_dropdown_default = color_by or 'legendDefault'
-    # validation for group measure & selected colorPalette
+    # measure validation for color_by & colorPalette(s)
     if color_by:
+        _measure_validation(metadata=metadata, measure=color_by)
+
         is_categorical = color_by in md_cols_categorical
         # categorical measure with continuous color palette
         if is_categorical and continuous_color_palette is not None:
@@ -90,18 +70,43 @@ def scatterplot_2d(output_dir: str, metadata: Metadata,
                              ' Please choose a compatible discrete measure, or'
                              ' change your color palette selection to one from'
                              ' `continuous_color_palette`.')
-    else:
-        if discrete_color_palette is not None:
-            if not md_cols_categorical:
-                raise ValueError('A `discrete_color_palette` was chosen but'
-                                 ' there are no categorical metadata columns'
-                                 ' present in the data.')
-            group_dropdown_default = md_cols_categorical[0]
-        if continuous_color_palette is not None:
-            group_dropdown_default = md_cols_numeric[0]
+
+    elif discrete_color_palette is not None:
+        # no categorical cols in md with discrete palette chosen
+        if not md_cols_categorical:
+            raise ValueError('A `discrete_color_palette` was chosen but'
+                             ' there are no categorical metadata columns'
+                             ' present in the data.')
+        # only set a default if a palette is chosen but no color_by
+        group_dropdown_default = md_cols_categorical[0]
+    elif continuous_color_palette is not None:
+        group_dropdown_default = md_cols_numeric.columns[0]
 
     discrete_selection = discrete_color_palette or 'category10'
     continuous_selection = continuous_color_palette or 'Viridis'
+
+    metadata_obj = json.loads(md.to_json(orient='records'))
+
+    return (metadata_obj, md_ids, md_cols_numeric, md_cols_color,
+            group_dropdown_default, discrete_selection, continuous_selection)
+
+
+def scatterplot_2d(output_dir: str, metadata: Metadata,
+                   x_measure: NumericMetadataColumn = None,
+                   y_measure: NumericMetadataColumn = None,
+                   color_by: MetadataColumn = None,
+                   discrete_color_palette: str = None,
+                   continuous_color_palette: str = None,
+                   title: str = None):
+
+    (metadata_obj, md_ids, md_cols_numeric, md_cols_color,
+     group_dropdown_default, discrete_selection, continuous_selection) = \
+        _scatterplot_prep(metadata=metadata, x_measure=x_measure,
+                          y_measure=y_measure, color_by=color_by,
+                          discrete_color_palette=discrete_color_palette,
+                          continuous_color_palette=continuous_color_palette)
+
+    md_cols_numeric = list(md_cols_numeric.columns)
 
     # set dropdowns for x/y measures
     x_dropdown_default = x_measure or md_cols_numeric[0]
@@ -125,11 +130,16 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
                             x_measure: NumericMetadataColumn = None,
                             y_measure: NumericMetadataColumn = None,
                             color_by: MetadataColumn = None,
+                            discrete_color_palette: str = None,
+                            continuous_color_palette: str = None,
                             title: str = None):
 
-    (metadata_obj, md_ids, md_cols_numeric, _, md_cols_color) = \
+    (metadata_obj, md_ids, md_cols_numeric, md_cols_color,
+     group_dropdown_default, discrete_selection, continuous_selection) = \
         _scatterplot_prep(metadata=metadata, x_measure=x_measure,
-                          y_measure=y_measure, color_by=color_by)
+                          y_measure=y_measure, color_by=color_by,
+                          discrete_color_palette=discrete_color_palette,
+                          continuous_color_palette=continuous_color_palette)
 
     md_cols_numeric_in_range = []
     for col, vals in md_cols_numeric.items():
@@ -165,7 +175,6 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
     # set dropdown defaults
     x_dropdown_default = x_measure or md_cols_numeric_in_range[0]
     y_dropdown_default = y_measure or md_cols_numeric_in_range[0]
-    group_dropdown_default = color_by or 'legendDefault'
 
     _render_visualization(output_dir, 'scatterplot_correlation', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,
@@ -175,4 +184,8 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
                           y_dropdown_default=y_dropdown_default,
                           md_cols_color=md_cols_color,
                           group_dropdown_default=group_dropdown_default,
+                          discrete_selection=discrete_selection,
+                          continuous_selection=continuous_selection,
+                          discrete_color_palettes=_DISCRETE_COLOR_PALETTES,
+                          continuous_color_palettes=_CONTINUOUS_COLOR_PALETTES,
                           title=title)
