@@ -127,8 +127,7 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
                             color_by: MetadataColumn = None,
                             title: str = None):
 
-    (metadata_obj, md_ids, md_cols_numeric, _, md_cols_color,
-     group_dropdown_default) = \
+    (metadata_obj, md_ids, md_cols_numeric, _, md_cols_color) = \
         _scatterplot_prep(metadata=metadata, x_measure=x_measure,
                           y_measure=y_measure, color_by=color_by)
 
@@ -155,7 +154,6 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
                          ' for use with data in these bounds. For a more'
                          ' flexible scatterplot without xy bounds, try'
                          ' using `scatterplot_2d`.')
-    x_dropdown_default = x_measure or md_cols_numeric_in_range[0]
 
     if y_measure and y_measure not in md_cols_numeric_in_range:
         raise ValueError(f'{y_measure} values not bounded within range'
@@ -163,7 +161,11 @@ def scatterplot_correlation(output_dir: str, metadata: Metadata,
                          ' for use with data in these bounds. For a more'
                          ' flexible scatterplot without xy bounds, try'
                          ' using `scatterplot_2d`.')
+
+    # set dropdown defaults
+    x_dropdown_default = x_measure or md_cols_numeric_in_range[0]
     y_dropdown_default = y_measure or md_cols_numeric_in_range[0]
+    group_dropdown_default = color_by or 'legendDefault'
 
     _render_visualization(output_dir, 'scatterplot_correlation', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,

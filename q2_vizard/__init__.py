@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 
-from q2_vizard.scatterplot import scatterplot_2d
+from q2_vizard.scatterplot import scatterplot_2d, scatterplot_correlation
 from q2_vizard.heatmap import heatmap
 from q2_vizard.lineplot import lineplot
 from q2_vizard.boxplot import boxplot
@@ -17,4 +17,5 @@ try:
 except ModuleNotFoundError:
     __version__ = '0.0.0+notfound'
 
-__all__ = ['heatmap', 'scatterplot_2d', 'lineplot', 'boxplot']
+__all__ = ['heatmap', 'scatterplot_2d', 'scatterplot_correlation',
+           'lineplot', 'boxplot']
