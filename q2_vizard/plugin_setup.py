@@ -36,6 +36,7 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'gradient_measure': Str,
+        'gradient_palette': Str % Choices(_CONTINUOUS_COLOR_PALETTES),
         'title': Str
     },
     parameter_descriptions={
@@ -48,6 +49,10 @@ plugin.visualizers.register_function(
         'gradient_measure': 'Numeric measure from the input Metadata that'
                             ' should be used to represent the color gradient'
                             ' in the heatmap.',
+        'gradient_palette': 'The preferred color palette that the plot will'
+                            ' be rendered using. Can be changed manually using'
+                            ' the `gradientPalette` drop-down in the rendered'
+                            ' visualization.',
         'title': 'The title of the heatmap.'},
     name='Heatmap',
     description='Basic heatmap for visualizing three Metadata measures.',

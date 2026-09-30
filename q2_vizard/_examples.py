@@ -209,6 +209,7 @@ def heatmap(use):
             x_measure='x',
             y_measure='y',
             gradient_measure='a',
+            gradient_palette='Cividis',
         ),
         use.UsageOutputNames(
             visualization='heatmap'

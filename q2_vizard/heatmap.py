@@ -10,7 +10,8 @@ import json
 
 from qiime2 import Metadata, MetadataColumn, NumericMetadataColumn
 
-from ._util import _col_type_validation, _measure_validation
+from ._util import (_col_type_validation, _measure_validation,
+                    _CONTINUOUS_COLOR_PALETTES)
 from ._render import _render_visualization
 
 
@@ -18,6 +19,7 @@ def heatmap(output_dir: str, metadata: Metadata,
             x_measure: MetadataColumn,
             y_measure: MetadataColumn,
             gradient_measure: NumericMetadataColumn,
+            gradient_palette: str = 'Viridis',
             title: str = None):
 
     # input handling for initial metadata
@@ -38,4 +40,7 @@ def heatmap(output_dir: str, metadata: Metadata,
     _render_visualization(output_dir, 'heatmap', 'spec.json',
                           metadata=metadata_obj, md_ids=md_ids,
                           x_measure=x_measure, y_measure=y_measure,
-                          gradient_measure=gradient_measure, title=title)
+                          gradient_measure=gradient_measure,
+                          gradient_palette=gradient_palette,
+                          continuous_color_palettes=_CONTINUOUS_COLOR_PALETTES,
+                          title=title)
