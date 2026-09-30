@@ -33,58 +33,156 @@ class TestScatterplot(TestPluginBase):
                              'sample4', 'sample5', 'sample6'],
                             name='sample-id')
         data = [
-            [1, 'foo', 5, 'left-palm', 33, 0.1, 0.01],
-            [2, 'foo', 10, 'right-foot', 66, 0.3, 0.03],
+            [1, 'foo', 5, 'leftpalm', 33, 0.1, 0.01],
+            [2, 'foo', 10, 'rightfoot', 66, 0.3, 0.03],
             [3, 'bar', 15, 'gut', 55, -0.2, 0.02],
-            [4, 'bar', 20, 'right-foot', 44, -0.7, 0.033],
-            [5, 'baz', 25, 'left-palm', 77, 0, 0.025],
+            [4, 'bar', 20, 'rightfoot', 44, -0.7, 0.033],
+            [5, 'baz', 25, 'leftpalm', 77, 0, 0.025],
             [6, 'baz', 30, 'gut', 22, 0.7, -0.05]
         ]
         self.md = Metadata(pd.DataFrame(
             data=data, index=md_index, dtype=object,
             columns=['A', 'foobar', 'B', 'bodysite', 'Z', 'C', 'F']))
 
-        exp_marks_len = len(data)
+        # color_by & palette cases, shared by both scatterplots
+        # (color encoding doesn't depend on the xy measures)
+        # exp_fill is always wrt sample1
+        # continuousPalettes use rgb() syntax & discrete uses hex code
+        self.color_cases = {
+            # no color_by or palette inputs
+            # first color in category10 is blue
+            'defaults': dict(
+                color_by=None,
+                exp_color_measure='legendDefault',
+                exp_discrete='category10', exp_continuous='Viridis',
+                exp_palette_type='discretePalette',
+                exp_fill='#1f77b4'),
+            # categorical color_by without palette input
+            # sample1 is 'foo' -> 3rd of sorted [bar, baz, foo]
+            # third color in category10 is green
+            'color_by_categorical': dict(
+                color_by='foobar',
+                exp_color_measure='foobar',
+                exp_discrete='category10', exp_continuous='Viridis',
+                exp_palette_type='discretePalette',
+                exp_fill='#2ca02c'),
+            # numeric color_by without palette input
+            # sample1 is first in sorted 'A' values
+            # first color in Viridis is dark purple
+            'color_by_numeric': dict(
+                color_by='A',
+                exp_color_measure='A',
+                exp_discrete='category10', exp_continuous='Viridis',
+                exp_palette_type='continuousPalette',
+                exp_fill='rgb(68, 1, 84)'),
+            # no color_by with discretePalette input
+            # foobar becomes the default color_by & sample1 is 3rd sorted
+            # same structure as color_by_categorical case
+            # third color in category20 is orange
+            'discrete_palette': dict(
+                color_by=None, discrete_color_palette='category20',
+                exp_color_measure='foobar',
+                exp_discrete='category20', exp_continuous='Viridis',
+                exp_palette_type='discretePalette',
+                exp_fill='#ff7f0e'),
+            # no color_by with continuousPalette input
+            # same structure as color_by_numeric case (sample1 is first in 'A')
+            # first color in Cividis is dark blue
+            'continuous_palette': dict(
+                color_by=None, continuous_color_palette='Cividis',
+                exp_color_measure='A',
+                exp_discrete='category10', exp_continuous='Cividis',
+                exp_palette_type='continuousPalette',
+                exp_fill='rgb(0, 32, 81)'),
+            # categorical color_by with discretePalette
+            # sample1 is 'leftpalm' -> 2nd of sorted [gut, leftpalm, rightfoot]
+            # second color in category20 is light blue
+            'color_by_categorical_with_palette': dict(
+                color_by='bodysite', discrete_color_palette='category20',
+                exp_color_measure='bodysite',
+                exp_discrete='category20', exp_continuous='Viridis',
+                exp_palette_type='discretePalette',
+                exp_fill='#aec7e8'),
+            # numeric color_by with continuousPalette
+            # same structure as continuous_palette (sample1 is first in 'B')
+            # first color in Cividis is dark blue
+            # scales are slightly different because of 'nice=true' in vega spec
+            'color_by_numeric_with_palette': dict(
+                color_by='B', continuous_color_palette='Cividis',
+                exp_color_measure='B',
+                exp_discrete='category10', exp_continuous='Cividis',
+                exp_palette_type='continuousPalette',
+                exp_fill='rgb(0, 39, 95)'),
+        }
 
-        self.test_cases = [
-            ('B', 'Z', 'foobar', exp_marks_len,
-             '5', '33', 'sample1', 'B', 'Z', 'foobar'),
-            ('B', 'Z', 'A', exp_marks_len,
-             '5', '33', 'sample1', 'B', 'Z', 'A'),
-            ('', '', '', exp_marks_len, '1', '1',
-             'sample1', 'A', 'A', 'legendDefault')
-        ]
+        # x/y for scatterplot_2d: default case leaves x/y unset,
+        # every other case uses chosen x/y measures
+        xy_default = dict(x_measure=None, y_measure=None,
+                          exp_x_measure='A', exp_y_measure='A',
+                          exp_x_mark='1', exp_y_mark='1')
+        xy_chosen = dict(x_measure='B', y_measure='Z',
+                         exp_x_measure='B', exp_y_measure='Z',
+                         exp_x_mark='5', exp_y_mark='33')
+
+        self.test_cases = self._build_cases(xy_default, xy_chosen)
+
+    def _build_cases(self, xy_default, xy_chosen):
+        return {
+            name: {**(xy_default if name == 'defaults' else xy_chosen),
+                   **color_case}
+            for name, color_case in self.color_cases.items()
+        }
 
     # utility method that will run all checks for each scatterplot method
     # used in browser tests under each child class (firefox & chrome supported)
-    def _selenium_scatterplot_test(self, driver, plot_method, x_measure,
-                                   y_measure, color_measure, exp_marks_len,
-                                   exp_x_mark, exp_y_mark, exp_mark_id,
+    def _selenium_scatterplot_test(self, driver, plot_method, *,
+                                   x_measure, y_measure, color_by,
+                                   exp_x_mark, exp_y_mark,
                                    exp_x_measure, exp_y_measure,
-                                   exp_color_measure):
+                                   exp_color_measure, exp_discrete,
+                                   exp_continuous, exp_palette_type, exp_fill,
+                                   discrete_color_palette=None,
+                                   continuous_color_palette=None):
+        exp_marks_len = self.md.id_count
+        exp_mark_id = 'sample1'
+
         with tempfile.TemporaryDirectory() as output_dir:
             plot_method(
                 output_dir=output_dir, metadata=self.md,
                 x_measure=x_measure, y_measure=y_measure,
-                color_by=color_measure
+                color_by=color_by,
+                discrete_color_palette=discrete_color_palette,
+                continuous_color_palette=continuous_color_palette
             )
 
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
 
             # test that we get the expected value in each dropdown
+            # uses the option's value rather than `.text`, because one
+            # palette dropdown is always hidden & selenium returns ''
+            # for the text of hidden elements
             def _dropdown_util(field, exp):
                 dropdown = Select(driver.find_element(By.NAME, field))
-                selected = dropdown.first_selected_option.text
-                self.assertEqual(selected, exp)
+                selected = dropdown.first_selected_option
+                self.assertEqual(selected.get_attribute('value'), exp)
 
             dropdown_fields = [
                 ('xField', exp_x_measure),
                 ('yField', exp_y_measure),
-                ('colorBy', exp_color_measure)
+                ('colorBy', exp_color_measure),
+                ('discretePalette', exp_discrete),
+                ('continuousPalette', exp_continuous)
             ]
 
             for field_name, expected_value in dropdown_fields:
                 _dropdown_util(field=field_name, exp=expected_value)
+
+            # test that only the palette dropdown matching the colorBy
+            # column type is visible
+            for palette in ('discretePalette', 'continuousPalette'):
+                shown = driver.find_element(By.NAME, palette).is_displayed()
+                self.assertEqual(shown, palette == exp_palette_type,
+                                 f'unexpected visibility for {palette}')
 
             # test that our axes match the dropdown values
             axis_elements = \
@@ -130,6 +228,9 @@ class TestScatterplot(TestPluginBase):
             self.assertEqual(mark_id, exp_mark_id)
             self.assertEqual(mark_x, exp_x_mark)
             self.assertEqual(mark_y, exp_y_mark)
+
+            # test that the selected palette actually reached the color scale
+            self.assertEqual(mark_element_0.get_attribute('fill'), exp_fill)
 
 
 class TestScatterplotPrepMethod(TestScatterplot):
@@ -245,82 +346,47 @@ class TestScatterplotPrepMethod(TestScatterplot):
 
 
 class TestScatterplot2D(TestScatterplot):
+    def _run_browser_checks(self, driver):
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
+
+        for name, case in self.test_cases.items():
+            with self.subTest(case=name):
+                self._selenium_scatterplot_test(
+                    driver, scatterplot_2d, **case)
+
     # run selenium checks with a chrome driver
     def test_scatterplot_2d_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
-        # saves someone a headache in the future if this is ever empty
-        self.assertGreater(len(self.test_cases), 0)
-
         with webdriver.Chrome(options=chrome_options) as driver:
-            for (x_measure, y_measure, color_measure, exp_marks_len,
-                 exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
-                 exp_y_measure, exp_color_measure) in self.test_cases:
-
-                with self.subTest(
-                    x_measure=x_measure, y_measure=y_measure,
-                    color_measure=color_measure, exp_marks_len=exp_marks_len,
-                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
-                    exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
-                    exp_y_measure=exp_y_measure,
-                    exp_color_measure=exp_color_measure
-                ):
-
-                    self._selenium_scatterplot_test(
-                        driver, scatterplot_2d, x_measure, y_measure,
-                        color_measure, exp_marks_len, exp_x_mark, exp_y_mark,
-                        exp_mark_id, exp_x_measure, exp_y_measure,
-                        exp_color_measure)
+            self._run_browser_checks(driver)
 
     # run selenium checks with a firefox driver
     def test_scatterplot_2d_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
 
-        # saves someone a headache in the future if this is ever empty
-        self.assertGreater(len(self.test_cases), 0)
-
         with webdriver.Firefox(options=firefox_options) as driver:
-
-            for (x_measure, y_measure, color_measure, exp_marks_len,
-                 exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
-                 exp_y_measure, exp_color_measure) in self.test_cases:
-
-                with self.subTest(
-                    x_measure=x_measure, y_measure=y_measure,
-                    color_measure=color_measure, exp_marks_len=exp_marks_len,
-                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
-                    exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
-                    exp_y_measure=exp_y_measure,
-                    exp_color_measure=exp_color_measure
-                ):
-
-                    self._selenium_scatterplot_test(
-                        driver, scatterplot_2d, x_measure, y_measure,
-                        color_measure, exp_marks_len, exp_x_mark, exp_y_mark,
-                        exp_mark_id, exp_x_measure, exp_y_measure,
-                        exp_color_measure)
+            self._run_browser_checks(driver)
 
 
 class TestScatterplotCorrelation(TestScatterplot):
     def setUp(self):
         super().setUp()
 
-        exp_marks_len = self.md.id_count
-
         # C & F are the only columns in range [-1, 1]
-        # so they're the only valid xy measures here
-        # third test case doesn't include xy measures to test their defaults,
-        # which both fall back to the first in-range column C
-        self.correlation_test_cases = [
-            ('C', 'F', 'foobar', exp_marks_len,
-             '0.1', '0.01', 'sample1', 'C', 'F', 'foobar'),
-            ('C', 'F', 'A', exp_marks_len,
-             '0.1', '0.01', 'sample1', 'C', 'F', 'A'),
-            ('', '', '', exp_marks_len, '0.1', '0.1',
-             'sample1', 'C', 'C', 'legendDefault')
-        ]
+        # both fall back to the first in-range column (C)
+        xy_default = dict(x_measure=None, y_measure=None,
+                          exp_x_measure='C', exp_y_measure='C',
+                          exp_x_mark='0.1', exp_y_mark='0.1')
+        xy_chosen = dict(x_measure='C', y_measure='F',
+                         exp_x_measure='C', exp_y_measure='F',
+                         exp_x_mark='0.1', exp_y_mark='0.01')
+
+        self.correlation_test_cases = \
+            self._build_cases(xy_default, xy_chosen)
 
     # validate error handling within the actual method
     def test_x_measure_not_within_bounds(self):
@@ -434,65 +500,29 @@ class TestScatterplotCorrelation(TestScatterplot):
             x_line_rect['y'],
             y_line_rect['y'] + y_line_rect['height'] / 2, delta=1)
 
+    def _run_browser_checks(self, driver):
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.correlation_test_cases), 0)
+
+        for name, case in self.correlation_test_cases.items():
+            with self.subTest(case=name):
+                self._selenium_scatterplot_test(
+                    driver, scatterplot_correlation, **case)
+
+                self._selenium_correlation_test(driver, self.md.id_count)
+
     # run selenium checks with a chrome driver
     def test_scatterplot_correlation_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
-        # saves someone a headache in the future if this is ever empty
-        self.assertGreater(len(self.correlation_test_cases), 0)
-
         with webdriver.Chrome(options=chrome_options) as driver:
-            for (x_measure, y_measure, color_measure, exp_marks_len,
-                 exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
-                 exp_y_measure,
-                 exp_color_measure) in self.correlation_test_cases:
-
-                with self.subTest(
-                    x_measure=x_measure, y_measure=y_measure,
-                    color_measure=color_measure, exp_marks_len=exp_marks_len,
-                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
-                    exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
-                    exp_y_measure=exp_y_measure,
-                    exp_color_measure=exp_color_measure
-                ):
-
-                    self._selenium_scatterplot_test(
-                        driver, scatterplot_correlation, x_measure, y_measure,
-                        color_measure, exp_marks_len, exp_x_mark, exp_y_mark,
-                        exp_mark_id, exp_x_measure, exp_y_measure,
-                        exp_color_measure)
-
-                    self._selenium_correlation_test(driver, exp_marks_len)
+            self._run_browser_checks(driver)
 
     # run selenium checks with a firefox driver
     def test_scatterplot_correlation_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
 
-        # saves someone a headache in the future if this is ever empty
-        self.assertGreater(len(self.correlation_test_cases), 0)
-
         with webdriver.Firefox(options=firefox_options) as driver:
-
-            for (x_measure, y_measure, color_measure, exp_marks_len,
-                 exp_x_mark, exp_y_mark, exp_mark_id, exp_x_measure,
-                 exp_y_measure,
-                 exp_color_measure) in self.correlation_test_cases:
-
-                with self.subTest(
-                    x_measure=x_measure, y_measure=y_measure,
-                    color_measure=color_measure, exp_marks_len=exp_marks_len,
-                    exp_x_mark=exp_x_mark, exp_y_mark=exp_y_mark,
-                    exp_mark_id=exp_mark_id, exp_x_measure=exp_x_measure,
-                    exp_y_measure=exp_y_measure,
-                    exp_color_measure=exp_color_measure
-                ):
-
-                    self._selenium_scatterplot_test(
-                        driver, scatterplot_correlation, x_measure, y_measure,
-                        color_measure, exp_marks_len, exp_x_mark, exp_y_mark,
-                        exp_mark_id, exp_x_measure, exp_y_measure,
-                        exp_color_measure)
-
-                    self._selenium_correlation_test(driver, exp_marks_len)
+            self._run_browser_checks(driver)
