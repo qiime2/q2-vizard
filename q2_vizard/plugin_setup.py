@@ -191,7 +191,7 @@ plugin.visualizers.register_function(
             ex.lineplot_mean_replicates_with_grouping,
             ex.lineplot_median_replicates_no_grouping,
             ex.lineplot_mean_replicates_no_grouping,
-            ex.lineplot_no_replicates_with_grouping,
+            ex.lineplot_no_replicates_with_grouping_and_color_palette,
             ex.lineplot_no_replicates_no_grouping
         ]
     }

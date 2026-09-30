@@ -46,6 +46,7 @@ def scatterplot_2d_all_measures(use):
             x_measure='x',
             y_measure='y',
             color_by='group',
+            discrete_color_palette='set1',
         ),
         use.UsageOutputNames(
             visualization='scatterplot_2d'
@@ -78,6 +79,7 @@ def scatterplot_correlation_all_measures(use):
             x_measure='c',
             y_measure='f',
             color_by='group',
+            discrete_color_palette='set1',
         ),
         use.UsageOutputNames(
             visualization='scatterplot_correlation'
@@ -160,7 +162,7 @@ def lineplot_mean_replicates_no_grouping(use):
     )
 
 
-def lineplot_no_replicates_with_grouping(use):
+def lineplot_no_replicates_with_grouping_and_color_palette(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
@@ -170,6 +172,7 @@ def lineplot_no_replicates_with_grouping(use):
             x_measure='a',
             y_measure='y',
             group_by='group',
+            color_palette='set1',
             title='Lineplot with no replicate method, grouped by `group`.'
         ),
         use.UsageOutputNames(
