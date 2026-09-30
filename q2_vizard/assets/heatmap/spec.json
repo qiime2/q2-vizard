@@ -68,12 +68,10 @@
     },
     {
       "name": "gradientPalette",
-      "value": "Viridis",
+      "value": {"{{REPLACE_PARAM}}": "gradient_palette"},
       "bind": {
         "input": "select",
-        "options": [
-          "Viridis", "Cividis", "Magma", "Plasma", "Inferno", "Greys"
-        ]
+        "options": {"{{REPLACE_PARAM}}": "continuous_color_palettes"}
       }
     },
     {

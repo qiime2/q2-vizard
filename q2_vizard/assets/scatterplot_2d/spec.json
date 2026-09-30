@@ -100,25 +100,18 @@
     },
     {
       "name": "discretePalette",
-      "value": "category10",
+      "value": {"{{REPLACE_PARAM}}": "discrete_selection"},
       "bind": {
         "input": "select",
-        "options": [
-          "Viridis", "Cividis", "Plasma", "Turbo",
-          "category10", "category20", "category20c",
-          "dark2", "set1", "tableau10", "tableau20"
-        ]
+        "options": {"{{REPLACE_PARAM}}": "discrete_color_palettes"}
       }
     },
     {
       "name": "continuousPalette",
-      "value": "Viridis",
+      "value": {"{{REPLACE_PARAM}}": "continuous_selection"},
       "bind": {
         "input": "select",
-        "options": [
-          "Viridis", "Cividis", "Magma",
-          "Plasma", "Inferno", "Turbo", "Greys"
-        ]
+        "options": {"{{REPLACE_PARAM}}": "continuous_color_palettes"}
       }
     }
   ],
