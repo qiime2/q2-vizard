@@ -236,7 +236,7 @@ def boxplot_horizontal_percentile_whisker_range(use):
     )
 
 
-def boxplot_horizontal_tukeys_iqr_whisker_range(use):
+def boxplot_horizontal_tukeys_iqr_whisker_range_with_color_palette(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     boxplot_viz, = use.action(
@@ -246,7 +246,8 @@ def boxplot_horizontal_tukeys_iqr_whisker_range(use):
             distribution_measure='x',
             group_by='group',
             whisker_range='tukeys_iqr',
-            box_orientation='horizontal'
+            box_orientation='horizontal',
+            color_palette='Cividis',
         ),
         use.UsageOutputNames(
             visualization='boxplot'
@@ -254,7 +255,7 @@ def boxplot_horizontal_tukeys_iqr_whisker_range(use):
     )
 
 
-def boxplot_vertical_minmax_whisker_range(use):
+def boxplot_vertical_minmax_whisker_range_with_color_palette(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     boxplot_viz, = use.action(
@@ -264,7 +265,8 @@ def boxplot_vertical_minmax_whisker_range(use):
             distribution_measure='x',
             group_by='group',
             whisker_range='minmax',
-            box_orientation='vertical'
+            box_orientation='vertical',
+            color_palette='Cividis',
         ),
         use.UsageOutputNames(
             visualization='boxplot'

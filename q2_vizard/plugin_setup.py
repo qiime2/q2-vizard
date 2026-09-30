@@ -212,6 +212,7 @@ plugin.visualizers.register_function(
         'group_by': Str,
         'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
         'box_orientation': Str % Choices('horizontal', 'vertical'),
+        'color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
         'title': Str
     },
     name='Boxplot',
@@ -237,13 +238,17 @@ plugin.visualizers.register_function(
                          ' on the rendered visualization.',
         'box_orientation': 'The visual orientataion of the boxes (either'
                            ' horizontal or vertical).',
+        'color_palette': 'The preferred color palette that the plot will'
+                         ' be rendered using. Can be changed manually using'
+                         ' the `colorPalette` drop-down in the rendered'
+                         ' visualization.',
         'title': 'The title of the boxplot.'
     },
     examples={
         f.__name__: f for f in [
             ex.boxplot_horizontal_percentile_whisker_range,
-            ex.boxplot_horizontal_tukeys_iqr_whisker_range,
-            ex.boxplot_vertical_minmax_whisker_range
+            ex.boxplot_horizontal_tukeys_iqr_whisker_range_with_color_palette,
+            ex.boxplot_vertical_minmax_whisker_range_with_color_palette
         ]
     }
 )
