@@ -27,6 +27,27 @@ plugin = Plugin(name='vizard',
                             ' visualization!',
                 short_description='Generalized microbiome data visualization.')
 
+color_palette_param_description = {
+    'color_palette': (
+        'The preferred color palette that the plot will be rendered using.'
+        ' Can be changed manually using the `colorPalette` drop-down in the'
+        ' rendered visualization.'
+        )
+}
+disc_cont_color_palette_param_descriptions = {
+    'continuous_color_palette': (
+        'The preferred continuous color palette that the plot will be rendered'
+        ' using (for use with numeric measures). Can be changed manually using'
+        ' the `continuousPalette` drop-down in the rendered visualization.'
+        ),
+    'discrete_color_palette': (
+        'The preferred discrete color palette that the plot will be rendered'
+        ' using. For use with categorical measures; data must contain at least'
+        ' one categorical measure for this parameter to be used. Can be'
+        ' changed manually using the `discretePalette` drop-down in the'
+        ' rendered visualization.'
+    )
+}
 
 plugin.visualizers.register_function(
     function=heatmap,
@@ -83,20 +104,7 @@ plugin.visualizers.register_function(
                     ' that should be used for color-coding the scatterplot.'
                     ' A categorical measure is rendered with a discrete color'
                     ' scheme, and a numeric measure with a continuous one.',
-        'discrete_color_palette': 'The preferred discrete color palette that'
-                                  ' the plot will be rendered using.'
-                                  ' For use with categorical measures; data'
-                                  ' must contain at least one categorical'
-                                  ' measure for this parameter to be used.'
-                                  ' Can be changed manually using the'
-                                  ' `discretePalette` drop-down in the'
-                                  ' rendered visualization.',
-        'continuous_color_palette': 'The preferred continuous color palette'
-                                    ' that the plot will be rendered using'
-                                    ' (for use with numeric measures).'
-                                    ' Can be changed manually using the'
-                                    ' `continuousPalette` drop-down in the'
-                                    ' rendered visualization.',
+        **disc_cont_color_palette_param_descriptions,
         'title': 'The title of the scatterplot.'},
     name='2D Scatterplot',
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
@@ -130,20 +138,7 @@ plugin.visualizers.register_function(
                     ' that should be used for color-coding the scatterplot.'
                     ' A categorical measure is rendered with a discrete color'
                     ' scheme, and a numeric measure with a continuous one.',
-        'discrete_color_palette': 'The preferred discrete color palette that'
-                                  ' the plot will be rendered using.'
-                                  ' For use with categorical measures; data'
-                                  ' must contain at least one categorical'
-                                  ' measure for this parameter to be used.'
-                                  ' Can be changed manually using the'
-                                  ' `discretePalette` drop-down in the'
-                                  ' rendered visualization.',
-        'continuous_color_palette': 'The preferred continuous color palette'
-                                    ' that the plot will be rendered using'
-                                    ' (for use with numeric measures).'
-                                    ' Can be changed manually using the'
-                                    ' `continuousPalette` drop-down in the'
-                                    ' rendered visualization.',
+        **disc_cont_color_palette_param_descriptions,
         'title': 'The title of the scatterplot.'},
     name='Correlation Scatterplot',
     description='Correlation scatterplot for visualizing two numeric Metadata'
@@ -180,10 +175,7 @@ plugin.visualizers.register_function(
                             ' Available methods are `median` and `mean`.',
         'group_by': 'Categorical measure from the input Metadata that'
                     ' should be used for grouping the lineplot.',
-        'color_palette': 'The preferred color palette that the plot will'
-                         ' be rendered using. Can be changed manually using'
-                         ' the `colorPalette` drop-down in the rendered'
-                         ' visualization.',
+        **color_palette_param_description,
         'title': 'The title of the lineplot.'},
     name='Lineplot',
     description='Basic lineplot for visualizing two numeric Metadata'
@@ -238,10 +230,7 @@ plugin.visualizers.register_function(
                          ' on the rendered visualization.',
         'box_orientation': 'The visual orientataion of the boxes (either'
                            ' horizontal or vertical).',
-        'color_palette': 'The preferred color palette that the plot will'
-                         ' be rendered using. Can be changed manually using'
-                         ' the `colorPalette` drop-down in the rendered'
-                         ' visualization.',
+        **color_palette_param_description,
         'title': 'The title of the boxplot.'
     },
     examples={
