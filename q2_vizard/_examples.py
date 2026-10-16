@@ -46,6 +46,7 @@ def scatterplot_2d_all_measures(use):
             x_measure='x',
             y_measure='y',
             color_by='group',
+            discrete_color_palette='set1',
         ),
         use.UsageOutputNames(
             visualization='scatterplot_2d'
@@ -78,6 +79,7 @@ def scatterplot_correlation_all_measures(use):
             x_measure='c',
             y_measure='f',
             color_by='group',
+            discrete_color_palette='set1',
         ),
         use.UsageOutputNames(
             visualization='scatterplot_correlation'
@@ -160,7 +162,7 @@ def lineplot_mean_replicates_no_grouping(use):
     )
 
 
-def lineplot_no_replicates_with_grouping(use):
+def lineplot_no_replicates_with_grouping_and_color_palette(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     lineplot_viz, = use.action(
@@ -170,6 +172,7 @@ def lineplot_no_replicates_with_grouping(use):
             x_measure='a',
             y_measure='y',
             group_by='group',
+            color_palette='set1',
             title='Lineplot with no replicate method, grouped by `group`.'
         ),
         use.UsageOutputNames(
@@ -206,6 +209,7 @@ def heatmap(use):
             x_measure='x',
             y_measure='y',
             gradient_measure='a',
+            gradient_palette='Cividis',
         ),
         use.UsageOutputNames(
             visualization='heatmap'
@@ -232,7 +236,7 @@ def boxplot_horizontal_percentile_whisker_range(use):
     )
 
 
-def boxplot_horizontal_tukeys_iqr_whisker_range(use):
+def boxplot_horizontal_tukeys_iqr_whisker_range_with_color_palette(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     boxplot_viz, = use.action(
@@ -242,7 +246,8 @@ def boxplot_horizontal_tukeys_iqr_whisker_range(use):
             distribution_measure='x',
             group_by='group',
             whisker_range='tukeys_iqr',
-            box_orientation='horizontal'
+            box_orientation='horizontal',
+            color_palette='Cividis',
         ),
         use.UsageOutputNames(
             visualization='boxplot'
@@ -250,7 +255,7 @@ def boxplot_horizontal_tukeys_iqr_whisker_range(use):
     )
 
 
-def boxplot_vertical_minmax_whisker_range(use):
+def boxplot_vertical_minmax_whisker_range_with_color_palette(use):
     metadata = use.init_metadata('metadata', md_factory)
 
     boxplot_viz, = use.action(
@@ -260,7 +265,8 @@ def boxplot_vertical_minmax_whisker_range(use):
             distribution_measure='x',
             group_by='group',
             whisker_range='minmax',
-            box_orientation='vertical'
+            box_orientation='vertical',
+            color_palette='Cividis',
         ),
         use.UsageOutputNames(
             visualization='boxplot'

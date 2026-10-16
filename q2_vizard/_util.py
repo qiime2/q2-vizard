@@ -7,6 +7,13 @@
 # ----------------------------------------------------------------------------
 
 
+_DISCRETE_COLOR_PALETTES = ["Viridis", "Cividis", "Plasma", "Turbo",
+                            "category10", "category20", "category20c",
+                            "dark2", "set1", "tableau10", "tableau20"]
+_CONTINUOUS_COLOR_PALETTES = ["Viridis", "Cividis", "Magma",
+                              "Plasma", "Inferno", "Turbo", "Greys"]
+
+
 def _col_type_validation(metadata, measure, col_type):
     if col_type == 'categorical':
         md_type = 'CategoricalMetadataColumn'

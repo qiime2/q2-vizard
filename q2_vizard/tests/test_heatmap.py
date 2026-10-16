@@ -14,6 +14,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.support.ui import Select
 
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
@@ -42,27 +43,57 @@ class TestHeatmap(TestPluginBase):
             data=data, index=md_index, dtype=object,
             columns=['A', 'foobar', 'B', 'bodysite', 'Z']))
 
-        exp_marks_len = len(data)
+        shared = dict(
+            x_measure='bodysite', y_measure='foobar', gradient_measure='Z',
+            exp_x_mark='left-palm', exp_y_mark='foo', exp_gradient_mark='33')
 
-        self.test_cases = [
-            ('bodysite', 'foobar', 'Z',
-             exp_marks_len, 'left-palm', 'foo', '33',
-             'sample1')
-        ]
+        # continuous palettes render fills as rgb() strings
+        self.test_cases = {
+            # default palette (Viridis)
+            'default_palette': dict(
+                gradient_palette=None, exp_palette='Viridis',
+                exp_fill='rgb(63, 73, 137)', **shared),
+            'chosen_palette': dict(
+                gradient_palette='Cividis', exp_palette='Cividis',
+                exp_fill='rgb(47, 70, 110)', **shared),
+            # `invertGradient` checkbox clicked after render: the scale is
+            # reversed, so sample1's color comes from the opposite end
+            'chosen_palette_inverted': dict(
+                gradient_palette='Cividis', exp_palette='Cividis',
+                invert_gradient=True,
+                exp_fill='rgb(194, 179, 110)', **shared),
+        }
 
     # utility method that will run all checks for heatmap
     # used in each browser test below (firefox & chrome supported)
-    def _selenium_heatmap_test(self, driver, x_measure, y_measure,
-                               gradient_measure, exp_marks_len, exp_x_mark,
-                               exp_y_mark, exp_gradient_mark, exp_mark_id):
+    def _selenium_heatmap_test(self, driver, *, x_measure, y_measure,
+                               gradient_measure, gradient_palette,
+                               exp_x_mark, exp_y_mark, exp_gradient_mark,
+                               exp_palette, exp_fill,
+                               invert_gradient=False):
+        exp_marks_len = self.md.id_count
+        exp_mark_id = 'sample1'
+
+        # only pass a palette when one is chosen, so the default is used
+        palette_kwargs = ({} if gradient_palette is None
+                          else {'gradient_palette': gradient_palette})
+
         with tempfile.TemporaryDirectory() as output_dir:
             heatmap(
                 output_dir=output_dir, metadata=self.md,
                 x_measure=x_measure, y_measure=y_measure,
-                gradient_measure=gradient_measure
+                gradient_measure=gradient_measure,
+                **palette_kwargs
             )
 
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
+
+            # test that the palette dropdown shows the expected palette
+            palette_dropdown = \
+                Select(driver.find_element(By.NAME, 'gradientPalette'))
+            self.assertEqual(
+                palette_dropdown.first_selected_option.get_attribute('value'),
+                exp_palette)
 
             # test that our axes match the expected fields
             axis_elements = \
@@ -105,56 +136,39 @@ class TestHeatmap(TestPluginBase):
             self.assertEqual(mark_y, exp_y_mark)
             self.assertEqual(mark_gradient, exp_gradient_mark)
 
+            # click the `invertGradient` checkbox when requested, which
+            # reverses the color scale (unchecked by default)
+            checkbox = driver.find_element(By.CSS_SELECTOR,
+                                           'input[name="invertGradient"]')
+            self.assertFalse(checkbox.is_selected())
+
+            if invert_gradient:
+                driver.execute_script("arguments[0].click();", checkbox)
+                self.assertTrue(checkbox.is_selected())
+
+            # test that the selected palette reached the color scale
+            self.assertEqual(mark_element_0.get_attribute('fill'), exp_fill)
+
+    def _run_browser_checks(self, driver):
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
+
+        for name, case in self.test_cases.items():
+            with self.subTest(case=name):
+                self._selenium_heatmap_test(driver, **case)
+
     # run selenium checks with a chrome driver
     def test_heatmap_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
-        # saves someone a headache in the future if this is ever empty
-        self.assertGreater(len(self.test_cases), 0)
-
         with webdriver.Chrome(options=chrome_options) as driver:
-            for (x_measure, y_measure,
-                 gradient_measure, exp_marks_len, exp_x_mark,
-                 exp_y_mark, exp_gradient_mark,
-                 exp_mark_id) in self.test_cases:
-
-                with self.subTest(
-                    x_measure=x_measure, y_measure=y_measure,
-                    gradient_measure=gradient_measure,
-                    exp_marks_len=exp_marks_len, exp_x_mark=exp_x_mark,
-                    exp_y_mark=exp_y_mark, exp_gradient_mark=exp_gradient_mark,
-                    exp_mark_id=exp_mark_id
-                ):
-
-                    self._selenium_heatmap_test(
-                        driver, x_measure, y_measure,
-                        gradient_measure, exp_marks_len, exp_x_mark,
-                        exp_y_mark, exp_gradient_mark, exp_mark_id)
+            self._run_browser_checks(driver)
 
     # run selenium checks with a firefox driver
     def test_heatmap_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
 
-        # saves someone a headache in the future if this is ever empty
-        self.assertGreater(len(self.test_cases), 0)
-
         with webdriver.Firefox(options=firefox_options) as driver:
-            for (x_measure, y_measure,
-                 gradient_measure, exp_marks_len, exp_x_mark,
-                 exp_y_mark, exp_gradient_mark,
-                 exp_mark_id) in self.test_cases:
-
-                with self.subTest(
-                    x_measure=x_measure, y_measure=y_measure,
-                    gradient_measure=gradient_measure,
-                    exp_marks_len=exp_marks_len, exp_x_mark=exp_x_mark,
-                    exp_y_mark=exp_y_mark, exp_gradient_mark=exp_gradient_mark,
-                    exp_mark_id=exp_mark_id
-                ):
-
-                    self._selenium_heatmap_test(
-                        driver, x_measure, y_measure,
-                        gradient_measure, exp_marks_len, exp_x_mark,
-                        exp_y_mark, exp_gradient_mark, exp_mark_id)
+            self._run_browser_checks(driver)

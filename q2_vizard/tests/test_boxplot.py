@@ -14,6 +14,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.support.ui import Select
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata
@@ -29,35 +30,76 @@ class TestBase(TestPluginBase):
 
         self.md = Metadata.load(self.get_data_path('sample-md.tsv'))
 
-        # first/second cases are almost identical,
-        # just w/different box_orientation & whisker_range params
-        # third case doesn't include group, just producing a single box
-        self.test_cases = [
-            ('x', 'group', 'horizontal', "titled 'group'", None, 3, 1),
-            ('x', 'group', 'vertical', "titled 'group'", 'minmax', 0, 0),
-            ('x', None, None, "titled 'legend'", 'tukeys_iqr', 0, 0)
-        ]
+        grouped = dict(distribution_measure='x', group_by='group',
+                       exp_legend="titled 'group'")
+
+        # default palette is category10; dark2 is used for the chosen
+        # palette because its first color differs from category10's
+        # boxes are colored per group in sorted order ([aa, bb, cc])
+        default_palette = dict(color_palette=None, exp_palette='category10')
+        chosen_palette = dict(color_palette='dark2', exp_palette='dark2')
+        category10 = ['#1f77b4', '#ff7f0e', '#2ca02c']
+        dark2 = ['#1b9e77', '#d95f02', '#7570b3']
+
+        # chosen palette is checked against both horizontal & vertical specs
+        self.test_cases = {
+            'grouped_horizontal_default_palette': dict(
+                box_orientation='horizontal', whisker_range=None,
+                exp_total_outlier_marks_len=3,
+                exp_single_box_outlier_marks_len=1,
+                exp_box_fills=category10,
+                **grouped, **default_palette),
+            'grouped_vertical_minmax_default_palette': dict(
+                box_orientation='vertical', whisker_range='minmax',
+                exp_total_outlier_marks_len=0,
+                exp_single_box_outlier_marks_len=0,
+                exp_box_fills=category10,
+                **grouped, **default_palette),
+            # no group, just producing a single box
+            'ungrouped_tukeys_iqr_default_palette': dict(
+                distribution_measure='x', group_by=None,
+                exp_legend="titled 'legend'",
+                box_orientation=None, whisker_range='tukeys_iqr',
+                exp_total_outlier_marks_len=0,
+                exp_single_box_outlier_marks_len=0,
+                exp_box_fills=category10[:1],
+                **default_palette),
+            'grouped_horizontal_chosen_palette': dict(
+                box_orientation='horizontal', whisker_range=None,
+                exp_total_outlier_marks_len=3,
+                exp_single_box_outlier_marks_len=1,
+                exp_box_fills=dark2,
+                **grouped, **chosen_palette),
+            'grouped_vertical_chosen_palette': dict(
+                box_orientation='vertical', whisker_range='minmax',
+                exp_total_outlier_marks_len=0,
+                exp_single_box_outlier_marks_len=0,
+                exp_box_fills=dark2,
+                **grouped, **chosen_palette),
+        }
 
     def _selenium_boxplot_test(
-        self, driver, distribution_measure, group_by, box_orientation,
+        self, driver, *, distribution_measure, group_by, box_orientation,
         exp_legend, whisker_range, exp_total_outlier_marks_len,
-        exp_single_box_outlier_marks_len
+        exp_single_box_outlier_marks_len, color_palette, exp_palette,
+        exp_box_fills
     ):
+        # only pass a palette when one is chosen, so the default is used
+        palette_kwargs = \
+            {} if color_palette is None else {'color_palette': color_palette}
+
         with tempfile.TemporaryDirectory() as output_dir:
             boxplot(
                 output_dir=output_dir, metadata=self.md,
                 distribution_measure=distribution_measure,
                 group_by=group_by, box_orientation=box_orientation,
-                whisker_range=whisker_range
+                whisker_range=whisker_range, **palette_kwargs
             )
 
             # set defaults if None - for use in test validation
-            if group_by is None:
-                group_by = 'legend'
-            if box_orientation is None:
-                box_orientation = 'horizontal'
-            if whisker_range is None:
-                whisker_range = 'percentile'
+            group_by = group_by or 'legend'
+            box_orientation = box_orientation or 'horizontal'
+            whisker_range = whisker_range or 'percentile'
 
             driver.get(f"file://{os.path.join(output_dir, 'index.html')}")
 
@@ -110,6 +152,18 @@ class TestBase(TestPluginBase):
                 exp_groups_len = len(md[group_by].unique())
 
             self.assertEqual(len(boxGroup_elements), exp_groups_len)
+
+            # test that the palette dropdown shows the expected palette
+            palette_dropdown = \
+                Select(driver.find_element(By.NAME, 'colorPalette'))
+            self.assertEqual(
+                palette_dropdown.first_selected_option.get_attribute('value'),
+                exp_palette)
+
+            # test that the boxes are colored by the selected palette
+            box_fills = [box.get_attribute('fill')
+                         for box in boxGroup_elements]
+            self.assertEqual(sorted(box_fills), sorted(exp_box_fills))
 
             # whiskerLine length - equal to unique vals in group_by column
             whiskerLine_elements = \
@@ -376,58 +430,26 @@ class TestBase(TestPluginBase):
             for exp, obs in zip(exp_outliers, actual_outliers):
                 self.assertEqual(exp, obs)
 
+    def _run_browser_checks(self, driver):
+        # saves someone a headache in the future if this is ever empty
+        self.assertGreater(len(self.test_cases), 0)
+
+        for name, case in self.test_cases.items():
+            with self.subTest(case=name):
+                self._selenium_boxplot_test(driver, **case)
+
     # run selenium tests using a headless chrome driver
     def test_boxplot_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument('-headless')
 
-        self.assertGreater(len(self.test_cases), 0)
-
         with webdriver.Chrome(options=chrome_options) as driver:
-            for (distribution_measure, group_by,
-                 box_orientation, exp_legend, whisker_range,
-                 exp_total_outlier_marks_len,
-                 exp_single_box_outlier_marks_len) in self.test_cases:
-
-                with self.subTest(
-                    distribution_measure=distribution_measure,
-                    group_by=group_by, box_orientation=box_orientation,
-                    exp_legend=exp_legend, whisker_range=whisker_range,
-                    exp_total_outlier_marks_len=exp_total_outlier_marks_len,
-                    exp_single_box_outlier_marks_len=(
-                        exp_single_box_outlier_marks_len)
-                ):
-
-                    self._selenium_boxplot_test(
-                        driver, distribution_measure, group_by,
-                        box_orientation, exp_legend, whisker_range,
-                        exp_total_outlier_marks_len,
-                        exp_single_box_outlier_marks_len)
+            self._run_browser_checks(driver)
 
     # run selenium tests using a headless firefox driver
     def test_boxplot_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument('-headless')
 
-        self.assertGreater(len(self.test_cases), 0)
-
         with webdriver.Firefox(options=firefox_options) as driver:
-            for (distribution_measure, group_by,
-                 box_orientation, exp_legend, whisker_range,
-                 exp_total_outlier_marks_len,
-                 exp_single_box_outlier_marks_len) in self.test_cases:
-
-                with self.subTest(
-                    distribution_measure=distribution_measure,
-                    group_by=group_by, box_orientation=box_orientation,
-                    exp_legend=exp_legend, whisker_range=whisker_range,
-                    exp_total_outlier_marks_len=exp_total_outlier_marks_len,
-                    exp_single_box_outlier_marks_len=(
-                        exp_single_box_outlier_marks_len)
-                ):
-
-                    self._selenium_boxplot_test(
-                        driver, distribution_measure, group_by,
-                        box_orientation, exp_legend, whisker_range,
-                        exp_total_outlier_marks_len,
-                        exp_single_box_outlier_marks_len)
+            self._run_browser_checks(driver)

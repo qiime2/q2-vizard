@@ -10,7 +10,8 @@ import json
 
 from qiime2 import Metadata, NumericMetadataColumn, CategoricalMetadataColumn
 
-from ._util import _measure_validation, _col_type_validation
+from ._util import (_measure_validation, _col_type_validation,
+                    _DISCRETE_COLOR_PALETTES)
 from ._render import _render_visualization
 
 
@@ -19,6 +20,7 @@ def boxplot(output_dir: str, metadata: Metadata,
             group_by: CategoricalMetadataColumn = None,
             whisker_range: str = 'percentile',
             box_orientation: str = 'horizontal',
+            color_palette: str = 'category10',
             title: str = None):
 
     # input handling for initial metadata
@@ -76,4 +78,6 @@ def boxplot(output_dir: str, metadata: Metadata,
                           whisker_range=whisker_range,
                           group_by=group_by, title=title,
                           expr=expr, subtitle=subtitle,
-                          box_orientation=box_orientation)
+                          box_orientation=box_orientation,
+                          color_palette=color_palette,
+                          discrete_color_palettes=_DISCRETE_COLOR_PALETTES)

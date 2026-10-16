@@ -13,6 +13,8 @@ from q2_vizard.heatmap import heatmap
 from q2_vizard.scatterplot import scatterplot_2d, scatterplot_correlation
 from q2_vizard.lineplot import lineplot
 from q2_vizard.boxplot import boxplot
+from q2_vizard._util import (_CONTINUOUS_COLOR_PALETTES,
+                             _DISCRETE_COLOR_PALETTES)
 
 import q2_vizard._examples as ex
 
@@ -25,6 +27,27 @@ plugin = Plugin(name='vizard',
                             ' visualization!',
                 short_description='Generalized microbiome data visualization.')
 
+color_palette_param_description = {
+    'color_palette': (
+        'The preferred color palette used to render the plot.'
+        ' Can be changed manually using the `colorPalette` drop-down in the'
+        ' rendered visualization.'
+        )
+}
+disc_cont_color_palette_param_descriptions = {
+    'continuous_color_palette': (
+        'The preferred continuous color palette used to render the plot'
+        ' (for use with numeric measures). Can be changed manually using'
+        ' the `continuousPalette` drop-down in the rendered visualization.'
+        ),
+    'discrete_color_palette': (
+        'The preferred discrete color palette used to render the plot.'
+        ' For use with categorical measures; data must contain at least'
+        ' one categorical measure for this parameter to be used. Can be'
+        ' changed manually using the `discretePalette` drop-down in the'
+        ' rendered visualization.'
+    )
+}
 
 plugin.visualizers.register_function(
     function=heatmap,
@@ -34,6 +57,7 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'gradient_measure': Str,
+        'gradient_palette': Str % Choices(_CONTINUOUS_COLOR_PALETTES),
         'title': Str
     },
     parameter_descriptions={
@@ -46,6 +70,10 @@ plugin.visualizers.register_function(
         'gradient_measure': 'Numeric measure from the input Metadata that'
                             ' should be used to represent the color gradient'
                             ' in the heatmap.',
+        'gradient_palette': 'The preferred color palette used to render'
+                            ' the plot. Can be changed manually using the'
+                            ' `gradientPalette` drop-down in the rendered'
+                            ' visualization.',
         'title': 'The title of the heatmap.'},
     name='Heatmap',
     description='Basic heatmap for visualizing three Metadata measures.',
@@ -61,6 +89,8 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'color_by': Str,
+        'discrete_color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
+        'continuous_color_palette': Str % Choices(_CONTINUOUS_COLOR_PALETTES),
         'title': Str
     },
     parameter_descriptions={
@@ -74,6 +104,7 @@ plugin.visualizers.register_function(
                     ' that should be used for color-coding the scatterplot.'
                     ' A categorical measure is rendered with a discrete color'
                     ' scheme, and a numeric measure with a continuous one.',
+        **disc_cont_color_palette_param_descriptions,
         'title': 'The title of the scatterplot.'},
     name='2D Scatterplot',
     description='Basic 2D scatterplot for visualizing two numeric Metadata'
@@ -92,6 +123,8 @@ plugin.visualizers.register_function(
         'x_measure': Str,
         'y_measure': Str,
         'color_by': Str,
+        'discrete_color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
+        'continuous_color_palette': Str % Choices(_CONTINUOUS_COLOR_PALETTES),
         'title': Str
     },
     parameter_descriptions={
@@ -105,6 +138,7 @@ plugin.visualizers.register_function(
                     ' that should be used for color-coding the scatterplot.'
                     ' A categorical measure is rendered with a discrete color'
                     ' scheme, and a numeric measure with a continuous one.',
+        **disc_cont_color_palette_param_descriptions,
         'title': 'The title of the scatterplot.'},
     name='Correlation Scatterplot',
     description='Correlation scatterplot for visualizing two numeric Metadata'
@@ -126,6 +160,7 @@ plugin.visualizers.register_function(
         'y_measure': Str,
         'replicate_method': Str % Choices('none', 'median', 'mean'),
         'group_by': Str,
+        'color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
         'title': Str
     },
     parameter_descriptions={
@@ -140,6 +175,7 @@ plugin.visualizers.register_function(
                             ' Available methods are `median` and `mean`.',
         'group_by': 'Categorical measure from the input Metadata that'
                     ' should be used for grouping the lineplot.',
+        **color_palette_param_description,
         'title': 'The title of the lineplot.'},
     name='Lineplot',
     description='Basic lineplot for visualizing two numeric Metadata'
@@ -152,7 +188,7 @@ plugin.visualizers.register_function(
             ex.lineplot_mean_replicates_with_grouping,
             ex.lineplot_median_replicates_no_grouping,
             ex.lineplot_mean_replicates_no_grouping,
-            ex.lineplot_no_replicates_with_grouping,
+            ex.lineplot_no_replicates_with_grouping_and_color_palette,
             ex.lineplot_no_replicates_no_grouping
         ]
     }
@@ -168,6 +204,7 @@ plugin.visualizers.register_function(
         'group_by': Str,
         'whisker_range': Str % Choices('tukeys_iqr', 'percentile', 'minmax'),
         'box_orientation': Str % Choices('horizontal', 'vertical'),
+        'color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
         'title': Str
     },
     name='Boxplot',
@@ -193,13 +230,14 @@ plugin.visualizers.register_function(
                          ' on the rendered visualization.',
         'box_orientation': 'The visual orientataion of the boxes (either'
                            ' horizontal or vertical).',
+        **color_palette_param_description,
         'title': 'The title of the boxplot.'
     },
     examples={
         f.__name__: f for f in [
             ex.boxplot_horizontal_percentile_whisker_range,
-            ex.boxplot_horizontal_tukeys_iqr_whisker_range,
-            ex.boxplot_vertical_minmax_whisker_range
+            ex.boxplot_horizontal_tukeys_iqr_whisker_range_with_color_palette,
+            ex.boxplot_vertical_minmax_whisker_range_with_color_palette
         ]
     }
 )
