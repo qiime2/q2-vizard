@@ -29,20 +29,20 @@ plugin = Plugin(name='vizard',
 
 color_palette_param_description = {
     'color_palette': (
-        'The preferred color palette that the plot will be rendered using.'
+        'The preferred color palette used to render the plot.'
         ' Can be changed manually using the `colorPalette` drop-down in the'
         ' rendered visualization.'
         )
 }
 disc_cont_color_palette_param_descriptions = {
     'continuous_color_palette': (
-        'The preferred continuous color palette that the plot will be rendered'
-        ' using (for use with numeric measures). Can be changed manually using'
+        'The preferred continuous color palette used to render the plot'
+        ' (for use with numeric measures). Can be changed manually using'
         ' the `continuousPalette` drop-down in the rendered visualization.'
         ),
     'discrete_color_palette': (
-        'The preferred discrete color palette that the plot will be rendered'
-        ' using. For use with categorical measures; data must contain at least'
+        'The preferred discrete color palette used to render the plot.'
+        ' For use with categorical measures; data must contain at least'
         ' one categorical measure for this parameter to be used. Can be'
         ' changed manually using the `discretePalette` drop-down in the'
         ' rendered visualization.'
@@ -70,9 +70,9 @@ plugin.visualizers.register_function(
         'gradient_measure': 'Numeric measure from the input Metadata that'
                             ' should be used to represent the color gradient'
                             ' in the heatmap.',
-        'gradient_palette': 'The preferred color palette that the plot will'
-                            ' be rendered using. Can be changed manually using'
-                            ' the `gradientPalette` drop-down in the rendered'
+        'gradient_palette': 'The preferred color palette used to render'
+                            ' the plot. Can be changed manually using the'
+                            ' `gradientPalette` drop-down in the rendered'
                             ' visualization.',
         'title': 'The title of the heatmap.'},
     name='Heatmap',
