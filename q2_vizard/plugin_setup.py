@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Str, Metadata, Choices
+from qiime2.plugin import Plugin, Str, Metadata, Choices, Bool
 
 import q2_vizard
 from q2_vizard.heatmap import heatmap
@@ -161,7 +161,8 @@ plugin.visualizers.register_function(
         'replicate_method': Str % Choices('none', 'median', 'mean'),
         'group_by': Str,
         'color_palette': Str % Choices(_DISCRETE_COLOR_PALETTES),
-        'title': Str
+        'title': Str,
+        'suppress_marks': Bool
     },
     parameter_descriptions={
         'metadata': 'Any metadata-like input with at least two'
@@ -176,7 +177,9 @@ plugin.visualizers.register_function(
         'group_by': 'Categorical measure from the input Metadata that'
                     ' should be used for grouping the lineplot.',
         **color_palette_param_description,
-        'title': 'The title of the lineplot.'},
+        'title': 'The title of the lineplot.',
+        'suppress_marks': 'Whether to suppress the scatter marks. Can be'
+                          ' toggled on/off in the rendered visualization.'},
     name='Lineplot',
     description='Basic lineplot for visualizing two numeric Metadata'
                 ' measures with optional grouping. All numeric columns present'
