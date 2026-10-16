@@ -23,6 +23,11 @@ def _scatterplot_prep(metadata, x_measure=None, y_measure=None, color_by=None,
     md = metadata.to_dataframe().reset_index()
     md['legendDefault'] = 'data'
 
+    # validate only one palette type is chosen
+    if discrete_color_palette and continuous_color_palette:
+        raise ValueError('Only one of `discrete_color_palette` and'
+                         ' `continuous_color_palette` can be chosen.')
+
     # measure validation for x/y
     for measure in (x_measure, y_measure):
         if measure:
@@ -43,11 +48,6 @@ def _scatterplot_prep(metadata, x_measure=None, y_measure=None, color_by=None,
     # every column is available for color-coding, plus 'legendDefault'
     md_cols_color = (md_cols_categorical + list(md_cols_numeric.columns)
                      + ['legendDefault'])
-
-    # validate only one palette type is chosen
-    if discrete_color_palette and continuous_color_palette:
-        raise ValueError('Only one of `discrete_color_palette` and'
-                         ' `continuous_color_palette` can be chosen.')
 
     group_dropdown_default = color_by or 'legendDefault'
     # measure validation for color_by & colorPalette(s)
