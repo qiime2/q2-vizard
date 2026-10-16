@@ -22,7 +22,7 @@ def lineplot(output_dir: str, metadata: Metadata,
              replicate_method: str = 'none',
              group_by: CategoricalMetadataColumn = None,
              color_palette: str = 'category10',
-             title: str = None):
+             title: str = None, suppress_marks: bool = False):
 
     # input handling for initial metadata
     md_ids = metadata.id_header
@@ -162,4 +162,5 @@ def lineplot(output_dir: str, metadata: Metadata,
                           y_dropdown_default=y_dropdown_default,
                           group_by=group_by, color_palette=color_palette,
                           discrete_color_palettes=_DISCRETE_COLOR_PALETTES,
-                          title=title, subtitle=subtitle)
+                          title=title, subtitle=subtitle,
+                          suppress_marks=suppress_marks)

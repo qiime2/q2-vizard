@@ -83,7 +83,7 @@
     },
     {
       "name": "suppressMarks",
-      "value": false,
+      "value": {"{{REPLACE_PARAM}}": "suppress_marks"},
       "bind": {"input": "checkbox"}
     },
     {
